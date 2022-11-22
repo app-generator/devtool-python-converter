@@ -6,10 +6,10 @@
 
 > Product Roadmap 
 
-| Status | Format | Output | Info | 
+| Status | Input | Output | Info | 
 | --- | --- | --- | --- |
-| NA | **OpenAPI** | `DB Model` | DB Model(s) extraction  |
-| NA | **OpenAPI** | DataTables | Paginated DT (vanilla JS) |
+| NA | **OpenAPI** yaml | `DB Model` | DB Model(s) extraction  |
+| NA | **OpenAPI** yaml | DataTables | Paginated DT (vanilla JS) |
 | --- | --- | --- | --- |
 | NA | **Pandas DF** | `DB Model` | DB Model |
 | NA | **Pandas DF** | Export (with filters) | CSV, PDF  |
