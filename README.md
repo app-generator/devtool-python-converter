@@ -1,6 +1,6 @@
 # [Python Data Converter](https://github.com/app-generator/devtool-python-converter)
 
-Converter library for XLS, CSV, OpenAPI, URLs using a simple Drag & Drop UI. 
+**Converter library** for `CSV`, `OpenAPI`, `Pandas DF`, `URLs` using a simple **Drag & Drop UI** - Actively supported by [AppSeed](https://appseed.us/).
 
 <br />
 
