@@ -1,0 +1,31 @@
+.custom-file-uploader {
+  position: relative;
+  border: 1px dashed #9c9c9c;
+  border-radius: 5px;
+  padding: 40px 10px;
+  background: #f8f9fe;
+  text-align: center;
+  cursor: pointer;
+}
+
+.custom-file-uploader .form-control {
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 12px;
+  width: 100%;
+}
+
+.custom-file-uploader input[type=url] {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}

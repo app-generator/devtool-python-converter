@@ -1,0 +1,86 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Author {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+  <link href="/static/assets/dnd/dnd.css" rel="stylesheet" />
+
+{% endblock stylesheets %}
+
+{% block body_class %} blog-author bg-gray-100 {% endblock body_class %}
+
+{% block content %}
+
+  {% include "includes/navigation-light.html" %}
+
+  <!-- START Blogs w/ 3 images & quote & text -->
+  <section class="bg-white mt-5">
+    <div class="container">
+      
+      <div class="row ">
+        <div class="col-md-6 mx-auto text-center">
+
+          {% if err %}
+
+            <p class="text-lead text-dark">
+              <span class="text-danger">ERROR</span>: {{ err|safe }}
+            </p>
+          
+            <!-- Deploy IS ACTIVE -->
+
+          {% else %}
+            
+            <h6 class="text-dark">
+              Simply drop your asset below.
+            </h5>
+            <p class="text-lead">
+              Supported types: URLs, Pandas DF, CVS, OpenAPI (yaml)
+            </p>
+
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <!-- END Blogs w/ 3 images & quote & text -->
+
+  <section class="mt-3 pb-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 col-md-12 col-12 m-auto text-center">
+
+            <div class="custom-file-uploader">
+              <form>
+                <input type="text" name="filename" class="file-name-get form-control" placeholder="Drop link here">
+                <input type="url" id="file_upload" name="url"/>
+              </form>
+            </div>
+                          
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script src="/static/assets/js/soft-design-system.min.js?v=1.0.1" type="text/javascript"></script>
+
+  <script defer type="text/javascript" src="/static/assets/dnd/dnd.js"></script>
+
+  <script>
+    
+    function something(  ){
+      
+      console.log('whatever');
+    }
+
+  </script>
+
+{% endblock javascripts %}
