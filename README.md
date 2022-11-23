@@ -8,8 +8,9 @@
 
 | Status | Input | Output | Info | 
 | --- | --- | --- | --- |
-| NA | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction  |
+| NA | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
 | NA | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
+| NA | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- |
 | NA | **CSV** | `DB Model` | DB Model |
 | NA | **CSV** | DataTables | Paginated Data View (vanilla JS) |
