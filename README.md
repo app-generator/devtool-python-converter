@@ -9,7 +9,6 @@
 | Status | Input | Output | Info | 
 | --- | --- | --- | --- |
 | NA | **OpenAPI** yaml | `DB Model` | DB Model(s) extraction  |
-| NA | **OpenAPI** yaml | DataTables | Paginated DT (vanilla JS) |
 | --- | --- | --- | --- |
 | NA | **CSV** | `DB Model` | DB Model |
 | NA | **CSV** | Export (with filters) | CSV, PDF  |
