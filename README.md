@@ -8,8 +8,8 @@
 
 | Status | Input | Output | Info | 
 | --- | --- | --- | --- |
-| NA | **OpenAPI** JSON | `DB Model` | DB Model(s) extraction  |
-| NA | **OpenAPI** Yaml | `DB Model` | DB Model(s) extraction |
+| NA | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction  |
+| NA | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- |
 | NA | **CSV** | `DB Model` | DB Model |
 | NA | **CSV** | Export (with filters) | CSV, PDF  |
