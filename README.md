@@ -12,14 +12,14 @@
 | NA | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- |
 | NA | **CSV** | `DB Model` | DB Model |
-| NA | **CSV** | Export (with filters) | CSV, PDF  |
 | NA | **CSV** | DataTables | Paginated Data View (vanilla JS) |
 | NA | **CSV** | Charts | Data to visualisation  |
+| NA | **CSV** | Export (with filters) | CSV, PDF  |
 | --- | --- | --- | --- |
 | NA | **Pandas DF** | `DB Model` | DB Model |
-| NA | **Pandas DF** | Export (with filters) | CSV, PDF  |
 | NA | **Pandas DF** | DataTables | Paginated Data View (vanilla JS) |
 | NA | **Pandas DF** | Charts | Data to visualisation  |
+| NA | **Pandas DF** | Export (with filters) | CSV, PDF  |
 
 <br />
 
