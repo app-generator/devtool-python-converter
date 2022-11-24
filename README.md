@@ -6,26 +6,30 @@
 
 > `Product Roadmap`
 
-| Status | Input | Output | Info | 
-| --- | --- | --- | --- |
-| NA | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
-| NA | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
-| NA | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
-| --- | --- | --- | --- |
-| NA | **CSV** | `DB Model` | DB Model |
-| NA | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
-| NA | **CSV** | `Charts` | Data to visualisation  |
-| NA | **CSV** | `Export` (with filters) | CSV, PDF  |
-| --- | --- | --- | --- |
-| NA | **Pandas DF** | `DB Model` | DB Model |
-| NA | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
-| NA | **Pandas DF** | `Charts` | Data to visualisation  |
-| NA | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
-| --- | --- | --- | --- |
-| NA | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
-| NA | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |
-| NA | **DBMS** `Remote URL` | `Charts` | Data to visualisation  |
-| NA | **DBMS** `Remote URL` | `Export` (with filters) | CSV, PDF  |
+| Status | Drop | Input | Output | Info | 
+| --- | --- | --- | --- | --- |
+| NA | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
+| NA | **Drop 1** | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
+| NA | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
+| --- | --- | --- | --- | --- |
+| NA | **Drop 1** | **CSV** | `DB Model` | DB Model |
+| NA | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
+| NA | **Drop 1** | **CSV** | `Charts` | Data to visualisation  |
+| NA | **Drop 1** | **CSV** | `Export` (with filters) | CSV, PDF  |
+| NA | `Drop 2` | **CSV** URL | `DB Model` | DB Model |
+| NA | `Drop 2` | **CSV** URL | `DataTables` | Paginated Data View (vanilla JS) |
+| NA | `Drop 2` | **CSV** URL | `Charts` | Data to visualisation  |
+| NA | `Drop 2` | **CSV** URL | `Export` (with filters) | CSV, PDF  |
+| --- | --- | --- | --- | --- |
+| NA | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
+| NA | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
+| NA | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
+| NA | **Drop 1** | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
+| --- | --- | --- | --- | --- |
+| NA | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
+| NA | `Drop 2` | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |
+| NA | `Drop 2` | **DBMS** `Remote URL` | `Charts` | Data to visualisation  |
+| NA | `Drop 2` | **DBMS** `Remote URL` | `Export` (with filters) | CSV, PDF  |
 
 <br />
 
