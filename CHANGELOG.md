@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.5] 2022-11-24
+### Changes
+
+- EULA: terms Update
+
 ## [0.0.4] 2022-11-24
 ### Changes
 
