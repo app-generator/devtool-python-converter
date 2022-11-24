@@ -6,7 +6,7 @@
 
 > `Product Roadmap`
 
-| Status | Drop | Input | Output | Info | 
+| Status | Delivery | Input | Output | Info | 
 | --- | --- | --- | --- | --- |
 | NA | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
 | NA | **Drop 1** | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
