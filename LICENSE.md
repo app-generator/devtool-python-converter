@@ -31,7 +31,6 @@ This document explains the usage of this **open-source** product developed by **
 | eLearning Activities | **YES** |
 | Projects (non-paying users) | **YES** |
 | End-Product usage for [NGOs](https://en.wikipedia.org/wiki/Non-governmental_organization) | **YES** |
-| Multiple copies (free/commercial products) | **YES** |
 | --- | --- |
 | **Support** | --- |
 | Github (issues tracker) | **YES** |
