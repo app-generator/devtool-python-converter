@@ -30,3 +30,4 @@ def pages(path):
 
     except TemplateNotFound:
         return render_template('pages/page-404.html'), 404
+
