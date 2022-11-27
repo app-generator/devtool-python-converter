@@ -6,7 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 django_fields = {
     'boolean': 'models.BooleanField()\n',
     'integer': 'models.IntegerField()\n',
-    'string': "models.OneToOneField()\n",
+    'string': "models.String()\n",
     'number': 'models.FloatField()\n',
     'UUIDField': "model.UUIDField()\n",
     'URLField': "model.URLField()\n",
@@ -52,3 +52,50 @@ flask_fields = {
     'String': "db.Column(db.String())\n",
 
 }
+def get_django_model(model_dict):
+    codes = ""
+    for attribute_name in model_dict:
+        if attribute_name == 'ID':
+            continue
+        codes = codes + f"\t{attribute_name} = "
+        attribute = model_dict[attribute_name]
+        attribute_type = attribute['type']
+        if attribute_type == 'OneToOneField':
+            codes = codes + f"models.OneToOneField()({attribute_type}_ID\n"
+        elif attribute_type == 'ManyToManyField':
+            codes = codes + f"models.ManyToManyField()({attribute_type}_ID\n"
+        elif attribute_type == 'ForeignKey':
+            codes = codes + f"models.ForeignKey()({attribute_type}_ID\n"
+        elif attribute_type in django_fields:
+            codes = codes + django_fields[attribute_type]
+        else:
+            codes = codes + f"models.ForeignKey({attribute_type})\n"
+    return codes
+
+
+def get_flask_model(model_dict):
+    codes = ""
+    for attribute_name in model_dict:
+        if attribute_name == 'ID':
+            continue
+        codes = codes + f"\t{attribute_name} = "
+        attribute = model_dict[attribute_name]
+        attribute_type = attribute['type']
+        if attribute_type == 'OneToOneField':
+            ...
+        # to_be_implemented
+        elif attribute_type == 'ManyToManyField':
+            ...
+        # to_be_implemented
+
+        elif attribute_type == 'ForeignKey':
+            ...
+        # to_be_implemented
+
+        elif attribute_type in flask_fields:
+            codes = codes + flask_fields[attribute_type]
+        else:
+            codes = codes + f"db.column(db.Integer, db.ForeignKey({attribute_type}.ID))\n"
+
+    return codes
+
