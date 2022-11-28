@@ -52,14 +52,22 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-10 col-md-12 col-12 m-auto text-center">
-
-            <div class="custom-file-uploader">
-              <form>
-                <input type="text" name="filename" class="file-name-get form-control" placeholder="Drop link here">
-                <input type="url" id="file_upload" name="url"/>
+            <div class="custom-file-uploader" id="custom-file-uploader">
+              <form name="form">
+                <label for="file" id="file-upload-label" class="file-upload-label">drop your file here.</label>
+                <input type="file" id="file_upload" class="file_upload" name="file" accept=".yaml, .json, .csv, .pkl"/>
               </form>
             </div>
-                          
+            <div class="output-utills">
+              <div class="select-container hidden" id="select-container">
+                <select id="select-output" class="form-select output-select" aria-label="Default select example">
+                  <option selected value="select output">select output</option> 
+                </select>
+              </div>
+              <div class="generate-container hidden" id="generate-container">
+                <button id="generate" class="generate">Generate</button>
+              </div>
+            </div>   
         </div>
       </div>
     </div>
