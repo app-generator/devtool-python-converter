@@ -2,6 +2,7 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import json
 import os
 
 # Flask modules
@@ -11,6 +12,7 @@ from werkzeug.utils import secure_filename
 # App modules
 from app import app, ALLOWED_EXTENSIONS
 from py_data_converter import *
+from py_data_converter.common import get_flask_model, get_django_model
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, convert_openapi_yaml_to_django_models, convert_openapi_yaml_to_flask_models
@@ -75,17 +77,31 @@ def pages(name):
                 flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], name)
 
             data = {'django': django_response, 'flask': flask_response}
+            if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], name)):
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], name))
             # front
             # Serve the file (if exists) from app/templates/FILE.html
-            return render_template(output_template, data)
+            return render_template(output_template, data=data)
 
         except TemplateNotFound:
             return render_template('pages/page-404.html'), 404
     elif request.method == 'POST':
-        data = request.get_json()
+        data = json.load(request.get_json())
         request_django = data['django']
         request_flask = data['flask']
-        # to be implemented
-
-
+        flask_codes = ""
+        for class_name in request_flask:
+            flask_codes = flask_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
+            flask_code = get_flask_model(request_flask[class_name])
+            flask_codes = flask_codes + flask_code
+        request_flask['#codes$'] = flask_codes
+        django_codes = ""
+        for class_name in request_django:
+            django_codes = django_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
+            django_code = get_django_model(request_flask[class_name])
+            django_codes = django_codes + django_code
+        request_django['#codes$'] = django_codes
+        data = {'django': request_django, 'flask': request_flask}
+        #front
+        render_template(output_template, data=data)
 
