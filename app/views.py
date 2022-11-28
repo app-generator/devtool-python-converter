@@ -63,7 +63,6 @@ def index():
 def pages(name):
     if request.method == 'GET':
         try:
-
             type = get_type(name)
             if type == 'csv':
                 django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], name)
@@ -90,6 +89,3 @@ def pages(name):
 
 
 
-
-if __name__ == '__main__':
-    print(allowed_file("products-with-price.json"))

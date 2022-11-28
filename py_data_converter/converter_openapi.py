@@ -4,8 +4,8 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import yaml
-from jsonparser import *
-from common import *
+from py_data_converter.jsonparser import *
+from py_data_converter.common import *
 
 
 def Parse_input(input_address, filename):
