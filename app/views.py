@@ -16,6 +16,7 @@ from py_data_converter.common import get_flask_model, get_django_model
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, convert_openapi_yaml_to_django_models, convert_openapi_yaml_to_flask_models
+from py_data_converter.converter_pandas import convert_pandas_to_flask_models
 
 
 def allowed_file(filename):
@@ -31,77 +32,84 @@ def get_type(filename):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            # front
-            output_desired = request.form.get("outputDropdown")
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # front
-            if output_desired == 'dbmodel':
-                return redirect(url_for('output', name=filename))
-            elif output_desired == 'charts':
-                # to be implemented
-                ...
-            else:
-                # to be implemented
-                ...
+        # front
+        data = json.load(request.get_json())
+        post_type = data['type']
+        if post_type == 'file':
+            # check if the post request has the file part
+            file = data['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                output_desired = data['output']
+                # front
+                flask_response = ''
+                django_response = ''
+                input_type = get_type(filename)
+                if output_desired == 'flask':
+                    if input_type == 'csv':
+                        flask_response = convert_csv_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    elif input_type == 'json':
+                        flask_response = convert_openapi_json_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    elif input_type == 'yml':
+                        flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    elif input_type == 'pkl':
+                        flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    data = {'flask': flask_response}
+                    return render_template(output_template, data=json.dumps(data))
+                elif output_desired == 'django':
+                    if input_type == 'csv':
+                        django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], name)
+                    elif input_type == 'json':
+                        django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'], name)
+                    elif input_type == 'yml':
+                        django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'], name)
+                    elif input_type == 'pkl':
+                        django_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    data = {'django': django_response}
+                    return render_template(output_template, data=json.dumps(data))
+                else:
+                    if input_type == 'csv':
+                        django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], name)
+                        flask_response = convert_csv_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    elif input_type == 'json':
+                        django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'], name)
+                        flask_response = convert_openapi_json_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    elif input_type == 'yml':
+                        django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'], name)
+                        flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                    elif input_type == 'pkl':
+                        flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                        django_response = convert_pandas_to_django_models(app.config['UPLOAD_FOLDER'], filename)
 
-    else:
+                    data = {'django': django_response, 'flask': flask_response}
+                    return render_template(output_template, data=json.dumps(data))
+        elif post_type == 'update':
+            data_recieved = data['update']
+            request_django = data_recieved['django']
+            request_flask = data_recieved['flask']
+            flask_codes = ""
+            for class_name in request_flask:
+                flask_codes = flask_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
+                flask_code = get_flask_model(request_flask[class_name])
+                flask_codes = flask_codes + flask_code
+            request_flask['#codes$'] = flask_codes
+            django_codes = ""
+            for class_name in request_django:
+                django_codes = django_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
+                django_code = get_django_model(request_flask[class_name])
+                django_codes = django_codes + django_code
+            request_django['#codes$'] = django_codes
+            data = {'django': request_django, 'flask': request_flask}
+            # front
+            render_template(output_template, data=data)
+    elif request.method == 'GET':
         # front
         return render_template(home_page)
 
-
-@app.route('/output/<name>', methods=['GET', 'POST'])
-def pages(name):
-    if request.method == 'GET':
-        try:
-            type = get_type(name)
-            if type == 'csv':
-                django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], name)
-                flask_response = convert_csv_to_flask_models(app.config['UPLOAD_FOLDER'], name)
-            elif type == 'json':
-                django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'], name)
-                flask_response = convert_openapi_json_to_flask_models(app.config['UPLOAD_FOLDER'], name)
-            elif type == 'yml':
-                django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'], name)
-                flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], name)
-
-            data = {'django': django_response, 'flask': flask_response}
-            if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], name)):
-                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], name))
-            # front
-            # Serve the file (if exists) from app/templates/FILE.html
-            return render_template(output_template, data=data)
-
-        except TemplateNotFound:
-            return render_template('pages/page-404.html'), 404
-    elif request.method == 'POST':
-        data = json.load(request.get_json())
-        request_django = data['django']
-        request_flask = data['flask']
-        flask_codes = ""
-        for class_name in request_flask:
-            flask_codes = flask_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
-            flask_code = get_flask_model(request_flask[class_name])
-            flask_codes = flask_codes + flask_code
-        request_flask['#codes$'] = flask_codes
-        django_codes = ""
-        for class_name in request_django:
-            django_codes = django_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
-            django_code = get_django_model(request_flask[class_name])
-            django_codes = django_codes + django_code
-        request_django['#codes$'] = django_codes
-        data = {'django': request_django, 'flask': request_flask}
-        #front
-        render_template(output_template, data=data)
 
