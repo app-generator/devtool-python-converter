@@ -3,7 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import re
-from common import *
+from py_data_converter.common import *
 
 
 def parse_csv(input_address, filename):
