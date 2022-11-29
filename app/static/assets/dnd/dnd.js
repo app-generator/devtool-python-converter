@@ -1,3 +1,4 @@
+// html elements
 const fileInput = document.querySelector("#file_upload");
 const dropAreaBorder = document.querySelector("#custom-file-uploader");
 const dropAreaLabel = document.querySelector("#file-upload-label");
@@ -5,6 +6,7 @@ const selectContainer = document.querySelector("#select-container");
 const selectOutput = document.querySelector("#select-output");
 const generateContainer = document.querySelector("#generate-container");
 const generateButton = document.querySelector("#generate");
+const copyButtons = document.querySelectorAll(".copy-button");
 
 let data = null;
 
@@ -136,10 +138,128 @@ const handleSelectOutput = (e) => {
 };
 
 const sendData = () => {
+  console.log(data);
   const formData = new FormData();
   formData.append("file", data);
+  fetch("http://localhost:5000/", {
+    method: "POST",
+    body: {
+      type: "file",
+      file: data,
+      output: "wt",
+    },
+  })
+    .then((res) => console.log(res))
+    .catch((e) => console.log(e));
 };
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text);
+};
+const findOutputText = (targetElement) => {
+  const target = targetElement === "copy-button-1" ? "#output-1" : "#output-2";
+  return document.querySelector(target).textContent;
+};
+const alertCopy = (node) => {
+  node.innerHTML = "copied";
+  setTimeout(() => {
+    node.innerHTML = "copy";
+  }, 2000);
+};
+const handleOutputCopy = (event) => {
+  const outputText = findOutputText(event.currentTarget.id);
+  copyToClipboard(outputText);
+  alertCopy(event.currentTarget.querySelector("#copy-state"));
+};
+const d = [
+  {
+    _id: "6384787aef2526f5e5cde0a1",
+    index: 0,
+    guid: "282ae085-d1b8-41b2-86ce-87acf5371983",
+    isActive: true,
+    balance: "$3,020.50",
+    picture: "http://placehold.it/32x32",
+    age: 33,
+    eyeColor: "green",
+    name: "Monique Edwards",
+    gender: "female",
+    company: "DEVILTOE",
+    email: "moniqueedwards@deviltoe.com",
+    phone: "+1 (801) 556-2155",
+    address: "218 Sackman Street, Coloma, Minnesota, 264",
+    about:
+      "Eiusmod ut qui est reprehenderit occaecat est laboris occaecat laborum esse qui adipisicing proident cillum. Quis ex magna dolore officia amet eiusmod velit sit irure eu anim. Reprehenderit ullamco sit cillum minim. Esse fugiat reprehenderit ullamco est adipisicing enim quis esse irure mollit. Proident excepteur est officia Lorem. Nostrud id ex aliqua tempor ipsum id sint do voluptate nulla ipsum quis officia.\r\n",
+    registered: "2019-01-09T05:21:02 -04:-30",
+    latitude: 20.488274,
+    longitude: -57.915187,
+    tags: ["sint", "dolor", "mollit", "sunt", "non", "eiusmod", "incididunt"],
+    friends: [
+      {
+        id: 0,
+        name: "Pate Ingram",
+      },
+      {
+        id: 1,
+        name: "Josefa Miles",
+      },
+      {
+        id: 2,
+        name: "Imogene Boone",
+      },
+    ],
+    greeting: "Hello, Monique Edwards! You have 1 unread messages.",
+    favoriteFruit: "apple",
+  },
+];
+const s = [
+  {
+    _id: "6384787aef2526f5e5cde0a1",
+    index: 0,
+    guid: "282ae085-d1b8-41b2-86ce-87acf5371983",
+    isActive: true,
+    balance: "$3,020.50",
+    picture: "http://placehold.it/32x32",
+    age: 33,
+    eyeColor: "green",
+    name: "Monique Edwards",
+    gender: "female",
+    company: "DEVILTOE",
+    email: "moniqueedwards@deviltoe.com",
+    phone: "+1 (801) 556-2155",
+    address: "218 Sackman Street, Coloma, Minnesota, 264",
+    about:
+      "Eiusmod ut qui est reprehenderit occaecat est laboris occaecat laborum esse qui adipisicing proident cillum. Quis ex magna dolore officia amet eiusmod velit sit irure eu anim. Reprehenderit ullamco sit cillum minim. Esse fugiat reprehenderit ullamco est adipisicing enim quis esse irure mollit. Proident excepteur est officia Lorem. Nostrud id ex aliqua tempor ipsum id sint do voluptate nulla ipsum quis officia.\r\n",
+    registered: "2019-01-09T05:21:02 -04:-30",
+    latitude: 20.488274,
+    longitude: -57.915187,
+    tags: ["sint", "dolor", "mollit", "sunt", "non", "eiusmod", "incididunt"],
+    friends: [
+      {
+        id: 0,
+        name: "Pate Ingram",
+      },
+      {
+        id: 1,
+        name: "Josefa Miles",
+      },
+      {
+        id: 2,
+        name: "Imogene Boone",
+      },
+    ],
+  },
+];
+const elem = document.querySelector(".output-1");
+const elem1 = document.querySelector(".output-2");
+elem.innerHTML = prettyPrintJson.toHtml(d, {
+  indent: 4,
+});
+elem1.innerHTML = prettyPrintJson.toHtml(s, {
+  indent: 4,
+});
 
 dropAreaBorder.addEventListener("drop", dropZoneDropHandler);
 selectOutput.addEventListener("change", handleSelectOutput);
 generateButton.addEventListener("click", sendData);
+copyButtons.forEach((button) =>
+  button.addEventListener("click", handleOutputCopy)
+);
