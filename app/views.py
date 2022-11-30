@@ -116,7 +116,6 @@ def index():
                 # front
                 return data
 
-
     elif request.method == 'GET':
         # front
         return render_template('Converter/index.html')
