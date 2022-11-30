@@ -17,7 +17,7 @@ const UPLOAD_STATE = {
   error: "error",
 };
 
-const VALID_EXTENSIONS = ["yml", "json", "pkl", "csv"];
+const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
 
 const preventDefaults = (event) => {
   event.preventDefault();

@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config['TESTING'] = True
 app.config['SECRET_KEY'] = 'S#perS3crEt_JamesBond'
 app.config['UPLOAD_FOLDER'] = app.root_path
-ALLOWED_EXTENSIONS = {'json', 'yml', 'csv', 'pkl'}
+ALLOWED_EXTENSIONS = {'json', 'yaml', 'csv', 'pkl'}
 
 # Import routing to render the pages
 from app import views

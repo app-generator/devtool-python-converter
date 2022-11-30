@@ -62,7 +62,7 @@ def index():
                         flask_response = convert_csv_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'json':
                         flask_response = convert_openapi_json_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
-                    elif input_type == 'yml':
+                    elif input_type == 'yaml':
                         flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'pkl':
                         flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
@@ -75,14 +75,12 @@ def index():
                         django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'json':
                         django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'], filename)
-                    elif input_type == 'yml':
+                    elif input_type == 'yaml':
                         django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'pkl':
                         django_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     data = {'django': django_response}
-
                     os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
-
                     return data
                 else:
                     if input_type == 'csv':
@@ -92,7 +90,7 @@ def index():
                         django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'],
                                                                                 filename)
                         flask_response = convert_openapi_json_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
-                    elif input_type == 'yml':
+                    elif input_type == 'yaml':
                         django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'],
                                                                                 filename)
                         flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], filename)

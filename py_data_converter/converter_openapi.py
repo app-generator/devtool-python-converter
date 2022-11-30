@@ -2,6 +2,7 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import os
 
 import yaml
 from py_data_converter.jsonparser import *
@@ -46,6 +47,7 @@ def convert_openapi_json_to_django_models(input_address, filename):
 def convert_openapi_yaml_to_django_models(input_address, filename):
     with open(input_address + "/" + filename, 'r') as file:
         configuration = yaml.safe_load(file)
+    os.remove(input_address + "/" + filename)
     with open(input_address + "/converted_to_json.json", 'w') as json_file:
         json.dump(configuration, json_file)
     return convert_openapi_json_to_django_models(input_address, "/converted_to_json.json")
@@ -69,7 +71,7 @@ def convert_openapi_json_to_flask_models(input_address, filename):
 def convert_openapi_yaml_to_flask_models(input_address, filename):
     with open(input_address + "/" + filename, 'r') as file:
         configuration = yaml.safe_load(file)
-
+    os.remove(input_address + "/" + filename)
     with open(input_address + "/converted_to_json.json", 'w') as json_file:
         json.dump(configuration, json_file)
     return convert_openapi_json_to_flask_models(input_address, "/converted_to_json.json")
