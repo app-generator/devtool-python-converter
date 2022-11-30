@@ -167,7 +167,7 @@ const showOpenApiOutput = (output) => {
 };
 
 const sendData = () => {
-  // console.log(data);
+  console.log(file);
   // const formData = new FormData();
   // formData.append("file", data);
   const output = document.querySelector("#select-output").value;
@@ -180,6 +180,7 @@ const sendData = () => {
   fetch("http://127.0.0.1:5000/", {
     method: "POST",
     body,
+    headers: { "Content-Type": "application/json" },
   })
     .then((res) => console.log(res))
     .catch((e) => console.log(e.response));
