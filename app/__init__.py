@@ -14,5 +14,6 @@ app.config['TESTING'] = True
 app.config['SECRET_KEY'] = 'S#perS3crEt_JamesBond'
 app.config['UPLOAD_FOLDER'] = '/uploads/'
 ALLOWED_EXTENSIONS = {'json', 'yml', 'csv', 'pkl'}
+
 # Import routing to render the pages
 from app import views
