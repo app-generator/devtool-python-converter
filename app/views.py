@@ -38,6 +38,9 @@ def index():
             # front
             data = json.load(request.get_json())
             post_type = data['type']
+        except:
+            flash()
+            return redirect(request.url)
             if post_type == 'file':
                 # check if the post request has the file part
                 file = request.files['file']
@@ -115,9 +118,8 @@ def index():
                 data = {'django': request_django, 'flask': request_flask}
                 # front
                 render_template(output_template, data=data)
-        except:
-            flash('uh no!')
-            return redirect(request.url)
+
+
     elif request.method == 'GET':
         # front
         return render_template(home_page)
