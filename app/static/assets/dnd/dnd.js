@@ -175,7 +175,7 @@ const sendData = () => {
   fetch("http://127.0.0.1:5000/", {
     method: "POST",
     body: formData,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "multipart/form-data" },
   })
     .then((res) => console.log(res))
     .catch((e) => console.log(e.response));
