@@ -34,13 +34,10 @@ def get_type(filename):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        try:
+
             # front
             data = json.load(request.get_json())
             post_type = data['type']
-        except:
-            flash('oh')
-            return redirect(request.url)
             if post_type == 'file':
                 # check if the post request has the file part
                 file = request.files['file']
@@ -67,7 +64,7 @@ def index():
                         elif input_type == 'pkl':
                             flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                         data = {'flask': flask_response}
-                        return render_template(output_template, data=json.dumps(data))
+                        return data
                     elif output_desired == 'django':
                         if input_type == 'csv':
                             django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], filename)
@@ -80,7 +77,7 @@ def index():
                         elif input_type == 'pkl':
                             django_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                         data = {'django': django_response}
-                        return render_template(output_template, data=json.dumps(data))
+                        return data
                     else:
                         if input_type == 'csv':
                             django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], filename)
@@ -98,7 +95,7 @@ def index():
                             django_response = convert_pandas_to_django_models(app.config['UPLOAD_FOLDER'], filename)
 
                         data = {'django': django_response, 'flask': flask_response}
-                        return render_template(output_template, data=json.dumps(data))
+                        return data
             elif post_type == 'update':
                 data_recieved = data['update']
                 request_django = data_recieved['django']
@@ -117,7 +114,7 @@ def index():
                 request_django['#codes$'] = django_codes
                 data = {'django': request_django, 'flask': request_flask}
                 # front
-                render_template(output_template, data=data)
+                return data
 
     elif request.method == 'GET':
         # front
