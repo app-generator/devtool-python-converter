@@ -167,24 +167,19 @@ const showOpenApiOutput = (output) => {
 };
 
 const sendData = () => {
-  console.log(file);
-  // const formData = new FormData();
-  // formData.append("file", data);
   const output = document.querySelector("#select-output").value;
-  const type = "file";
-  const body = JSON.stringify({
-    type,
-    file,
-    output,
-  });
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", "file");
+  formData.append("output", output);
   fetch("http://127.0.0.1:5000/", {
     method: "POST",
-    body,
+    body: formData,
     headers: { "Content-Type": "application/json" },
   })
     .then((res) => console.log(res))
     .catch((e) => console.log(e.response));
-  showOpenApiOutput(x);
+  // showOpenApiOutput(x);
 };
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text);
