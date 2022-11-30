@@ -172,11 +172,11 @@ const sendData = () => {
   // formData.append("file", data);
   const output = document.querySelector("#select-output").value;
   const type = "file";
-  const body = {
+  const body = JSON.stringify({
     type,
     file,
     output,
-  };
+  });
   fetch("http://127.0.0.1:5000/", {
     method: "POST",
     body,
