@@ -136,63 +136,57 @@ const handleSelectOutput = (e) => {
 };
 
 const showOpenApiOutput = (output) => {
-  const elem = document.querySelector(".output-1");
-  const elem1 = document.querySelector(".output-2");
-  const x = {
-    Price: {
-      ID: { type: "number" },
-      usd: { type: "number" },
-      euro: { type: "number" },
-    },
-    Product: {
-      ID: { type: "number" },
-      name: { type: "string" },
-      price: { type: "Price" },
-    },
-    "#codes$":
-      "class Price(models.Model):\n\tID = models.AutoField(primary_key=True)\n\tusd = models.FloatField()\n\teuro = models.FloatField()\nclass Product(models.Model):\n\tID = models.AutoField(primary_key=True)\n\tname = models.OneToOneField()\n\tprice = models.ForeignKey(Price)\n",
-  };
-  for (const key in x) {
-    if (key !== "#codes") {
-    } else {
-    }
-  }
-  elem.innerHTML =
-    prettyPrintJson.toHtml(x, {
+  const { flask, django } = output;
+  document.getElementById("output-container").classList.add("flex");
+  if (flask) {
+    document.getElementById("output-wrapper-1").classList.remove("hidden");
+    const elem = document.querySelector(".output-1");
+    elem.innerHTML = prettyPrintJson.toHtml(flask, {
       indent: 4,
-    }) + "salam";
-  elem1.innerHTML = prettyPrintJson.toHtml(x, {
-    indent: 4,
-  });
+    });
+  }
+  if (django) {
+    document.getElementById("output-wrapper-2").classList.remove("hidden");
+    const elem = document.querySelector(".output-2");
+    elem.innerHTML = prettyPrintJson.toHtml(django, {
+      indent: 4,
+    });
+  }
 };
 
-const sendData = () => {
+const sendData = async () => {
   const output = document.querySelector("#select-output").value;
   const formData = new FormData();
   formData.append("file", file);
   formData.append("type", "file");
   formData.append("output", output);
-  fetch("http://127.0.0.1:5000/", {
+  const result = await fetch("http://127.0.0.1:5000/", {
     method: "POST",
     body: formData,
   })
-    .then((res) => console.log(res))
-    .catch((e) => console.log(e.response));
-  // showOpenApiOutput(x);
+    .then((response) => {
+      return response.json();
+    })
+    .catch((error) => error.response.message);
+  showOpenApiOutput(result);
 };
+
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text);
 };
+
 const findOutputText = (targetElement) => {
   const target = targetElement === "copy-button-1" ? "#output-1" : "#output-2";
   return document.querySelector(target).textContent;
 };
+
 const alertCopy = (node) => {
   node.innerHTML = "copied";
   setTimeout(() => {
     node.innerHTML = "copy";
   }, 2000);
 };
+
 const handleOutputCopy = (event) => {
   const outputText = findOutputText(event.currentTarget.id);
   copyToClipboard(outputText);

@@ -11,15 +11,19 @@
 .highlight-border{
   border: 2px dashed yellowgreen;
 }
+
 .highlight-label {
   color: yellowgreen;
 }
+
 .error-border{
   border: 2px dashed red;
 }
+
 .error-label {
   color:  red; 
 }
+
 .success-border {
   border: 2px dashed green;
 }
@@ -27,9 +31,11 @@
 .success-label {
   color: green;
 }
+
 .file-upload-label{
   font-size: 1rem;
 }
+
 .custom-file-uploader .form-control {
   border: none;
   background: transparent;
@@ -37,20 +43,6 @@
   font-size: 12px;
   width: 100%;
 }
-
-/* .custom-file-uploader input[type=url] {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 5;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-} */
 
 .file_upload{
   display: none;
@@ -68,7 +60,6 @@
   width: 150%;
 }
 
-
 .generate{
   border: none;
   width: 200px;
@@ -84,13 +75,13 @@
   display: none;
 }
 
+.flex{
+  display: flex;
+}
+
 .output-container{
   width: 100%;
   padding: 10px;
-  /* display: grid; */
-  /* gap: 0.5rem; */
-  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
-  display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-around;
@@ -100,13 +91,11 @@
 
 .output-wrapper{
   width: 48%;
-  /* width: 100%; */
   padding: 10px;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(11px);
   -webkit-backdrop-filter: blur(11px);
-
 }
 
 .output-header{
@@ -114,7 +103,6 @@
   justify-content: space-between; 
   align-items: center;
 }
-
 
 .output-title{
   font-size: 1.5rem;
@@ -131,8 +119,6 @@
   color: #7928CA;
 }
 
-
-
 .copy-button{
   width: 70px;
   border-right: 1px solid rgba(255, 255, 255, 0.18);
@@ -141,11 +127,6 @@
   flex-direction: row;
   justify-content: space-evenly;
 }
-
-
-
-
-
 
 
 
