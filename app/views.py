@@ -39,7 +39,7 @@ def index():
             data = json.load(request.get_json())
             post_type = data['type']
         except:
-            flash()
+            flash('oh')
             return redirect(request.url)
             if post_type == 'file':
                 # check if the post request has the file part
