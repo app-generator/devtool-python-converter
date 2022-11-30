@@ -18,6 +18,7 @@ const UPLOAD_STATE = {
 };
 
 const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
+const FLASK_DJANGO = ["Flask", "Django", "Flask & Django"];
 
 const preventDefaults = (event) => {
   event.preventDefault();
@@ -96,7 +97,7 @@ const handleValidDrop = (fileName, fileExtension) => {
   } else if (fileExtension === "json" || fileExtension === "yaml") {
     selectContainer.classList.remove("hidden");
     generateContainer.classList.add("hidden");
-    ["Flask", "Django", "Flask & Django"].forEach((item) => addOption(item));
+    FLASK_DJANGO.forEach((item) => addOption(item));
   } else {
     generateContainer.classList.remove("hidden");
     selectContainer.classList.add("hidden");
@@ -135,7 +136,9 @@ const handleSelectOutput = (e) => {
   else generateContainer.classList.add("hidden");
 };
 
-const showOpenApiOutput = (output) => {
+const showFlaskDjangoOutput = (output) => {
+  document.getElementById("output-wrapper-2").classList.add("hidden");
+  document.getElementById("output-wrapper-2").classList.add("hidden");
   const { flask, django } = output;
   document.getElementById("output-container").classList.add("flex");
   if (flask) {
@@ -154,21 +157,27 @@ const showOpenApiOutput = (output) => {
   }
 };
 
-const sendData = async () => {
+const sendData = async (body, url, method) => {
+  const request = await fetch(url, {
+    method,
+    body,
+  });
+  const result = await request.json().then((error) => error);
+  showFlaskDjangoOutput(result);
+};
+
+const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("type", "file");
-  formData.append("output", output);
-  const result = await fetch("http://127.0.0.1:5000/", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .catch((error) => error.response.message);
-  showOpenApiOutput(result);
+  if (FLASK_DJANGO.includes(output)) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", "file");
+    formData.append("output", output);
+    const url = process;
+    const method = "POST";
+    sendData(formData, url, method);
+  } else {
+  }
 };
 
 const copyToClipboard = (text) => {
@@ -195,7 +204,7 @@ const handleOutputCopy = (event) => {
 
 dropAreaBorder.addEventListener("drop", dropZoneDropHandler);
 selectOutput.addEventListener("change", handleSelectOutput);
-generateButton.addEventListener("click", sendData);
+generateButton.addEventListener("click", sendDataWrapper);
 copyButtons.forEach((button) =>
   button.addEventListener("click", handleOutputCopy)
 );
