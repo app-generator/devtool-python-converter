@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import json
+import math
 import os
 import sys
 import logging
@@ -123,3 +124,18 @@ def index():
     elif request.method == 'GET':
         # front
         return render_template('Converter/index.html')
+
+
+import pandas as pd
+
+
+@app.route('/datatb')
+def dynamic_datatb():
+    csv_file = pd.read_csv('sales.csv')
+    headings = [row for row in csv_file.head()]
+
+    return render_template('datatb/datatb.html', **{
+        'model_name': 'model_name',
+        'headings': headings,
+        'data': [[val for val in record[1]] for record in csv_file.iterrows()],
+    })
