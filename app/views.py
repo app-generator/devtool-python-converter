@@ -37,12 +37,9 @@ def index():
     if request.method == 'POST':
 
         # front
-        print('hi', flush=True)
 
-        print(f'\n\nprinted : {request.is_json}\n\n', flush=True)
-        data = json.load(request.get_json())
+        data = request.form
         post_type = data['type']
-
         if post_type == 'file':
             # check if the post request has the file part
             file = request.files['file']
@@ -59,7 +56,8 @@ def index():
                 flask_response = ''
                 django_response = ''
                 input_type = get_type(filename)
-                if output_desired == 'flask':
+                print(output_desired)
+                if output_desired == 'Flask':
                     if input_type == 'csv':
                         flask_response = convert_csv_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'json':
@@ -69,19 +67,22 @@ def index():
                     elif input_type == 'pkl':
                         flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     data = {'flask': flask_response}
+                    os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+
                     return data
-                elif output_desired == 'django':
+                elif output_desired == 'Django':
                     if input_type == 'csv':
                         django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'json':
-                        django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'],
-                                                                                filename)
+                        django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'yml':
-                        django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'],
-                                                                                filename)
+                        django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'pkl':
                         django_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     data = {'django': django_response}
+
+                    os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+
                     return data
                 else:
                     if input_type == 'csv':
@@ -98,7 +99,7 @@ def index():
                     elif input_type == 'pkl':
                         flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                         django_response = convert_pandas_to_django_models(app.config['UPLOAD_FOLDER'], filename)
-
+                    os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
                     data = {'django': django_response, 'flask': flask_response}
                     return data
         elif post_type == 'update':
@@ -113,7 +114,7 @@ def index():
             request_flask['#codes$'] = flask_codes
             django_codes = ""
             for class_name in request_django:
-                django_codes = django_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
+                django_codes = django_codes + f"class {class_name}(models.Model):\n\tID = models.AutoField(primary_key=True)\n"
                 django_code = get_django_model(request_flask[class_name])
                 django_codes = django_codes + django_code
             request_django['#codes$'] = django_codes
