@@ -128,4 +128,4 @@ def index():
             render_template(output_template, data=data)
     elif request.method == 'GET':
         # front
-        return render_template('converter/index.html')
+        return render_template(output_template)
