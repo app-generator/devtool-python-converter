@@ -19,6 +19,7 @@ const UPLOAD_STATE = {
 
 const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
 const FLASK_DJANGO = ["Flask", "Django", "Flask & Django"];
+const IDK_THE_NAME = ["Model", "DataTable", "Charts", "Export"];
 
 const preventDefaults = (event) => {
   event.preventDefault();
@@ -91,7 +92,7 @@ const handleValidDrop = (fileName, fileExtension) => {
   if (fileExtension === "pkl" || fileExtension === "csv") {
     selectContainer.classList.remove("hidden");
     generateContainer.classList.add("hidden");
-    ["Model", "DataTable", "Charts", "Export"].forEach((option) => {
+    IDK_THE_NAME.forEach((option) => {
       addOption(option);
     });
   } else if (fileExtension === "json" || fileExtension === "yaml") {
@@ -144,16 +145,12 @@ const showFlaskDjangoOutput = (output) => {
   if (flask) {
     document.getElementById("output-wrapper-1").classList.remove("hidden");
     const elem = document.querySelector(".output-1");
-    elem.innerHTML = prettyPrintJson.toHtml(flask, {
-      indent: 4,
-    });
+    elem.innerHTML = flask["#codes$"];
   }
   if (django) {
     document.getElementById("output-wrapper-2").classList.remove("hidden");
     const elem = document.querySelector(".output-2");
-    elem.innerHTML = prettyPrintJson.toHtml(django, {
-      indent: 4,
-    });
+    elem.innerHTML = django["#codes$"];
   }
 };
 
@@ -168,12 +165,12 @@ const sendData = async (body, url, method) => {
 
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  if (FLASK_DJANGO.includes(output)) {
+  if (FLASK_DJANGO.includes(output) || IDK_THE_NAME.includes(output)) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "file");
     formData.append("output", output);
-    const url = process;
+    const url = "http://127.0.0.1:5000/";
     const method = "POST";
     sendData(formData, url, method);
   } else {
@@ -208,3 +205,9 @@ generateButton.addEventListener("click", sendDataWrapper);
 copyButtons.forEach((button) =>
   button.addEventListener("click", handleOutputCopy)
 );
+document
+  .querySelectorAll("#output-container#output-wrapper-1")
+  .forEach((el) => {
+    console.log(el);
+    hljs.highlightElement(el);
+  });

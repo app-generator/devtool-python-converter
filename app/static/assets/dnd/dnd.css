@@ -128,7 +128,9 @@
   justify-content: space-evenly;
 }
 
-
+#output-container#output-wrapper-1{
+  white-space: pre;
+}
 
 @media screen and (max-width:700px){
   .output-wrapper{
