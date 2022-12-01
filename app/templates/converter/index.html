@@ -5,7 +5,8 @@
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
 
-  <link href="/static/assets/dnd/dnd.css" rel="stylesheet" />
+<link href="/static/assets/dnd/dnd.css" rel="stylesheet" />
+
 
 {% endblock stylesheets %}
 
@@ -13,74 +14,126 @@
 
 {% block content %}
 
-  {% include "includes/navigation-light.html" %}
+{% include "includes/navigation-light.html" %}
 
-  <!-- START Blogs w/ 3 images & quote & text -->
-  <section class="bg-white mt-5">
-    <div class="container">
-      
-      <div class="row ">
-        <div class="col-md-6 mx-auto text-center">
+<!-- START Blogs w/ 3 images & quote & text -->
+<section class="bg-white mt-5">
+  <div class="container">
 
-          {% if err %}
+    <div class="row ">
+      <div class="col-md-6 mx-auto text-center">
 
-            <p class="text-lead text-dark">
-              <span class="text-danger">ERROR</span>: {{ err|safe }}
-            </p>
-          
-            <!-- Deploy IS ACTIVE -->
+        {% if err %}
 
-          {% else %}
-            
-            <h6 class="text-dark">
-              Simply drop your asset below.
-            </h5>
-            <p class="text-lead">
-              Supported types: URLs, Pandas DF, CVS, OpenAPI (yaml)
-            </p>
+        <p class="text-lead text-dark">
+          <span class="text-danger">ERROR</span>: {{ err|safe }}
+        </p>
+
+        <!-- Deploy IS ACTIVE -->
+
+        {% else %}
+
+        <h6 class="text-dark">
+          Simply drop your asset below.
+          </h5>
+          <p class="text-lead">
+            Supported types: URLs, Pandas DF, CVS, OpenAPI (yaml)
+          </p>
 
           {% endif %}
 
-        </div>
-      </div>
-
-    </div>
-  </section>
-  <!-- END Blogs w/ 3 images & quote & text -->
-
-  <section class="mt-3 pb-3">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-10 col-md-12 col-12 m-auto text-center">
-
-            <div class="custom-file-uploader">
-              <form>
-                <input type="text" name="filename" class="file-name-get form-control" placeholder="Drop link here">
-                <input type="url" id="file_upload" name="url"/>
-              </form>
-            </div>
-                          
-        </div>
       </div>
     </div>
-  </section>
+
+  </div>
+</section>
+<!-- END Blogs w/ 3 images & quote & text -->
+
+<section class="mt-3 pb-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-md-12 col-12 m-auto text-center">
+        <div class="custom-file-uploader" id="custom-file-uploader">
+          <form name="form">
+            <label for="file" id="file-upload-label" class="file-upload-label">drop your file here.</label>
+            <input type="file" id="file_upload" class="file_upload" name="file" accept=".yaml, .json, .csv, .pkl" />
+          </form>
+        </div>
+        <div class="output-utills">
+          <div class="select-container hidden" id="select-container">
+            <select id="select-output" class="form-select output-select" aria-label="Default select example">
+              <option selected value="select output">select output</option>
+            </select>
+          </div>
+          <div class="generate-container hidden" id="generate-container">
+            <button id="generate" class="generate">Generate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="m-3">
+  <div class="output-container hidden" id="output-container">
+    <div class="output-wrapper hidden" id="output-wrapper-1">
+      <div class="output-header">
+        <div class="output-title">flask</div>
+        <div class="utill copy-button button" id="copy-button-1">
+          <div id="copy-state">
+            copy
+          </div>
+          <div>
+            <i class="fa-solid fa-copy"></i>
+          </div>
+        </div>
+      </div>
+      <div>
+        <!-- <pre class="output-1" id="output-1"></pre> -->
+        <pre class="output-1"></pre>
+      </div>
+    </div>
+    <div class="output-wrapper hidden" id="output-wrapper-2">
+      <div class="output-header">
+        <div class="output-title">django</div>
+        <div class="utill copy-button button" id="copy-button-2">
+          <div id="copy-state">
+            copy
+          </div>
+          <div>
+            <i class="fa-solid fa-copy"></i>
+          </div>
+        </div>
+      </div>
+      <div>
+        <!-- <pre class="output-2" id="output-2"></pre> -->
+        <pre class="output-2"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 {% endblock content %}
 
-<!-- Specific JS goes HERE --> 
+<!-- Specific JS goes HERE -->
 {% block javascripts %}
 
-  <script src="/static/assets/js/soft-design-system.min.js?v=1.0.1" type="text/javascript"></script>
+<script src="/static/assets/js/soft-design-system.min.js?v=1.0.1" type="text/javascript"></script>
 
-  <script defer type="text/javascript" src="/static/assets/dnd/dnd.js"></script>
+<script defer type="text/javascript" src="/static/assets/dnd/dnd.js"></script>
 
-  <script>
-    
-    function something(  ){
-      
-      console.log('whatever');
-    }
+<script src="https://kit.fontawesome.com/9dfa2931b4.js" crossorigin="anonymous"></script>
 
-  </script>
+
+
+<script>
+
+  function something() {
+
+    console.log('whatever');
+  }
+
+</script>
 
 {% endblock javascripts %}
