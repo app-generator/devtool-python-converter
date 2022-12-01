@@ -52,12 +52,14 @@
   margin-top: 50px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;
 }
 
 .output-select{
-  width: 150%;
+  /* width: 150%; */
+  width: 150px;
 }
 
 .generate{
@@ -128,9 +130,14 @@
   justify-content: space-evenly;
 }
 
-#output-container#output-wrapper-1{
-  white-space: pre;
+.output-1, .output-2 {
+  color: black;
+  font-family: monospace, sans-serif;
+  font-size: 1rem;
+  padding: 20px 0 0 20px;
+  padding-left: 20px;
 }
+
 
 @media screen and (max-width:700px){
   .output-wrapper{
@@ -138,5 +145,11 @@
   }
   .output-wrapper:nth-child(2){
     margin-top: 10px;
+  }
+}
+
+@media screen and (max-width:398px) {
+  .generate{
+    margin-top: 20px;
   }
 }

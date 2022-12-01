@@ -205,9 +205,3 @@ generateButton.addEventListener("click", sendDataWrapper);
 copyButtons.forEach((button) =>
   button.addEventListener("click", handleOutputCopy)
 );
-document
-  .querySelectorAll("#output-container#output-wrapper-1")
-  .forEach((el) => {
-    console.log(el);
-    hljs.highlightElement(el);
-  });
