@@ -138,7 +138,7 @@ const handleSelectOutput = (e) => {
 };
 
 const showFlaskDjangoOutput = (output) => {
-  document.getElementById("output-wrapper-2").classList.add("hidden");
+  document.getElementById("output-wrapper-1").classList.add("hidden");
   document.getElementById("output-wrapper-2").classList.add("hidden");
   const { flask, django } = output;
   document.getElementById("output-container").classList.add("flex");
