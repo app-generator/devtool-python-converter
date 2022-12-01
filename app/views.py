@@ -65,8 +65,11 @@ def index():
                         flask_response = convert_openapi_json_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'yaml':
                         flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + 'converted_to_json.json')
+
                     elif input_type == 'pkl':
                         flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename[:-4] + '.csv')
                     data = {'flask': flask_response}
                     os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
 
@@ -78,8 +81,11 @@ def index():
                         django_response = convert_openapi_json_to_django_models(app.config['UPLOAD_FOLDER'], filename)
                     elif input_type == 'yaml':
                         django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'], filename)
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + 'converted_to_json.json')
+
                     elif input_type == 'pkl':
                         django_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename[:-4] + '.csv')
                     data = {'django': django_response}
                     os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
                     return data
@@ -95,9 +101,11 @@ def index():
                         django_response = convert_openapi_yaml_to_django_models(app.config['UPLOAD_FOLDER'],
                                                                                 filename)
                         flask_response = convert_openapi_yaml_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + 'converted_to_json.json')
                     elif input_type == 'pkl':
                         flask_response = convert_pandas_to_flask_models(app.config['UPLOAD_FOLDER'], filename)
                         django_response = convert_pandas_to_django_models(app.config['UPLOAD_FOLDER'], filename)
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename[:-4] + '.csv')
                     os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
                     data = {'django': django_response, 'flask': flask_response}
                     return data

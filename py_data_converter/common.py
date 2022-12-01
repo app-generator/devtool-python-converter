@@ -55,7 +55,7 @@ flask_fields = {
 def get_django_model(model_dict):
     codes = ""
     for attribute_name in model_dict:
-        if attribute_name == 'ID':
+        if attribute_name.lower() == 'id':
             continue
         codes = codes + f"\t{attribute_name} = "
         attribute = model_dict[attribute_name]
@@ -76,7 +76,7 @@ def get_django_model(model_dict):
 def get_flask_model(model_dict):
     codes = ""
     for attribute_name in model_dict:
-        if attribute_name == 'ID':
+        if attribute_name.lower() == 'id':
             continue
         codes = codes + f"\t{attribute_name} = "
         attribute = model_dict[attribute_name]
