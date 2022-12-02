@@ -66,7 +66,7 @@
             </select>
           </div>
           <div class="generate-container hidden" id="generate-container">
-            <button id="generate" class="generate">Generate</button>
+            <button id="generate" class="generate button">Generate</button>
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@
     <div class="output-wrapper hidden" id="output-wrapper-1">
       <div class="output-header">
         <div class="output-title">flask</div>
-        <div class="utill copy-button button" id="copy-button-1">
+        <div class="utill copy-button" id="copy-button-1">
           <div id="copy-state">
             copy
           </div>
@@ -90,13 +90,38 @@
       </div>
       <div>
         <!-- <pre class="output-1" id="output-1"></pre> -->
-        <pre class="output-1"></pre>
+        <div id="edit-container-1" class="edit-container hidden">
+          <div class="edit-wrapper">
+            <div class="select-title title-space">selected row: </div>
+            <div id="selected-row-1" class="selected-row selected-row-1"></div>
+          </div>
+          <div class="edit-wrapper">
+            <div>
+              <label class="type-label title-space" for="select-1">change the type to: </label>
+            </div>
+            <div>
+              <select name="select-1" id="select-1" class="select-1"></select>
+            </div>
+          </div>
+          <div class="edit-wrapper">
+            <button id="apply-change-1" class="button apply-button">Apply Change</button>
+          </div>
+        </div>
+        <pre class="output-1" id="output-1"></pre>
+        <div class="validation-container" id="validation-container-1">
+          <div>
+            <button class="validate button hidden" id="validate-1">validate data</button>
+          </div>
+          <div>
+            <div class="result hidden" id="result-1">result</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="output-wrapper hidden" id="output-wrapper-2">
       <div class="output-header">
         <div class="output-title">django</div>
-        <div class="utill copy-button button" id="copy-button-2">
+        <div class="utill copy-button" id="copy-button-2">
           <div id="copy-state">
             copy
           </div>
@@ -107,7 +132,32 @@
       </div>
       <div>
         <!-- <pre class="output-2" id="output-2"></pre> -->
-        <pre class="output-2"></pre>
+        <div id="edit-container-2" class="edit-container hidden">
+          <div class="edit-wrapper">
+            <div class="select-title title-space">selected row: </div>
+            <div id="selected-row-2" class="selected-row selected-row-2"></div>
+          </div>
+          <div class="edit-wrapper">
+            <div>
+              <label class="type-label title-space" for="select-2">change the type to: </label>
+            </div>
+            <div>
+              <select name="select-2" id="select-2" class="select-2"></select>
+            </div>
+          </div>
+          <div class="edit-wrapper">
+            <button id="apply-change-2" class="button apply-button">Apply Change</button>
+          </div>
+        </div>
+        <pre class="output-2" id="output-2"></pre>
+        <div class="validation-container" id="validation-container-2">
+          <div>
+            <button class="validate button hidden" id="validate-2">validate data</button>
+          </div>
+          <div>
+            <div class="result hidden" id="result-2">result</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
