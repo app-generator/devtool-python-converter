@@ -406,7 +406,7 @@ const updateDataWrapper = (e) => {
     flask: flaskUpdated,
   };
   formData.append("type", type);
-  formData.append("update", updatedValues);
+  formData.append("update", JSON.stringify(updatedValues));
   updateData(formData, url, method);
   e.target.classList.add("hidden");
 };

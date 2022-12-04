@@ -110,22 +110,33 @@ def index():
                     data = {'django': django_response, 'flask': flask_response}
                     return data
         elif post_type == 'update':
-            data_recieved = data['update']
-            request_django = data_recieved['django']
-            request_flask = data_recieved['flask']
-            flask_codes = ""
-            for class_name in request_flask:
-                flask_codes = flask_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
-                flask_code = get_flask_model(request_flask[class_name])
-                flask_codes = flask_codes + flask_code
-            request_flask['#codes$'] = flask_codes
-            django_codes = ""
-            for class_name in request_django:
-                django_codes = django_codes + f"class {class_name}(models.Model):\n\tID = models.AutoField(primary_key=True)\n"
-                django_code = get_django_model(request_flask[class_name])
-                django_codes = django_codes + django_code
-            request_django['#codes$'] = django_codes
-            data = {'django': request_django, 'flask': request_flask}
+            data_recieved = json.loads(data['update'])
+            data = {}
+            if 'django' in data_recieved:
+                request_django = data_recieved['django']
+                print(request_django, flush=True)
+                print(data_recieved, flush=True)
+
+                django_codes = ""
+                for class_name in request_django:
+                    django_codes = django_codes + f"class {class_name}(models.Model):\n\tID = models.AutoField(primary_key=True)\n"
+                    django_code = get_django_model(request_django[class_name])
+                    django_codes = django_codes + django_code
+                request_django['#codes$'] = django_codes
+                data['django'] = request_django
+
+            if 'flask' in data_recieved:
+                request_flask = data_recieved['flask']
+                print(request_flask, flush=True)
+
+                flask_codes = ""
+                for class_name in request_flask:
+                    flask_codes = flask_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
+                    flask_code = get_flask_model(request_flask[class_name])
+                    flask_codes = flask_codes + flask_code
+                request_flask['#codes$'] = flask_codes
+                data['flask'] = request_flask
+
             # front
             return data
 
