@@ -20,6 +20,7 @@ const validate2 = document.querySelector("#validate-2");
 const flaskOutput = document.querySelector("#output-1");
 const djangoOutput = document.querySelector("#output-2");
 
+// constants
 let file = null;
 
 const UPLOAD_STATE = {
@@ -30,8 +31,11 @@ const UPLOAD_STATE = {
 };
 
 const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
-const FLASK_DJANGO = ["Flask", "Django", "Flask & Django"];
-const IDK_THE_NAME = ["Model", "DataTable", "Charts", "Export"];
+
+const OPENAPI_OUTPUT = ["Flask", "Django", "Flask & Django"];
+
+const CSV_OUTPUT = ["Model", "DataTable", "Charts", "Export"];
+
 const FLASK_FIELDS = {
   selectType: "select type",
   boolean: "db.Column(db.Boolean)\n",
@@ -83,38 +87,37 @@ const DJANGO_FIELDS = {
   BigAutoField: "model.BigAutoField()\n",
 };
 
+let COUNTER = 1;
+let SELECTED_ROW_FLASK = null;
+let SELECTED_ROW_DJANGO = null;
+
+// prevents default behaviours when dropping a file
 const preventDefaults = (event) => {
   event.preventDefault();
   event.stopPropagation();
 };
 
-["drop", "dragenter", "dragover", "dragleave"].forEach((ev) => {
-  dropAreaBorder.addEventListener(ev, preventDefaults);
-});
+// handles dragEnter and dragOver events
+const draggingHandler = () => {
+  dropAreaBorder.classList.remove("error-border", "success-border");
+  dropAreaLabel.classList.remove("error-label", "success-label");
+  dropAreaBorder.classList.add("highlight-border");
+  dropAreaLabel.classList.add("highlight-label");
+  dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.drag);
+};
 
-["dragenter", "dragover"].forEach((ev) => {
-  dropAreaBorder.addEventListener(ev, () => {
-    dropAreaBorder.classList.remove("error-border", "success-border");
-    dropAreaLabel.classList.remove("error-label", "success-label");
-    dropAreaBorder.classList.add("highlight-border");
-    dropAreaLabel.classList.add("highlight-label");
-    dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.drag);
-  });
-});
+// handles dragLeave and drop events
+const dragStopHandler = () => {
+  dropAreaBorder.classList.remove("highlight-border");
+  dropAreaLabel.classList.remove("highlight-label");
+};
 
-["dragleave", "drop"].forEach((ev) => {
-  dropAreaBorder.addEventListener(ev, () => {
-    dropAreaBorder.classList.remove("highlight-border");
-    dropAreaLabel.classList.remove("highlight-label");
-  });
-});
+// handles dragLeave event
+const dragEndHandler = () => {
+  dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.dragLeave);
+};
 
-["dragleave"].forEach((ev) => {
-  dropAreaBorder.addEventListener(ev, () => {
-    dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.dragLeave);
-  });
-});
-
+// determines drop area label depending on the upload state
 const getDropAreaLabelText = (state, ext, fileName) => {
   switch (state) {
     case UPLOAD_STATE.success:
@@ -128,6 +131,7 @@ const getDropAreaLabelText = (state, ext, fileName) => {
   }
 };
 
+// adds option tag with value to the select tag(node)
 const addOption = (node, value) => {
   const optionNode = document.createElement("option");
   optionNode.innerHTML = value;
@@ -135,12 +139,14 @@ const addOption = (node, value) => {
   node.appendChild(optionNode);
 };
 
+// resets the options available for specific file type
 const resetOptions = () => {
   const children = [...selectOutput.children];
   children.forEach((child) => selectOutput.removeChild(child));
   addOption(selectOutput, "select output");
 };
 
+// handles the case when the dropped file is valid
 const handleValidDrop = (fileName, fileExtension) => {
   dropAreaBorder.classList.remove("highlight-border", "error-border");
   dropAreaLabel.classList.remove("highlight-label", "error-label");
@@ -154,19 +160,20 @@ const handleValidDrop = (fileName, fileExtension) => {
   if (fileExtension === "pkl" || fileExtension === "csv") {
     selectContainer.classList.remove("hidden");
     generateContainer.classList.add("hidden");
-    IDK_THE_NAME.forEach((option) => {
+    CSV_OUTPUT.forEach((option) => {
       addOption(selectOutput, option);
     });
   } else if (fileExtension === "json" || fileExtension === "yaml") {
     selectContainer.classList.remove("hidden");
     generateContainer.classList.add("hidden");
-    FLASK_DJANGO.forEach((item) => addOption(selectOutput, item));
+    OPENAPI_OUTPUT.forEach((item) => addOption(selectOutput, item));
   } else {
     generateContainer.classList.remove("hidden");
     selectContainer.classList.add("hidden");
   }
 };
 
+// handles the case when the dropped file is not valid
 const handleInvalidDrop = (fileExtension) => {
   dropAreaBorder.classList.remove("highlight-border", "success-border");
   dropAreaLabel.classList.remove("highlight-label", "success-label");
@@ -180,6 +187,7 @@ const handleInvalidDrop = (fileExtension) => {
   generateContainer.classList.add("hidden");
 };
 
+// listens to all drop events on the determined div tag
 const dropZoneDropHandler = (e) => {
   // console.log(e.dataTransfer.getData("URL"));
   file = e.dataTransfer.files[0];
@@ -193,83 +201,40 @@ const dropZoneDropHandler = (e) => {
   else handleValidDrop(fileName, fileExtension);
 };
 
+// listens to change event on the output selection tag
 const handleSelectOutput = (e) => {
   if (e.target.value !== "select output")
     generateContainer.classList.remove("hidden");
   else generateContainer.classList.add("hidden");
 };
 
-const handleExcludes = (res, exclude) => {
-  for (const iterator of exclude) {
-    if (res.includes(iterator)) {
-      return false;
-    }
-  }
-  return true;
-};
-
-const addTypesToSelect = (type, parent) => {
-  const elem = parent.querySelectorAll(`select`);
-  const object = type === "django" ? DJANGO_FIELDS : FLASK_FIELDS;
-  for (const iterator of elem) {
-    for (const key in object) {
-      addOption(iterator, object[key]);
-    }
-  }
-};
-const detectType = (input, regex, exclude, type) => {
-  let output = "";
-  let counter = 1;
-  for (const iterator of input.split("\n")) {
-    const res = iterator.match(regex);
-    let fOutput = "";
-    if (res) {
-      if (handleExcludes(res.input, exclude)) {
-        const className = `select-${counter++}`;
-        fOutput = iterator.replace(
-          res[0],
-          `<select class=${className}>  
-              <option value=${res[0]}>${res[0]}</option>
-            </select>`
-        );
-      } else {
-        fOutput = iterator;
-      }
-    } else {
-      fOutput = iterator;
-    }
-    output += fOutput + "\n";
-  }
-  return output;
-};
-
-let counter = 1;
-let selectedRow_flask = null;
-let selectedRow_django = null;
+// handles changing types for flask or django output models
 const handleApplyChange = (event) => {
   const type = event.target.id.includes("1") ? "flask" : "django";
   if (type === "flask") {
     const newValue = editSelect1.value;
     if (newValue !== "select type") {
-      const identifier = selectedRow_flask.innerHTML.split("=")[0] + "= ";
-      selectedRow_flask.innerHTML = identifier + `${newValue}`;
+      const identifier = SELECTED_ROW_FLASK.innerHTML.split("=")[0] + "= ";
+      SELECTED_ROW_FLASK.innerHTML = identifier + `${newValue}`;
       validate1.classList.remove("hidden");
     }
     editContainer1.classList.remove("flex");
     editContainer1.classList.add("hidden");
-    selectedRow_flask = null;
+    SELECTED_ROW_FLASK = null;
   } else {
     const newValue = editSelect2.value;
     if (newValue !== "select type") {
-      const identifier = selectedRow_django.innerHTML.split("=")[0] + "= ";
-      selectedRow_django.innerHTML = identifier + `${newValue}`;
+      const identifier = SELECTED_ROW_DJANGO.innerHTML.split("=")[0] + "= ";
+      SELECTED_ROW_DJANGO.innerHTML = identifier + `${newValue}`;
       validate2.classList.remove("hidden");
     }
     editContainer2.classList.remove("flex");
     editContainer2.classList.add("hidden");
-    selectedRow_django = null;
+    SELECTED_ROW_DJANGO = null;
   }
 };
+
+// listens to click events fired on each div node in the models output(django or flask)
 const handleTypeChange = (e, type) => {
   const content = e.target.innerHTML;
   let avoidables =
@@ -278,67 +243,58 @@ const handleTypeChange = (e, type) => {
     selectedDjangoRow.innerHTML = content;
     editContainer2.classList.remove("hidden");
     editContainer2.classList.add("flex");
-    selectedRow_django = e.target;
+    SELECTED_ROW_DJANGO = e.target;
   }
   if (type === "flask" && !avoidables) {
     selectedFlaskRow.innerHTML = content;
     editContainer1.classList.remove("hidden");
     editContainer1.classList.add("flex");
-    selectedRow_flask = e.target;
+    SELECTED_ROW_FLASK = e.target;
   }
 };
+
+// adds event listeners for click event to each div node in the models output(flask or django)
 const handleTypeEventListeners = (type) => {
-  for (let index = 1; index < counter; index++) {
+  for (let index = 1; index < COUNTER; index++) {
     document
       .querySelector(`.div-${type}-${index}`)
       .addEventListener("click", (event) => handleTypeChange(event, type));
   }
 };
+
+// wraps each line of model output inside a distinguished div
 const divivize = (str, type) => {
   let ans = "";
   for (const iterator of str.split("\n")) {
-    const className = `div-${type}-${counter++}`;
+    const className = `div-${type}-${COUNTER++}`;
     ans += `<div class=${className}>${iterator + "\n"}</div>`;
   }
   return ans;
 };
 
+// renders flask or django output
 const showFlaskDjangoOutput = (output) => {
   document.getElementById("output-wrapper-1").classList.add("hidden");
   document.getElementById("output-wrapper-2").classList.add("hidden");
   const { flask, django } = output;
   document.getElementById("output-container").classList.add("flex");
   if (flask) {
-    counter = 1;
+    COUNTER = 1;
     document.getElementById("output-wrapper-1").classList.remove("hidden");
     const elem = document.querySelector(".output-1");
-    // elem.innerHTML = flask["#codes$"];
     elem.innerHTML = divivize(flask["#codes$"], "flask");
     handleTypeEventListeners("flask");
-    // elem.innerHTML = detectType(
-    //   flask["#codes$"],
-    //   /\(db..+/,
-    //   ["db.Model"],
-    //   "flask"
-    // );
   }
   if (django) {
-    counter = 1;
+    COUNTER = 1;
     document.getElementById("output-wrapper-2").classList.remove("hidden");
     const elem = document.querySelector(".output-2");
-    // elem.innerHTML = django["#codes$"];
     elem.innerHTML = divivize(django["#codes$"], "django");
     handleTypeEventListeners("django");
-    // elem.innerHTML = detectType(
-    //   django["#codes$"],
-    //   /models..+/,
-    //   ["models.Model", "models.AutoField"],
-    //   "django"
-    // );
-    // addTypesToSelect("django", elem);
   }
 };
 
+// sends an http request to the server containing uploaded file to be converted to flask or django output
 const sendData = async (body, url, method) => {
   const request = await fetch(url, {
     method,
@@ -348,9 +304,10 @@ const sendData = async (body, url, method) => {
   showFlaskDjangoOutput(result);
 };
 
+// prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  if (FLASK_DJANGO.includes(output) || IDK_THE_NAME.includes(output)) {
+  if (OPENAPI_OUTPUT.includes(output) || CSV_OUTPUT.includes(output)) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "file");
@@ -362,16 +319,19 @@ const sendDataWrapper = () => {
   }
 };
 
+// copies the given parameter to clipboard
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text);
 };
 
+// returns text content in the given node
 const findOutputText = (targetElement) => {
   const target = targetElement === "copy-button-1" ? "#output-1" : "#output-2";
   const element = document.querySelector(target);
   return element.innerText;
 };
 
+// alerts the user when the text is copied
 const alertCopy = (node) => {
   node.innerHTML = "copied";
   setTimeout(() => {
@@ -379,12 +339,14 @@ const alertCopy = (node) => {
   }, 2000);
 };
 
+// listens to click events on the copy buttons
 const handleOutputCopy = (event) => {
   const outputText = findOutputText(event.currentTarget.id);
   copyToClipboard(outputText);
   alertCopy(event.currentTarget.querySelector("#copy-state"));
 };
 
+// sends an http request to the server containing updated django and flask models to be validated
 const updateData = async (body, url, method) => {
   const result = await fetch(url, {
     method,
@@ -394,6 +356,7 @@ const updateData = async (body, url, method) => {
   console.log(response);
 };
 
+// prepers the required data for post request using updateData function
 const updateDataWrapper = (e) => {
   const djangoUpdated = djangoOutput.textContent;
   const flaskUpdated = flaskOutput.textContent;
@@ -411,21 +374,46 @@ const updateDataWrapper = (e) => {
   e.target.classList.add("hidden");
 };
 
+// adds event listeners to different nodes
+
+["drop", "dragenter", "dragover", "dragleave"].forEach((ev) => {
+  dropAreaBorder.addEventListener(ev, preventDefaults);
+});
+
+["dragenter", "dragover"].forEach((ev) => {
+  dropAreaBorder.addEventListener(ev, draggingHandler);
+});
+
+["dragleave", "drop"].forEach((ev) => {
+  dropAreaBorder.addEventListener(ev, dragStopHandler);
+});
+
+["dragleave"].forEach((ev) => {
+  dropAreaBorder.addEventListener(ev, dragEndHandler);
+});
+
 dropAreaBorder.addEventListener("drop", dropZoneDropHandler);
+
 selectOutput.addEventListener("change", handleSelectOutput);
+
 generateButton.addEventListener("click", sendDataWrapper);
+
 copyButtons.forEach((button) =>
   button.addEventListener("click", handleOutputCopy)
 );
+
 Object.values(FLASK_FIELDS).forEach((value) => {
   addOption(editSelect1, value);
 });
+
 Object.values(DJANGO_FIELDS).forEach((value) => {
   addOption(editSelect2, value);
 });
+
 [applyChange1, applyChange2].forEach((button) =>
   button.addEventListener("click", handleApplyChange)
 );
+
 [validate1, validate2].forEach((button) =>
   button.addEventListener("click", updateDataWrapper)
 );
