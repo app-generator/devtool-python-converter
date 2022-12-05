@@ -118,7 +118,7 @@ def index():
 import pandas as pd
 
 
-@app.route('/datatb')
+@app.route('/datatb', methods=['POST'])
 def dynamic_datatb():
     data = request.form
     file = request.files['file']
