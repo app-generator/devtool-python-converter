@@ -15,8 +15,8 @@ const applyChange1 = document.querySelector("#apply-change-1");
 const editSelect2 = document.querySelector("#select-2");
 const editContainer2 = document.querySelector("#edit-container-2");
 const applyChange2 = document.querySelector("#apply-change-2");
-const validate1 = document.querySelector("#validate-1");
-const validate2 = document.querySelector("#validate-2");
+// const validate1 = document.querySelector("#validate-1");
+// const validate2 = document.querySelector("#validate-2");
 const flaskOutput = document.querySelector("#output-1");
 const djangoOutput = document.querySelector("#output-2");
 
@@ -216,7 +216,7 @@ const handleApplyChange = (event) => {
     if (newValue !== "select type") {
       const identifier = SELECTED_ROW_FLASK.innerHTML.split("=")[0] + "= ";
       SELECTED_ROW_FLASK.innerHTML = identifier + `${newValue}`;
-      validate1.classList.remove("hidden");
+      // validate1.classList.remove("hidden");
     }
     editContainer1.classList.remove("flex");
     editContainer1.classList.add("hidden");
@@ -226,7 +226,7 @@ const handleApplyChange = (event) => {
     if (newValue !== "select type") {
       const identifier = SELECTED_ROW_DJANGO.innerHTML.split("=")[0] + "= ";
       SELECTED_ROW_DJANGO.innerHTML = identifier + `${newValue}`;
-      validate2.classList.remove("hidden");
+      // validate2.classList.remove("hidden");
     }
     editContainer2.classList.remove("flex");
     editContainer2.classList.add("hidden");
@@ -295,27 +295,48 @@ const showFlaskDjangoOutput = (output) => {
 };
 
 // sends an http request to the server containing uploaded file to be converted to flask or django output
-const sendData = async (body, url, method) => {
+const sendFlaskDjangoData = async (body, url, method) => {
   const request = await fetch(url, {
     method,
     body,
   });
-  const result = await request.json().then((error) => error);
+  const result = await request.json().catch((error) => error);
   showFlaskDjangoOutput(result);
+};
+
+// renders a data table
+const showDataTableOutput = async (res) => {
+  const htmlText = await res.text();
+  var newHTML = document.open("text/html", "replace");
+  newHTML.write(htmlText);
+  newHTML.close();
+};
+
+// sends an http request to the server containing uploaded file and expects a html document for later renders
+const sendDataTableData = async (body, url, method) => {
+  await fetch(url, {
+    method,
+    body,
+  }).then((res) => showDataTableOutput(res));
 };
 
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  if (OPENAPI_OUTPUT.includes(output) || CSV_OUTPUT.includes(output)) {
+  if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "file");
     formData.append("output", output);
     const url = "http://127.0.0.1:5000/";
     const method = "POST";
-    sendData(formData, url, method);
-  } else {
+    sendFlaskDjangoData(formData, url, method);
+  } else if (output === "DataTable") {
+    const formData = new FormData();
+    formData.append("file", file);
+    const url = "http://127.0.0.1:5000/datatb";
+    const method = "POST";
+    sendDataTableData(formData, url, method);
   }
 };
 
@@ -347,32 +368,32 @@ const handleOutputCopy = (event) => {
 };
 
 // sends an http request to the server containing updated django and flask models to be validated
-const updateData = async (body, url, method) => {
-  const result = await fetch(url, {
-    method,
-    body,
-  });
-  const response = await result.json().catch((error) => error);
-  console.log(response);
-};
+// const updateData = async (body, url, method) => {
+//   const result = await fetch(url, {
+//     method,
+//     body,
+//   });
+//   const response = await result.json().catch((error) => error);
+//   console.log(response);
+// };
 
 // prepers the required data for post request using updateData function
-const updateDataWrapper = (e) => {
-  const djangoUpdated = djangoOutput.textContent;
-  const flaskUpdated = flaskOutput.textContent;
-  const type = "update";
-  const url = "http://127.0.0.1:5000/";
-  const method = "POST";
-  const formData = new FormData();
-  const updatedValues = {
-    django: djangoUpdated,
-    flask: flaskUpdated,
-  };
-  formData.append("type", type);
-  formData.append("update", JSON.stringify(updatedValues));
-  updateData(formData, url, method);
-  e.target.classList.add("hidden");
-};
+// const updateDataWrapper = (e) => {
+//   const djangoUpdated = djangoOutput.textContent;
+//   const flaskUpdated = flaskOutput.textContent;
+//   const type = "update";
+//   const url = "http://127.0.0.1:5000/";
+//   const method = "POST";
+//   const formData = new FormData();
+//   const updatedValues = {
+//     django: djangoUpdated,
+//     flask: flaskUpdated,
+//   };
+//   formData.append("type", type);
+//   formData.append("update", JSON.stringify(updatedValues));
+//   updateData(formData, url, method);
+//   e.target.classList.add("hidden");
+// };
 
 // adds event listeners to different nodes
 
@@ -414,6 +435,6 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
   button.addEventListener("click", handleApplyChange)
 );
 
-[validate1, validate2].forEach((button) =>
-  button.addEventListener("click", updateDataWrapper)
-);
+// [validate1, validate2].forEach((button) =>
+//   button.addEventListener("click", updateDataWrapper)
+// );
