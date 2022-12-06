@@ -1,0 +1,27 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "products",
+		"version": "1.0.0",
+		"description": "an OpenAPI REST descriptor"
+	},
+	"paths": {},
+	"components": {
+		"schemas": {
+			"Product": {
+				"type": "object",
+				"properties": {
+					"ID": {
+						"type": "number"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number"
+					}
+				}
+			}
+		}
+	}
+} 
