@@ -404,7 +404,9 @@ const sendDataWrapper = () => {
   } else if (output === "DataTable") {
     const formData = new FormData();
     formData.append("file", file);
-    const url = "http://127.0.0.1:5000/datatb";
+    formData.append("type", "file");
+    formData.append("output", output);
+    const url = "http://127.0.0.1:5000";
     const method = "POST";
     sendDataTableData(formData, url, method);
   } else if (output === "Charts") {
