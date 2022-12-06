@@ -4,6 +4,7 @@ const dropAreaBorder = document.querySelector("#custom-file-uploader");
 const dropAreaLabel = document.querySelector("#file-upload-label");
 const selectContainer = document.querySelector("#select-container");
 const selectOutput = document.querySelector("#select-output");
+const outputContainer = document.querySelector("#output-container");
 const generateContainer = document.querySelector("#generate-container");
 const generateButton = document.querySelector("#generate");
 const copyButtons = document.querySelectorAll(".copy-button");
@@ -19,9 +20,19 @@ const applyChange2 = document.querySelector("#apply-change-2");
 // const validate2 = document.querySelector("#validate-2");
 const flaskOutput = document.querySelector("#output-1");
 const djangoOutput = document.querySelector("#output-2");
+const chartOutput = document.querySelector("#chart");
+const chartFlex = document.querySelector("#chart-flex");
+const chartType = document.querySelector("#select-chart-type");
+const chartX = document.querySelector("#select-x");
+const chartY = document.querySelector("#select-y");
+const chartOptionsContainer = document.querySelector(
+  "#flex-select-chart-options"
+);
 
 // constants
 let file = null;
+let myChart = null;
+let chartInfo = null;
 
 const UPLOAD_STATE = {
   drag: "drag",
@@ -34,7 +45,18 @@ const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
 
 const OPENAPI_OUTPUT = ["Flask", "Django", "Flask & Django"];
 
-const CSV_OUTPUT = ["Model", "DataTable", "Charts", "Export"];
+const CSV_OUTPUT = ["Model", "DataTable", "Charts"];
+
+const CHART_TYPES = [
+  "line",
+  "bar",
+  "radar",
+  "doughnut",
+  "pie",
+  "polarArea",
+  "bubble",
+  "scatter",
+];
 
 const FLASK_FIELDS = {
   selectType: "select type",
@@ -139,11 +161,11 @@ const addOption = (node, value) => {
   node.appendChild(optionNode);
 };
 
-// resets the options available for specific file type
-const resetOptions = () => {
-  const children = [...selectOutput.children];
-  children.forEach((child) => selectOutput.removeChild(child));
-  addOption(selectOutput, "select output");
+// resets the options in a given node ans adds a default option
+const resetOptions = (node, defaultVal) => {
+  const children = [...node.children];
+  children.forEach((child) => node.removeChild(child));
+  addOption(node, defaultVal);
 };
 
 // handles the case when the dropped file is valid
@@ -195,17 +217,45 @@ const dropZoneDropHandler = (e) => {
   const splittedFileName = fileName.split(".");
   const fileExtension =
     splittedFileName[splittedFileName.length - 1].toLocaleLowerCase();
-  resetOptions();
+  resetOptions(selectOutput, "select output");
   if (!VALID_EXTENSIONS.includes(fileExtension))
     handleInvalidDrop(fileExtension);
   else handleValidDrop(fileName, fileExtension);
 };
 
+const fillChartOptions = async () => {
+  [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
+  const fileURL = URL.createObjectURL(file);
+  chartInfo = await d3.csv(fileURL).then((res) => res);
+  const columns = Object.keys(chartInfo[0]);
+  columns.forEach((column) => {
+    addOption(chartX, column);
+    addOption(chartY, column);
+  });
+  CHART_TYPES.forEach((chart_type) => addOption(chartType, chart_type));
+};
+
 // listens to change event on the output selection tag
 const handleSelectOutput = (e) => {
-  if (e.target.value !== "select output")
+  const value = e.target.value;
+  if (value === "select output") {
+    generateContainer.classList.add("hidden");
+    chartFlex.classList.add("hidden");
+    chartFlex.classList.remove("flex");
+  } else if (value === "Charts") {
+    outputContainer.classList.remove("flex");
+    outputContainer.classList.add("hidden");
     generateContainer.classList.remove("hidden");
-  else generateContainer.classList.add("hidden");
+    chartFlex.classList.remove("hidden");
+    chartFlex.classList.add("flex");
+    chartOptionsContainer.classList.remove("hidden");
+    fillChartOptions();
+  } else {
+    outputContainer.classList.remove("hideen");
+    generateContainer.classList.remove("hidden");
+    chartFlex.classList.add("hidden");
+    chartFlex.classList.remove("flex");
+  }
 };
 
 // handles changing types for flask or django output models
@@ -320,6 +370,26 @@ const sendDataTableData = async (body, url, method) => {
   }).then((res) => showDataTableOutput(res));
 };
 
+// shows chart data using chartjs
+const showChartData = async (chartType, x, y) => {
+  myChart?.destroy();
+  const labels = [...new Set(chartInfo.map((item) => item[x].toString()))];
+  const data = chartInfo.map((item) => item[y]);
+  const label = y;
+  myChart = new Chart(chartOutput, {
+    type: chartType,
+    data: {
+      labels,
+      datasets: [
+        {
+          label,
+          data,
+        },
+      ],
+    },
+  });
+};
+
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
@@ -337,6 +407,16 @@ const sendDataWrapper = () => {
     const url = "http://127.0.0.1:5000/datatb";
     const method = "POST";
     sendDataTableData(formData, url, method);
+  } else if (output === "Charts") {
+    const chartArr = [chartType.value, chartX.value, chartY.value];
+    if (!chartArr.includes("")) {
+      showChartData(...chartArr);
+    } else {
+      generateButton.innerHTML = `<div style="font-size:0.8rem;">select chart options</div>`;
+      setTimeout(() => {
+        generateButton.innerHTML = "Generate";
+      }, 2000);
+    }
   }
 };
 
