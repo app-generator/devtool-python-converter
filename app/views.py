@@ -120,7 +120,6 @@ import pandas as pd
 
 @app.route('/datatb')
 def dynamic_datatb():
-    data = request.form
     file = request.files['file']
     # If the user does not select a file, the browser submits an
     # empty file without a filename.
