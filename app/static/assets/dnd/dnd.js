@@ -4,6 +4,7 @@ const dropAreaBorder = document.querySelector("#custom-file-uploader");
 const dropAreaLabel = document.querySelector("#file-upload-label");
 const selectContainer = document.querySelector("#select-container");
 const selectOutput = document.querySelector("#select-output");
+const outputContainer = document.querySelector("#output-container");
 const generateContainer = document.querySelector("#generate-container");
 const generateButton = document.querySelector("#generate");
 const copyButtons = document.querySelectorAll(".copy-button");
@@ -15,13 +16,23 @@ const applyChange1 = document.querySelector("#apply-change-1");
 const editSelect2 = document.querySelector("#select-2");
 const editContainer2 = document.querySelector("#edit-container-2");
 const applyChange2 = document.querySelector("#apply-change-2");
-const validate1 = document.querySelector("#validate-1");
-const validate2 = document.querySelector("#validate-2");
+// const validate1 = document.querySelector("#validate-1");
+// const validate2 = document.querySelector("#validate-2");
 const flaskOutput = document.querySelector("#output-1");
 const djangoOutput = document.querySelector("#output-2");
+const chartOutput = document.querySelector("#chart");
+const chartFlex = document.querySelector("#chart-flex");
+const chartType = document.querySelector("#select-chart-type");
+const chartX = document.querySelector("#select-x");
+const chartY = document.querySelector("#select-y");
+const chartOptionsContainer = document.querySelector(
+  "#flex-select-chart-options"
+);
 
 // constants
 let file = null;
+let myChart = null;
+let chartInfo = null;
 
 const UPLOAD_STATE = {
   drag: "drag",
@@ -34,7 +45,18 @@ const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
 
 const OPENAPI_OUTPUT = ["Flask", "Django", "Flask & Django"];
 
-const CSV_OUTPUT = ["Model", "DataTable", "Charts", "Export"];
+const CSV_OUTPUT = ["Model", "DataTable", "Charts"];
+
+const CHART_TYPES = [
+  "line",
+  "bar",
+  "radar",
+  "doughnut",
+  "pie",
+  "polarArea",
+  "bubble",
+  "scatter",
+];
 
 const FLASK_FIELDS = {
   selectType: "select type",
@@ -139,11 +161,11 @@ const addOption = (node, value) => {
   node.appendChild(optionNode);
 };
 
-// resets the options available for specific file type
-const resetOptions = () => {
-  const children = [...selectOutput.children];
-  children.forEach((child) => selectOutput.removeChild(child));
-  addOption(selectOutput, "select output");
+// resets the options in a given node ans adds a default option
+const resetOptions = (node, defaultVal) => {
+  const children = [...node.children];
+  children.forEach((child) => node.removeChild(child));
+  addOption(node, defaultVal);
 };
 
 // handles the case when the dropped file is valid
@@ -195,17 +217,45 @@ const dropZoneDropHandler = (e) => {
   const splittedFileName = fileName.split(".");
   const fileExtension =
     splittedFileName[splittedFileName.length - 1].toLocaleLowerCase();
-  resetOptions();
+  resetOptions(selectOutput, "select output");
   if (!VALID_EXTENSIONS.includes(fileExtension))
     handleInvalidDrop(fileExtension);
   else handleValidDrop(fileName, fileExtension);
 };
 
+const fillChartOptions = async () => {
+  [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
+  const fileURL = URL.createObjectURL(file);
+  chartInfo = await d3.csv(fileURL).then((res) => res);
+  const columns = Object.keys(chartInfo[0]);
+  columns.forEach((column) => {
+    addOption(chartX, column);
+    addOption(chartY, column);
+  });
+  CHART_TYPES.forEach((chart_type) => addOption(chartType, chart_type));
+};
+
 // listens to change event on the output selection tag
 const handleSelectOutput = (e) => {
-  if (e.target.value !== "select output")
+  const value = e.target.value;
+  if (value === "select output") {
+    generateContainer.classList.add("hidden");
+    chartFlex.classList.add("hidden");
+    chartFlex.classList.remove("flex");
+  } else if (value === "Charts") {
+    outputContainer.classList.remove("flex");
+    outputContainer.classList.add("hidden");
     generateContainer.classList.remove("hidden");
-  else generateContainer.classList.add("hidden");
+    chartFlex.classList.remove("hidden");
+    chartFlex.classList.add("flex");
+    chartOptionsContainer.classList.remove("hidden");
+    fillChartOptions();
+  } else {
+    outputContainer.classList.remove("hideen");
+    generateContainer.classList.remove("hidden");
+    chartFlex.classList.add("hidden");
+    chartFlex.classList.remove("flex");
+  }
 };
 
 // handles changing types for flask or django output models
@@ -216,7 +266,7 @@ const handleApplyChange = (event) => {
     if (newValue !== "select type") {
       const identifier = SELECTED_ROW_FLASK.innerHTML.split("=")[0] + "= ";
       SELECTED_ROW_FLASK.innerHTML = identifier + `${newValue}`;
-      validate1.classList.remove("hidden");
+      // validate1.classList.remove("hidden");
     }
     editContainer1.classList.remove("flex");
     editContainer1.classList.add("hidden");
@@ -226,7 +276,7 @@ const handleApplyChange = (event) => {
     if (newValue !== "select type") {
       const identifier = SELECTED_ROW_DJANGO.innerHTML.split("=")[0] + "= ";
       SELECTED_ROW_DJANGO.innerHTML = identifier + `${newValue}`;
-      validate2.classList.remove("hidden");
+      // validate2.classList.remove("hidden");
     }
     editContainer2.classList.remove("flex");
     editContainer2.classList.add("hidden");
@@ -295,27 +345,78 @@ const showFlaskDjangoOutput = (output) => {
 };
 
 // sends an http request to the server containing uploaded file to be converted to flask or django output
-const sendData = async (body, url, method) => {
+const sendFlaskDjangoData = async (body, url, method) => {
   const request = await fetch(url, {
     method,
     body,
   });
-  const result = await request.json().then((error) => error);
+  const result = await request.json().catch((error) => error);
   showFlaskDjangoOutput(result);
+};
+
+// renders a data table
+const showDataTableOutput = async (res) => {
+  const htmlText = await res.text();
+  var newHTML = document.open("text/html", "replace");
+  newHTML.write(htmlText);
+  newHTML.close();
+};
+
+// sends an http request to the server containing uploaded file and expects a html document for later renders
+const sendDataTableData = async (body, url, method) => {
+  await fetch(url, {
+    method,
+    body,
+  }).then((res) => showDataTableOutput(res));
+};
+
+// shows chart data using chartjs
+const showChartData = async (chartType, x, y) => {
+  myChart?.destroy();
+  const labels = [...new Set(chartInfo.map((item) => item[x].toString()))];
+  const data = chartInfo.map((item) => item[y]);
+  const label = y;
+  myChart = new Chart(chartOutput, {
+    type: chartType,
+    data: {
+      labels,
+      datasets: [
+        {
+          label,
+          data,
+        },
+      ],
+    },
+  });
 };
 
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  if (OPENAPI_OUTPUT.includes(output) || CSV_OUTPUT.includes(output)) {
+  if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "file");
     formData.append("output", output);
     const url = "http://127.0.0.1:5000/";
     const method = "POST";
-    sendData(formData, url, method);
-  } else {
+    sendFlaskDjangoData(formData, url, method);
+  } else if (output === "DataTable") {
+    const formData = new FormData();
+    formData.append("file", file);
+    const url = "http://127.0.0.1:5000/datatb";
+    const method = "POST";
+    sendDataTableData(formData, url, method);
+  } else if (output === "Charts") {
+    const chartArr = [chartType.value, chartX.value, chartY.value];
+    if (!chartArr.includes("")) {
+      showChartData(...chartArr);
+    } else {
+      generateButton.innerHTML = `<div style="font-size:0.8rem;">select chart options</div>`;
+      setTimeout(() => {
+        generateButton.innerHTML = "Generate";
+      }, 2000);
+    }
   }
 };
 
@@ -347,32 +448,32 @@ const handleOutputCopy = (event) => {
 };
 
 // sends an http request to the server containing updated django and flask models to be validated
-const updateData = async (body, url, method) => {
-  const result = await fetch(url, {
-    method,
-    body,
-  });
-  const response = await result.json().catch((error) => error);
-  console.log(response);
-};
+// const updateData = async (body, url, method) => {
+//   const result = await fetch(url, {
+//     method,
+//     body,
+//   });
+//   const response = await result.json().catch((error) => error);
+//   console.log(response);
+// };
 
 // prepers the required data for post request using updateData function
-const updateDataWrapper = (e) => {
-  const djangoUpdated = djangoOutput.textContent;
-  const flaskUpdated = flaskOutput.textContent;
-  const type = "update";
-  const url = "http://127.0.0.1:5000/";
-  const method = "POST";
-  const formData = new FormData();
-  const updatedValues = {
-    django: djangoUpdated,
-    flask: flaskUpdated,
-  };
-  formData.append("type", type);
-  formData.append("update", JSON.stringify(updatedValues));
-  updateData(formData, url, method);
-  e.target.classList.add("hidden");
-};
+// const updateDataWrapper = (e) => {
+//   const djangoUpdated = djangoOutput.textContent;
+//   const flaskUpdated = flaskOutput.textContent;
+//   const type = "update";
+//   const url = "http://127.0.0.1:5000/";
+//   const method = "POST";
+//   const formData = new FormData();
+//   const updatedValues = {
+//     django: djangoUpdated,
+//     flask: flaskUpdated,
+//   };
+//   formData.append("type", type);
+//   formData.append("update", JSON.stringify(updatedValues));
+//   updateData(formData, url, method);
+//   e.target.classList.add("hidden");
+// };
 
 // adds event listeners to different nodes
 
@@ -414,6 +515,6 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
   button.addEventListener("click", handleApplyChange)
 );
 
-[validate1, validate2].forEach((button) =>
-  button.addEventListener("click", updateDataWrapper)
-);
+// [validate1, validate2].forEach((button) =>
+//   button.addEventListener("click", updateDataWrapper)
+// );

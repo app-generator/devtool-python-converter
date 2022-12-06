@@ -7,7 +7,6 @@
 
 <link href="/static/assets/dnd/dnd.css" rel="stylesheet" />
 
-
 {% endblock stylesheets %}
 
 {% block body_class %} blog-author bg-gray-100 {% endblock body_class %}
@@ -163,6 +162,36 @@
   </div>
 </section>
 
+<section class="m-3">
+  <div class="chart-flex hidden" id="chart-flex">
+    <div class="flex-select-chart-options" id="flex-select-chart-options">
+      <div class="chart-type">
+        <label for="select-chart-type">select chart type : </label>
+        <select name="select-chart-type" id="select-chart-type" class="select-1">
+          <option selected value=""></option>
+        </select>
+      </div>
+      <div class="column-1">
+        <label for="select-x">select x axis : </label>
+        <select name="select-x" id="select-x" class="select-1">
+          <option selected value=""></option>
+        </select>
+      </div>
+      <div class="column-2">
+        <label for="select-y">select y axis : </label>
+        <select name="select-y" id="select-y" class="select-1">
+          <option selected value=""></option>
+        </select>
+      </div>
+      <div title='select two columns to draw. make sure columns are suitable for charting'>
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="output-chart">
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
+</section>
 
 {% endblock content %}
 
@@ -175,15 +204,16 @@
 
 <script src="https://kit.fontawesome.com/9dfa2931b4.js" crossorigin="anonymous"></script>
 
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
 
 
 <script>
 
   function something() {
 
-    console.log('whatever');
-  }
-
-</script>
+    console.log(' whatever');
+  } </script>
 
 {% endblock javascripts %}

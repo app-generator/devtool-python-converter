@@ -118,7 +118,7 @@ def index():
 import pandas as pd
 
 
-@app.route('/datatb')
+@app.route('/datatb', methods=['POST'])
 def dynamic_datatb():
     file = request.files['file']
     # If the user does not select a file, the browser submits an
