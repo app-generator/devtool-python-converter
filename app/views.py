@@ -109,25 +109,6 @@ def index():
                     os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
                     data = {'django': django_response, 'flask': flask_response}
                     return data
-        elif post_type == 'update':
-            data_recieved = data['update']
-            request_django = data_recieved['django']
-            request_flask = data_recieved['flask']
-            flask_codes = ""
-            for class_name in request_flask:
-                flask_codes = flask_codes + f"class {class_name}(db.Model):\n\tID = db.Column(db.Integer, primary_key=True,autoincrement=True)\n"
-                flask_code = get_flask_model(request_flask[class_name])
-                flask_codes = flask_codes + flask_code
-            request_flask['#codes$'] = flask_codes
-            django_codes = ""
-            for class_name in request_django:
-                django_codes = django_codes + f"class {class_name}(models.Model):\n\tID = models.AutoField(primary_key=True)\n"
-                django_code = get_django_model(request_flask[class_name])
-                django_codes = django_codes + django_code
-            request_django['#codes$'] = django_codes
-            data = {'django': request_django, 'flask': request_flask}
-            # front
-            return data
 
     elif request.method == 'GET':
         # front
@@ -137,13 +118,31 @@ def index():
 import pandas as pd
 
 
-@app.route('/datatb')
+@app.route('/datatb', methods=['POST'])
 def dynamic_datatb():
-    csv_file = pd.read_csv('sales.csv')
-    headings = [row for row in csv_file.head()]
-
-    return render_template('datatb/datatb.html', **{
-        'model_name': 'model_name',
-        'headings': headings,
-        'data': [[val for val in record[1]] for record in csv_file.iterrows()],
-    })
+    data = request.form
+    file = request.files['file']
+    # If the user does not select a file, the browser submits an
+    # empty file without a filename.
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        input_type = get_type(filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if input_type == 'csv':
+            csv_file = pd.read_csv(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+        elif input_type == 'pkl':
+            csv_file = pd.read_pickle(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+        else:
+            flash('input file is not supported!')
+            os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+            return redirect(request.url)
+        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+        headings = [row for row in csv_file.head()]
+        return render_template('datatb/datatb.html', **{
+            'model_name': 'model_name',
+            'headings': headings,
+            'data': [[val for val in record[1]] for record in csv_file.iterrows()],
+        })
