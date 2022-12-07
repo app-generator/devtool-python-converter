@@ -89,6 +89,22 @@ def index():
                     data = {'django': django_response}
                     os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
                     return data
+                elif output_desired == 'DataTable':
+                    if input_type == 'csv':
+                        csv_file = pd.read_csv(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+                    elif input_type == 'pkl':
+                        csv_file = pd.read_pickle(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+                    else:
+                        flash('input file is not supported!')
+                        os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+                        return redirect(request.url)
+                    os.remove(app.config['UPLOAD_FOLDER'] + "\\" + filename)
+                    headings = [row for row in csv_file.head()]
+                    return render_template('datatb/datatb.html', **{
+                        'model_name': 'model_name',
+                        'headings': headings,
+                        'data': [[val for val in record[1]] for record in csv_file.iterrows()],
+                    })
                 else:
                     if input_type == 'csv':
                         django_response = convert_csv_to_django_models(app.config['UPLOAD_FOLDER'], filename)
@@ -120,7 +136,6 @@ import pandas as pd
 
 @app.route('/datatb', methods=['POST'])
 def dynamic_datatb():
-    data = request.form
     file = request.files['file']
     # If the user does not select a file, the browser submits an
     # empty file without a filename.
