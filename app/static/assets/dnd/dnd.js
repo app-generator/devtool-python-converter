@@ -27,6 +27,8 @@ const chartY = document.querySelector("#select-y");
 const chartOptionsContainer = document.querySelector(
   "#flex-select-chart-options"
 );
+const dataTableFrame = document.querySelector("#data-table-frame");
+const dataTableFrameContainer = document.querySelector("#iframe-container");
 
 // constants
 let file = null;
@@ -241,6 +243,7 @@ const handleSelectOutput = (e) => {
     generateContainer.classList.add("hidden");
     chartFlex.classList.add("hidden");
     chartFlex.classList.remove("flex");
+    dataTableFrameContainer.classList.add("hidden");
   } else if (value === "Charts") {
     outputContainer.classList.remove("flex");
     outputContainer.classList.add("hidden");
@@ -248,12 +251,21 @@ const handleSelectOutput = (e) => {
     chartFlex.classList.remove("hidden");
     chartFlex.classList.add("flex");
     chartOptionsContainer.classList.remove("hidden");
+    dataTableFrameContainer.classList.add("hidden");
     fillChartOptions();
+  } else if (value === "DataTable") {
+    dataTableFrameContainer.classList.remove("hidden");
+    outputContainer.classList.remove("flex");
+    outputContainer.classList.add("hidden");
+    generateContainer.classList.remove("hidden");
+    chartFlex.classList.remove("flex");
+    chartFlex.classList.add("hidden");
   } else {
     outputContainer.classList.remove("hideen");
     generateContainer.classList.remove("hidden");
     chartFlex.classList.add("hidden");
     chartFlex.classList.remove("flex");
+    dataTableFrameContainer.classList.add("hidden");
   }
 };
 
@@ -353,12 +365,21 @@ const sendFlaskDjangoData = async (body, url, method) => {
   showFlaskDjangoOutput(result);
 };
 
+// calculates iframe height
+const resizeIframe = (event) => {
+  event.target.style.height =
+    event.target.contentWindow.document.documentElement.scrollHeight + "px";
+};
+
 // renders a data table
 const showDataTableOutput = async (res) => {
   const htmlText = await res.text();
-  var newHTML = document.open("text/html", "replace");
+  dataTableFrameContainer.classList.remove("hidden");
+  const doc = dataTableFrame.contentWindow.document;
+  const newHTML = doc.open("text/html", "replace");
   newHTML.write(htmlText);
   newHTML.close();
+  scrollToOutPut(dataTableFrame);
 };
 
 // sends an http request to the server containing uploaded file and expects a html document for later renders
@@ -369,16 +390,26 @@ const sendDataTableData = async (body, url, method) => {
   }).then((res) => showDataTableOutput(res));
 };
 
-function getOffset(el) {
-  var _x = 0;
-  var _y = 0;
-  while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-    _x += el.offsetLeft - el.scrollLeft;
-    _y += el.offsetTop - el.scrollTop;
-    el = el.offsetParent;
+// calculates coordinates of the given element relative to the document
+const getOffset = (element) => {
+  let _x = 0;
+  let _y = 0;
+  while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
+    _x += element.offsetLeft - element.scrollLeft;
+    _y += element.offsetTop - element.scrollTop;
+    element = element.offsetParent;
   }
   return { top: _y, left: _x };
-}
+};
+
+const scrollToOutPut = (element) => {
+  const { top, left } = getOffset(element);
+  window.scrollTo({
+    left,
+    top,
+    behavior: "smooth",
+  });
+};
 
 // shows chart data using chartjs
 const showChartData = async (chartType, x, y) => {
@@ -401,13 +432,7 @@ const showChartData = async (chartType, x, y) => {
       maintainAspectRatio: false,
     },
   });
-  const { top, left } = getOffset(chartOutput);
-  console.log(top, left);
-  window.scrollTo({
-    left,
-    top,
-    behavior: "smooth",
-  });
+  scrollToOutPut(chartOutput);
 };
 
 // prepers the required data for post request using sendData function
@@ -540,3 +565,5 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 // [validate1, validate2].forEach((button) =>
 //   button.addEventListener("click", updateDataWrapper)
 // );
+
+dataTableFrame.addEventListener("load", resizeIframe);
