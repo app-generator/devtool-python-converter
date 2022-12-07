@@ -1,5 +1,4 @@
 // html elements
-const fileInput = document.querySelector("#file_upload");
 const dropAreaBorder = document.querySelector("#custom-file-uploader");
 const dropAreaLabel = document.querySelector("#file-upload-label");
 const selectContainer = document.querySelector("#select-container");
@@ -370,6 +369,17 @@ const sendDataTableData = async (body, url, method) => {
   }).then((res) => showDataTableOutput(res));
 };
 
+function getOffset(el) {
+  var _x = 0;
+  var _y = 0;
+  while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+    _x += el.offsetLeft - el.scrollLeft;
+    _y += el.offsetTop - el.scrollTop;
+    el = el.offsetParent;
+  }
+  return { top: _y, left: _x };
+}
+
 // shows chart data using chartjs
 const showChartData = async (chartType, x, y) => {
   myChart?.destroy();
@@ -387,6 +397,16 @@ const showChartData = async (chartType, x, y) => {
         },
       ],
     },
+    options: {
+      maintainAspectRatio: false,
+    },
+  });
+  const { top, left } = getOffset(chartOutput);
+  console.log(top, left);
+  window.scrollTo({
+    left,
+    top,
+    behavior: "smooth",
   });
 };
 

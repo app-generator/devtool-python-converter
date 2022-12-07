@@ -2,6 +2,7 @@
   position: relative;
   border: 2px dashed #9c9c9c;
   border-radius: 5px;
+  box-sizing: border-box;
   padding: 40px 10px;
   background: #f8f9fe;
   text-align: center;
@@ -216,7 +217,13 @@
 }
 
 .output-chart{
-  width: 100%;
+  position: relative;
+  width: 75%;
+  height: 100%;
+}
+
+.chart{
+  height: 750px !important;
 }
 
 @media screen and (max-width:700px){
