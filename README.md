@@ -8,22 +8,22 @@
 
 | Status | Delivery | Input | Output | Info | 
 | --- | --- | --- | --- | --- |
-| NA | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
-| NA | **Drop 1** | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
+| DONE | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
+| DONE | **Drop 1** | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
 | NA | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- | --- |
-| NA | **Drop 1** | **CSV** | `DB Model` | DB Model |
-| NA | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
-| NA | **Drop 1** | **CSV** | `Charts` | Data to visualisation  |
+| DONE | **Drop 1** | **CSV** | `DB Model` | DB Model |
+| DONE | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
+| DONE | **Drop 1** | **CSV** | `Charts` | Data to visualisation  |
 | NA | **Drop 1** | **CSV** | `Export` (with filters) | CSV, PDF  |
 | NA | `Drop 2` | **CSV** URL | `DB Model` | DB Model |
 | NA | `Drop 2` | **CSV** URL | `DataTables` | Paginated Data View (vanilla JS) |
 | NA | `Drop 2` | **CSV** URL | `Charts` | Data to visualisation  |
 | NA | `Drop 2` | **CSV** URL | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
-| NA | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
-| NA | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
-| NA | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
+| DONE | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
+| DONE | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
+| DONE | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
 | NA | **Drop 1** | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
 | NA | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
