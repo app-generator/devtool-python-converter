@@ -29,6 +29,12 @@ const chartOptionsContainer = document.querySelector(
 );
 const dataTableFrame = document.querySelector("#data-table-frame");
 const dataTableFrameContainer = document.querySelector("#iframe-container");
+const exportOutputSelect = document.querySelector("#export-output-select");
+const selectTableOutputContainer = document.querySelector(
+  "#select-table-output-container"
+);
+const dataTableFrameX = document.querySelector("#data-table-frame-x");
+const dataTableFrameContainerX = document.querySelector("#iframe-container-x");
 
 // constants
 let file = null;
@@ -46,7 +52,7 @@ const VALID_EXTENSIONS = ["yaml", "json", "pkl", "csv"];
 
 const OPENAPI_OUTPUT = ["Flask", "Django", "Flask & Django"];
 
-const CSV_OUTPUT = ["Model", "DataTable", "Charts"];
+const CSV_OUTPUT = ["Model", "DataTable", "Charts", "Export"];
 
 const CHART_TYPES = [
   "line",
@@ -213,6 +219,9 @@ const handleInvalidDrop = (fileExtension) => {
 // listens to all drop events on the determined div tag
 const dropZoneDropHandler = (e) => {
   // console.log(e.dataTransfer.getData("URL"));
+  chartOptionsContainer.classList.remove("flex");
+  chartOptionsContainer.classList.add("hidden");
+  selectTableOutputContainer.classList.add("hidden");
   file = e.dataTransfer.files[0];
   const fileName = file.name;
   const splittedFileName = fileName.split(".");
@@ -224,6 +233,7 @@ const dropZoneDropHandler = (e) => {
   else handleValidDrop(fileName, fileExtension);
 };
 
+// fills chart options(x and y axis based on the input and chart type based on the library)
 const fillChartOptions = async () => {
   [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
   const fileURL = URL.createObjectURL(file);
@@ -236,37 +246,143 @@ const fillChartOptions = async () => {
   CHART_TYPES.forEach((chart_type) => addOption(chartType, chart_type));
 };
 
+// using an entry object, handles className toggles
+const handleContainersVisibility = (entries) => {
+  entries.forEach((entry) =>
+    entry.action === "add"
+      ? entry.node.classList.add(entry.classList)
+      : entry.node.classList.remove(entry.classList)
+  );
+};
+
+// fills export options
+const fillExportOptions = () => {
+  resetOptions(exportOutputSelect, "");
+  ["CSV", "JSON", "SQL", "PDF"].forEach((item) =>
+    addOption(exportOutputSelect, item)
+  );
+};
+
 // listens to change event on the output selection tag
 const handleSelectOutput = (e) => {
   const value = e.target.value;
+  let entries = [];
   if (value === "select output") {
-    generateContainer.classList.add("hidden");
-    chartFlex.classList.add("hidden");
-    chartFlex.classList.remove("flex");
-    dataTableFrameContainer.classList.add("hidden");
+    entries = [
+      { node: outputContainer, action: "remove", classList: "flex" },
+      { node: outputContainer, action: "add", classList: "hidden" },
+      { node: generateContainer, action: "add", classList: "hidden" },
+      { node: chartFlex, action: "add", classList: "hidden" },
+      { node: chartFlex, action: "remove", classList: "flex" },
+      { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
+      {
+        node: selectTableOutputContainer,
+        action: "add",
+        classList: "hidden",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "remove",
+        classList: "flex",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "add",
+        classList: "hidden",
+      },
+    ];
   } else if (value === "Charts") {
-    outputContainer.classList.remove("flex");
-    outputContainer.classList.add("hidden");
-    generateContainer.classList.remove("hidden");
-    chartFlex.classList.remove("hidden");
-    chartFlex.classList.add("flex");
-    chartOptionsContainer.classList.remove("hidden");
-    dataTableFrameContainer.classList.add("hidden");
+    entries = [
+      { node: outputContainer, action: "remove", classList: "flex" },
+      { node: outputContainer, action: "add", classList: "hidden" },
+      { node: generateContainer, action: "remove", classList: "hidden" },
+      { node: chartFlex, action: "remove", classList: "hidden" },
+      { node: chartFlex, action: "add", classList: "flex" },
+      { node: chartOptionsContainer, action: "remove", classList: "hidden" },
+      { node: chartOptionsContainer, action: "add", classList: "flex" },
+      { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
+      {
+        node: selectTableOutputContainer,
+        action: "add",
+        classList: "hidden",
+      },
+    ];
     fillChartOptions();
   } else if (value === "DataTable") {
-    dataTableFrameContainer.classList.remove("hidden");
-    outputContainer.classList.remove("flex");
-    outputContainer.classList.add("hidden");
-    generateContainer.classList.remove("hidden");
-    chartFlex.classList.remove("flex");
-    chartFlex.classList.add("hidden");
+    entries = [
+      { node: dataTableFrameContainerX, action: "remove", classList: "hidden" },
+      { node: outputContainer, action: "remove", classList: "flex" },
+      { node: outputContainer, action: "add", classList: "hidden" },
+      { node: generateContainer, action: "remove", classList: "hidden" },
+      { node: chartFlex, action: "remove", classList: "flex" },
+      { node: chartFlex, action: "add", classList: "hidden" },
+      {
+        node: selectTableOutputContainer,
+        action: "add",
+        classList: "hidden",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "remove",
+        classList: "flex",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "add",
+        classList: "hidden",
+      },
+    ];
+  } else if (value === "Export") {
+    entries = [
+      { node: outputContainer, action: "remove", classList: "flex" },
+      { node: outputContainer, action: "add", classList: "hidden" },
+      { node: generateContainer, action: "remove", classList: "hidden" },
+      { node: chartFlex, action: "remove", classList: "flex" },
+      { node: chartFlex, action: "add", classList: "hidden" },
+      { node: chartOptionsContainer, action: "add", classList: "hidden" },
+      { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
+      {
+        node: selectTableOutputContainer,
+        action: "remove",
+        classList: "hidden",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "remove",
+        classList: "flex",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "add",
+        classList: "hidden",
+      },
+    ];
+    dataTableFrameX.contentWindow.dataTable?.destroy();
+    fillExportOptions();
   } else {
-    outputContainer.classList.remove("hideen");
-    generateContainer.classList.remove("hidden");
-    chartFlex.classList.add("hidden");
-    chartFlex.classList.remove("flex");
-    dataTableFrameContainer.classList.add("hidden");
+    entries = [
+      { node: generateContainer, action: "remove", classList: "hidden" },
+      { node: chartFlex, action: "add", classList: "hidden" },
+      { node: chartFlex, action: "remove", classList: "flex" },
+      { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
+      {
+        node: selectTableOutputContainer,
+        action: "add",
+        classList: "hidden",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "remove",
+        classList: "flex",
+      },
+      {
+        node: chartOptionsContainer,
+        action: "add",
+        classList: "hidden",
+      },
+    ];
   }
+  handleContainersVisibility(entries);
 };
 
 // handles changing types for flask or django output models
@@ -371,23 +487,54 @@ const resizeIframe = (event) => {
     event.target.contentWindow.document.documentElement.scrollHeight + "px";
 };
 
-// renders a data table
-const showDataTableOutput = async (res) => {
+// creates a new html and injects it to a frame
+const createHTML = async (frame, res) => {
   const htmlText = await res.text();
-  dataTableFrameContainer.classList.remove("hidden");
-  const doc = dataTableFrame.contentWindow.document;
+  const doc = frame.contentWindow.document;
   const newHTML = doc.open("text/html", "replace");
   newHTML.write(htmlText);
   newHTML.close();
-  scrollToOutPut(dataTableFrame);
+};
+
+// renders a data table
+const showDataTableOutput = async (res) => {
+  await createHTML(dataTableFrameX, res);
+  dataTableFrameContainerX.classList.remove("hidden");
+  scrollToOutPut(dataTableFrameX);
+};
+
+// fetches data from a table and creates a data table object to use
+const fetchTable = (newDoc) => {
+  const table = newDoc.querySelector(".table");
+  table.classList.remove("table");
+  table.classList.remove("dataTable-table");
+  document.querySelector("#table-container").appendChild(table);
+  document
+    .querySelector("#table-container > table")
+    .setAttribute("id", "export-table");
+  const dataTable = new simpleDatatables.DataTable("#export-table");
+  dataTable.export({
+    type: exportOutputSelect.value.toLowerCase(),
+    download: true,
+  });
+  dataTable.destroy();
+};
+
+// prepers the data required for exporting data
+const exportData = async (res) => {
+  await createHTML(dataTableFrame, res);
+  const newDoc = dataTableFrame.contentWindow.document;
+  newDoc.addEventListener("DOMContentLoaded", () => fetchTable(newDoc));
 };
 
 // sends an http request to the server containing uploaded file and expects a html document for later renders
-const sendDataTableData = async (body, url, method) => {
+const sendDataTableData = async (body, url, method, callback) => {
   await fetch(url, {
     method,
     body,
-  }).then((res) => showDataTableOutput(res));
+  })
+    .then((res) => callback(res))
+    .catch((e) => console.log(e));
 };
 
 // calculates coordinates of the given element relative to the document
@@ -435,34 +582,46 @@ const showChartData = async (chartType, x, y) => {
   scrollToOutPut(chartOutput);
 };
 
+const showEmptySelectError = (errorMessage) => {
+  generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
+  setTimeout(() => {
+    generateButton.innerHTML = "Generate";
+  }, 2000);
+};
+
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
+  const url = "http://127.0.0.1:5000";
+  const method = "POST";
   if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "file");
     formData.append("output", output);
-    const url = "http://127.0.0.1:5000/";
-    const method = "POST";
     sendFlaskDjangoData(formData, url, method);
   } else if (output === "DataTable") {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "file");
     formData.append("output", output);
-    const url = "http://127.0.0.1:5000";
-    const method = "POST";
-    sendDataTableData(formData, url, method);
+    sendDataTableData(formData, url, method, showDataTableOutput);
   } else if (output === "Charts") {
     const chartArr = [chartType.value, chartX.value, chartY.value];
     if (!chartArr.includes("")) {
       showChartData(...chartArr);
     } else {
-      generateButton.innerHTML = `<div style="font-size:0.8rem;">select chart options</div>`;
-      setTimeout(() => {
-        generateButton.innerHTML = "Generate";
-      }, 2000);
+      showEmptySelectError("select chart options");
+    }
+  } else if (output === "Export") {
+    if (exportOutputSelect.value === "") {
+      showEmptySelectError("select Export output");
+    } else {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "file");
+      formData.append("output", "DataTable");
+      sendDataTableData(formData, url, method, exportData);
     }
   }
 };
@@ -566,4 +725,4 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 //   button.addEventListener("click", updateDataWrapper)
 // );
 
-dataTableFrame.addEventListener("load", resizeIframe);
+dataTableFrameX.addEventListener("load", resizeIframe);
