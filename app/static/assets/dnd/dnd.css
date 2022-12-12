@@ -209,7 +209,7 @@
 
 .flex-select-chart-options{
   width: 80%;
-  display: flex;
+  /* display: flex; */
   flex-direction: row;
   justify-content: space-around;
   align-items: flex-end;
@@ -227,15 +227,24 @@
   width: 100%;
 }
 
-.iframe-container {
+.iframe-container, .iframe-container-x {
   width: 100%;
   height: 100%;
 }
-.data-table-frame{
+.data-table-frame, .data-table-frame-x{
   width: 100%;
   height: 100%;
   overflow-y: visible;
 }
+
+.export-container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
 
 @media screen and (max-width:700px){
   .output-wrapper{

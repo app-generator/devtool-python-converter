@@ -7,6 +7,9 @@
 
 <link href="/static/assets/dnd/dnd.css" rel="stylesheet" />
 
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+
+
 {% endblock stylesheets %}
 
 {% block body_class %} blog-author bg-gray-100 {% endblock body_class %}
@@ -167,6 +170,9 @@
     <iframe frameborder="0" id="data-table-frame" class="data-table-frame">
     </iframe>
   </div>
+  <div class="hidden iframe-container-x" id="iframe-container-x">
+    <iframe frameborder="0" id="data-table-frame-x" class="data-table-frame-x"></iframe>
+  </div>
 </section>
 
 <section class="m-3">
@@ -200,6 +206,24 @@
   </div>
 </section>
 
+<section class="m-3">
+  <div class="export-container">
+    <div id="select-table-output-container" class="select-table-output-container hidden">
+      <div>
+        <label for="export-output-select">select a format to export : </label>
+        <select name="export-output-select" class="select-1" id="export-output-select">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+    <!-- <div id="table-container"> -->
+    <div id="table-container" class="hidden">
+    </div>
+
+    <!-- </div> -->
+  </div>
+</section>
+
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
@@ -214,6 +238,8 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
 
 
 <script>
