@@ -14,7 +14,7 @@
 | Status | Delivery | Input | Output | Info | 
 | --- | --- | --- | --- | --- |
 | DONE | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
-| NA | **Drop 2** | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
+| NA | Drop 2 | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
 | NA | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- | --- |
 | DONE | **Drop 1** | **CSV** | `DB Model` | DB Model |
