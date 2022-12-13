@@ -4,7 +4,7 @@
 
 > [EULA License](./LICENSE.md): 
 
-- `Free` for solo-developers, NGOs, and eLearning
+- **Free** for `students`, `solo-developers` (personal use), `NGOs`, and eLearning activities
 - [Unrestricted usage](./LICENSE.md#lifetime-license) allowed via `one-time payment` - [$299](https://appseed.gumroad.com/l/devtool-python-converter) (managed by GUMROAD) 
 
 <br />
