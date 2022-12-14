@@ -4,6 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 import csv
 import io
+import json
 
 # Flask modules
 from werkzeug.datastructures import FileStorage
@@ -103,7 +104,7 @@ def index():
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
                         f = csv_file.to_csv()
-                        return f
+                        return json.dumps(f)
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
