@@ -27,16 +27,15 @@ This document explains the usage of this **open-source** product developed by **
 | [NGOs](https://en.wikipedia.org/wiki/Non-governmental_organization) | **YES** |
 | --- | --- |
 | **End Products** | --- |
-| Personal Use | **YES** |
+| Personal Use (hobby projects) | **YES** |
 | eLearning Activities | **YES** |
-| Projects (non-paying users) | **YES** |
 | End-Product usage for [NGOs](https://en.wikipedia.org/wiki/Non-governmental_organization) | **YES** |
 | --- | --- |
 | **Support** | --- |
 | Github (issues tracker) | **YES** |
 | Email *support @ appseed.us* | **YES** |
 | --- | --- |
-| **Forbidden Usage** | --- |
+| **Forbidden Usage** (without a license) | --- |
 | `End-products` for sale - paying, non-paying users | **NO** (license required) |
 | Used by `StartUPs` | **NO** (license required) |
 | Used by `Companies` | **NO** (license required) |
@@ -54,8 +53,8 @@ The license covers:
 
 - `Usage in commercial` projects
 - `Usage in eLearning` activities
-- `Unlimited copies`
-- `Premium Support` via Email / Discord 
+- `Unlimited projects` (hobby, commercial)
+- `Premium` [Support](https://appseed.us/support/) via Email / `Discord`
 
 > `IMPORTANT`: The **end-product that used the tool should NOT compete with AppSeed**.
 
