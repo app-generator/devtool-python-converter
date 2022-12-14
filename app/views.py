@@ -8,6 +8,7 @@ import json
 
 # Flask modules
 from werkzeug.datastructures import FileStorage
+from flask import jsonify
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 # App modules
@@ -24,21 +25,22 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def jsonify(csv_file):
+def jsonify_csv(csv_file):
     lines = csv_file.split('\r\n')
     keys = lines[0].split(',')
     keys = keys[1:]
-    out = {}
+    out = []
     i = 0
     lines = lines[1:-1]
     for line in lines:
         values = line.split(',')
         values = values[1:]
-        out[i] = {}
+        out.append({})
         for j in range(len(values)):
             out[i][keys[j]] = values[j]
         i = i+1
     return out
+
 def get_type(filename):
     return filename.rsplit('.', 1)[1].lower()
 
@@ -121,7 +123,7 @@ def index():
                         flash('input file is not supported!')
                         return redirect(request.url)
                     f = csv_file.to_csv()
-                    return jsonify(f)
+                    return jsonify(jsonify_csv(f))
                 else:
                     if input_type == 'csv':
                         model = parse_csv(file)
