@@ -9,9 +9,8 @@ from py_data_converter.jsonparser import *
 from py_data_converter.common import *
 
 
-def Parse_input(input_address, filename):
-    source = open(input_address + "/" + filename)
-    source = json.load(source)
+def Parse_input(file):
+    source = json.load(file)
     allthekeys = [*get_keys(source)]
     alltheValues = [glom(source, item) for item in allthekeys]
     listofRefitem = [item for item in alltheValues if item.find('#') != -1]
@@ -28,8 +27,7 @@ def Parse_input(input_address, filename):
     return openAPI_schema
 
 
-def convert_openapi_json_to_django_models(input_address, filename):
-    openAPI_schema = Parse_input(input_address, filename)
+def convert_openapi_json_to_django_models(openAPI_schema):
     models = openAPI_schema.get_models()
     response = {}
     codes = ""
@@ -40,20 +38,11 @@ def convert_openapi_json_to_django_models(input_address, filename):
         django_code = get_django_model(model)
         codes = codes + django_code
     response['#codes$'] = codes
-
     return response
 
 
-def convert_openapi_yaml_to_django_models(input_address, filename):
-    with open(input_address + "/" + filename, 'r') as file:
-        configuration = yaml.safe_load(file)
-    with open(input_address + "/converted_to_json.json", 'w') as json_file:
-        json.dump(configuration, json_file)
-    return convert_openapi_json_to_django_models(input_address, "/converted_to_json.json")
 
-
-def convert_openapi_json_to_flask_models(input_address, filename):
-    openAPI_schema = Parse_input(input_address, filename)
+def convert_openapi_json_to_flask_models(openAPI_schema):
     models = openAPI_schema.get_models()
     response = {}
     codes = ""
@@ -67,12 +56,10 @@ def convert_openapi_json_to_flask_models(input_address, filename):
     return response
 
 
-def convert_openapi_yaml_to_flask_models(input_address, filename):
-    with open(input_address + "/" + filename, 'r') as file:
-        configuration = yaml.safe_load(file)
-    with open(input_address + "/converted_to_json.json", 'w') as json_file:
-        json.dump(configuration, json_file)
-    return convert_openapi_json_to_flask_models(input_address, "/converted_to_json.json")
+def parse_yaml(file):
+    configuration = yaml.safe_load(file)
+    file = json.dumps(configuration)
+    return Parse_input(file)
 
 
 if __name__ == '__main__':
