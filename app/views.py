@@ -36,7 +36,6 @@ def jsonify_csv(df):
                 out[i][headings[j]] = 'null'
             else:
                 out[i][headings[j]] = values[i][j]
-    print(out)
     return out
 
 def get_type(filename):
