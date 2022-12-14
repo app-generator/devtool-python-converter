@@ -25,20 +25,14 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def jsonify_csv(csv_file):
-    lines = csv_file.split('\r\n')
-    keys = lines[0].split(',')
-    keys = keys[1:]
+def jsonify_csv(df):
+    values = [[val for val in record[1]] for record in df.iterrows()]
+    headings = [row for row in df.head()]
     out = []
-    i = 0
-    lines = lines[1:-1]
-    for line in lines:
-        values = line.split(',')
-        values = values[1:]
+    for i in range(len(values)):
         out.append({})
-        for j in range(len(values)):
-            out[i][keys[j]] = values[j]
-        i = i+1
+        for j in range(len(values[i])):
+            out[i][headings[j]] = values[i][j]
     return out
 
 def get_type(filename):
@@ -119,11 +113,11 @@ def index():
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
+
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
-                    f = csv_file.to_csv()
-                    response = jsonify(jsonify_csv(f))
+                    response = jsonify(jsonify_csv(csv_file))
                     return response
                 else:
                     if input_type == 'csv':
