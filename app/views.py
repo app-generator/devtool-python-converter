@@ -32,7 +32,7 @@ def jsonify_csv(df):
     for i in range(len(values)):
         out.append({})
         for j in range(len(values[i])):
-            if(values==''):
+            if(values=='NaN'):
                 out[i][headings[j]] = 'null'
             else:
                 out[i][headings[j]] = values[i][j]
