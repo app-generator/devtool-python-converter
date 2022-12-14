@@ -12,7 +12,7 @@
 
 ## Video Presentation 
 
-The material explains how to use this conversion tool written in Python to manipulate and convert information into different formats. 
+The `material explains how to use this conversion tool` written in **Python** to manipulate and convert information into different formats. 
 
 **The tool** uses a simple UI able to **convert** `OpenAPI` descriptors, `CSV`, and `DataFrames` into Python `Models definition` (allows editing), `Data Tables`, and `Charts`. 
 
