@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.7] 2022-12-14
+### Changes
+
+- DOCS Update
+- Update LICENSE (more details)
+
 ## [0.0.6] 2022-12-14
 ### Changes
 
