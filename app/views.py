@@ -114,15 +114,14 @@ def index():
                     })
                 elif output_desired == 'Charts':
                     if input_type == 'csv':
-                        data = {'file':file}
-                        return data
+                        csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
-                        f = csv_file.to_csv()
-                        return jsonify(f)
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
+                    f = csv_file.to_csv()
+                    return jsonify(f)
                 else:
                     if input_type == 'csv':
                         model = parse_csv(file)
