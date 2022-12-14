@@ -123,7 +123,8 @@ def index():
                         flash('input file is not supported!')
                         return redirect(request.url)
                     f = csv_file.to_csv()
-                    return jsonify(jsonify_csv(f))
+                    response = jsonify(jsonify_csv(f))
+                    return response
                 else:
                     if input_type == 'csv':
                         model = parse_csv(file)
