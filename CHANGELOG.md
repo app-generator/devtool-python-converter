@@ -1,6 +1,12 @@
 # Change Log
 
-## [0.0.5] 2022-11-24
+## [0.0.6] 2022-12-14
+### Changes
+
+- More conversions available
+- DOCS Update
+
+## [0.0.6] 2022-11-24
 ### Changes
 
 - EULA: terms Update
