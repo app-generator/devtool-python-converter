@@ -24,7 +24,21 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
+def jsonify(csv_file):
+    lines = csv_file.split('\r\n')
+    keys = lines[0].split(',')
+    keys = keys[1:]
+    out = {}
+    i = 0
+    lines = lines[1:-1]
+    for line in lines:
+        values = line.split(',')
+        values = values[1:]
+        out[i] = {}
+        for j in range(len(values)):
+            out[i][keys[j]] = values[j]
+        i = i+1
+    return out
 def get_type(filename):
     return filename.rsplit('.', 1)[1].lower()
 
@@ -92,6 +106,7 @@ def index():
                         flash('input file is not supported!')
                         return redirect(request.url)
                     headings = [row for row in csv_file.head()]
+
                     return render_template('datatb/datatb.html', **{
                         'model_name': 'model_name',
                         'headings': headings,
@@ -104,7 +119,7 @@ def index():
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
                         f = csv_file.to_csv()
-                        return json.dumps(f)
+                        return jsonify(f)
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
