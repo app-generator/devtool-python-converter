@@ -9,6 +9,16 @@
 
 <br />
 
+## Video Presentation 
+
+The material explains how to use this conversion tool written in Python to manipulate and convert information into different formats. The tool uses a simple UI able to convert OpenAPI descriptors, CSV, and DataFrames into Python Models definition (allows editing), Data tables, and charts. 
+
+<br />
+
+[![Python Data Converter - Converter library for CSV, OpenAPI, Pandas DF, URLs using a simple Drag & Drop UI - EULA license.](https://user-images.githubusercontent.com/51070104/207289612-000891c6-7c4d-487c-9599-7aac96928f0b.jpg)](https://www.youtube.com/watch?v=87qvYSvjGOk)
+
+<br />
+
 ### `Product Roadmap`
 
 | Status | Delivery | Input | Output | Info | 
