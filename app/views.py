@@ -17,7 +17,7 @@ from app import app, ALLOWED_EXTENSIONS
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models, parse_csv
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, \
-    Parse_input, parse_yaml
+    Parse_input, parse_yaml, parse_json
 from py_data_converter.converter_pandas import convert_pandas_to_csv
 
 
@@ -69,7 +69,7 @@ def index():
                         model = parse_csv(file)
                         flask_response = convert_csv_to_flask_models(model, file.filename[:-4])
                     elif input_type == 'json':
-                        openAPI_schema = Parse_input(file)
+                        openAPI_schema = parse_json(file)
                         flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
                     elif input_type == 'yaml':
                         openAPI_schema = parse_yaml(file)
@@ -85,7 +85,7 @@ def index():
                         model = parse_csv(file)
                         django_response = convert_csv_to_django_models(model, file.filename[:-4])
                     elif input_type == 'json':
-                        openAPI_schema = Parse_input(file)
+                        openAPI_schema = parse_json(file)
                         django_response = convert_openapi_json_to_django_models(openAPI_schema)
                     elif input_type == 'yaml':
                         openAPI_schema = parse_yaml(file)
@@ -128,7 +128,7 @@ def index():
                         django_response = convert_csv_to_django_models(model, file.filename[:-4])
                         flask_response = convert_csv_to_flask_models(model, file.filename[:-4])
                     elif input_type == 'json':
-                        openAPI_schema = Parse_input(file)
+                        openAPI_schema = parse_json(file)
                         django_response = convert_openapi_json_to_django_models(openAPI_schema)
                         flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
                     elif input_type == 'yaml':

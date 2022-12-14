@@ -9,8 +9,7 @@ from py_data_converter.jsonparser import *
 from py_data_converter.common import *
 
 
-def Parse_input(file):
-    source = json.load(file)
+def Parse_input(source):
     allthekeys = [*get_keys(source)]
     alltheValues = [glom(source, item) for item in allthekeys]
     listofRefitem = [item for item in alltheValues if item.find('#') != -1]
@@ -60,6 +59,10 @@ def parse_yaml(file):
     configuration = yaml.safe_load(file)
     file = json.dumps(configuration)
     return Parse_input(file)
+
+def parse_json(file):
+    source = json.load(file)
+    return Parse_input(source)
 
 
 if __name__ == '__main__':
