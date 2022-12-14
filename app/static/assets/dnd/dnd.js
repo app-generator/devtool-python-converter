@@ -233,11 +233,29 @@ const dropZoneDropHandler = (e) => {
   else handleValidDrop(fileName, fileExtension);
 };
 
+// sends an http request to server and converts pkl,csv files to json
+const convertDataToCSV = async (url, body, method) => {
+  return await fetch(url, {
+    body,
+    method,
+  })
+    .then((res) => res.json())
+    .catch((err) => err);
+};
+
 // fills chart options(x and y axis based on the input and chart type based on the library)
 const fillChartOptions = async () => {
+  const url = "http://127.0.0.1:5000";
+  const method = "POST";
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", "file");
+  formData.append("output", "Charts");
   [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
-  const fileURL = URL.createObjectURL(file);
-  chartInfo = await d3.csv(fileURL).then((res) => res);
+  // const fileURL = URL.createObjectURL(file);
+  // chartInfo = await d3.csv(fileURL).then((res) => res);
+  chartInfo = await convertDataToCSV(url, formData, method);
+  console.log(chartInfo); 
   const columns = Object.keys(chartInfo[0]);
   columns.forEach((column) => {
     addOption(chartX, column);
@@ -588,15 +606,7 @@ const showEmptySelectError = (errorMessage) => {
     generateButton.innerHTML = "Generate";
   }, 2000);
 };
-const sendChartData = async (body) => {
-  const x = await fetch("http://127.0.0.1:5000", {
-    body,
-    method: "POST",
-  })
-    .then((res) => res.text())
-    .then((x) => console.log(x))
-    .catch((err) => console.log(err));
-};
+
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
@@ -616,13 +626,13 @@ const sendDataWrapper = () => {
     sendDataTableData(formData, url, method, showDataTableOutput);
   } else if (output === "Charts") {
     const chartArr = [chartType.value, chartX.value, chartY.value];
-    if (file.name.endsWith(".pkl")) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", "file");
-      formData.append("output", output);
-      sendChartData(formData);
-    }
+    // if (file.name.endsWith(".pkl")) {
+    //   const formData = new FormData();
+    //   formData.append("file", file);
+    //   formData.append("type", "file");
+    //   formData.append("output", output);
+    //   convertDataToCSV(formData);
+    // }
     if (!chartArr.includes("")) {
       showChartData(...chartArr);
     } else {
