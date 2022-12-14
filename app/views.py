@@ -4,19 +4,14 @@ Copyright (c) 2019 - present AppSeed.us
 """
 import csv
 import io
-import json
-import math
-import os
-import sys
-import logging
+
 # Flask modules
-from jinja2 import TemplateNotFound
+from werkzeug.datastructures import FileStorage
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 # App modules
 from app import app, ALLOWED_EXTENSIONS
-from py_data_converter import *
-from py_data_converter.common import get_flask_model, get_django_model
+
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models, parse_csv
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, \
@@ -55,7 +50,6 @@ def index():
                 flask_response = ''
                 django_response = ''
                 input_type = get_type(filename)
-                print(output_desired)
                 if output_desired == 'Flask':
                     if input_type == 'csv':
                         model = parse_csv(file)
@@ -104,13 +98,13 @@ def index():
                     })
                 elif output_desired == 'Charts':
                     if input_type == 'csv':
-                        return file
+                        data = {'file':file}
+                        return data
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
-                        f = io.StringIO()
-                        csv_file.to_csv(f)
-                        csv.writer(f).writerows(f)
-                        return f
+                        f = csv_file.to_csv()
+                        data = {'file':f}
+                        return data
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
