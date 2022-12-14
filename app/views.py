@@ -103,8 +103,7 @@ def index():
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
                         f = csv_file.to_csv()
-                        data = {'file':f}
-                        return data
+                        return f
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
