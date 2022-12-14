@@ -32,7 +32,10 @@ def jsonify_csv(df):
     for i in range(len(values)):
         out.append({})
         for j in range(len(values[i])):
-            out[i][headings[j]] = values[i][j]
+            if(values==''):
+                out[i][headings[j]] = 'null'
+            else:
+                out[i][headings[j]] = values[i][j]
     return out
 
 def get_type(filename):
