@@ -255,7 +255,7 @@ const fillChartOptions = async () => {
   // const fileURL = URL.createObjectURL(file);
   // chartInfo = await d3.csv(fileURL).then((res) => res);
   chartInfo = await convertDataToCSV(url, formData, method);
-  console.log(chartInfo); 
+  console.log(chartInfo);
   const columns = Object.keys(chartInfo[0]);
   columns.forEach((column) => {
     addOption(chartX, column);
