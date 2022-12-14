@@ -588,7 +588,15 @@ const showEmptySelectError = (errorMessage) => {
     generateButton.innerHTML = "Generate";
   }, 2000);
 };
-
+const sendChartData = async (body) => {
+  const x = await fetch("http://127.0.0.1:5000", {
+    body,
+    method: "POST",
+  })
+    .then((res) => res.text())
+    .then((x) => console.log(x))
+    .catch((err) => console.log(err));
+};
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
@@ -608,6 +616,13 @@ const sendDataWrapper = () => {
     sendDataTableData(formData, url, method, showDataTableOutput);
   } else if (output === "Charts") {
     const chartArr = [chartType.value, chartX.value, chartY.value];
+    if (file.name.endsWith(".pkl")) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "file");
+      formData.append("output", output);
+      sendChartData(formData);
+    }
     if (!chartArr.includes("")) {
       showChartData(...chartArr);
     } else {
