@@ -8,7 +8,7 @@ import json
 
 # Flask modules
 from werkzeug.datastructures import FileStorage
-from flask import jsonify
+from flask import jsonify, send_from_directory
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 # App modules
@@ -146,5 +146,18 @@ def index():
     elif request.method == 'GET':
         return render_template('converter/index.html')
 
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory( '.', 'sitemap.xml')
 
-import pandas as pd
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory( '.', 'robots.txt')
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory( './static/common', 'favicon.ico')
+
+@app.route('/googlee35aa2f2fd7b0c5b.html')
+def google_hash():
+    return send_from_directory( '.', 'googlee35aa2f2fd7b0c5b.html')
