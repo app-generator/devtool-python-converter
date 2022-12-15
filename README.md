@@ -2,15 +2,16 @@
 
 **Converter library** for `CSV`, `OpenAPI`, `Pandas DF`, `URLs` using a simple **Drag & Drop UI** - provided by [AppSeed](https://appseed.us/).
 
+- `Python` [Generator & Converter](https://github.com/app-generator/devtool-python-converter) - `source code`
 - `Python` [Generator & Converter](https://app-generator.dev/) - `LIVE demo`
-- Free [Support](https://appseed.us/support/) via `Email` & `Discord`
+- Get [Support](https://appseed.us/support/) via `Email` & `Discord`
 
 <br />
 
 > [EULA License](https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md): 
 
 - **Free** for `students`, `solo-developers` (hobby projects), `NGOs`, and `eLearning` activities
-- **[Unrestricted usage](https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md#lifetime-license)** allowed via `one-time payment` 
+- **[Unrestricted usage](https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md#lifetime-license)** requires a license (one-time payment) 
   - `Payment Link`: **[$299](https://appseed.gumroad.com/l/devtool-python-converter)** (managed by `GUMROAD`) 
 
 <br />

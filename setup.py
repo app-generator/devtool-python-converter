@@ -8,17 +8,17 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
 name='python-data-converter',
-version='1.0.2',
+version='1.0.3',
 zip_safe=False,
 packages=find_packages(),
 include_package_data=True,
 description='Data processor and converter for Python',
 long_description=README,
 long_description_content_type="text/markdown",
-url='https://github.com/app-generator/devtool-python-converter',
+url='https://app-generator.dev',
 author='AppSeed.us',
 author_email='support@appseed.us',
-license='MIT License',
+license='EULA License',
 classifiers=[
     'Intended Audience :: Developers',
     'Intended Audience :: System Administrators',

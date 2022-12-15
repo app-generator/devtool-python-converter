@@ -1,10 +1,11 @@
 # Change Log
 
-## [1.0.2] 2022-12-15
+## [1.0.3] 2022-12-15
 ### Changes
 
 - `Python` [Generator & Converter](https://app-generator.dev/) - `LIVE demo`
 - `DOCS` Update (minor)
+- Update Package License
 
 ## [1.0.1] 2022-12-15
 ### Changes
