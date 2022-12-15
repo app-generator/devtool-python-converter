@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.1] 2022-12-15
+### Changes
+
+- UI Updates (minor)
+- Update License 
+
 ## [1.0.0] 2022-12-15
 ### Changes
 
