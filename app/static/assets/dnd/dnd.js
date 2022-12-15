@@ -216,8 +216,16 @@ const handleInvalidDrop = (fileExtension) => {
   generateContainer.classList.add("hidden");
 };
 
+const writeHTML = (frame, context) => {
+  const doc = frame.contentWindow.document;
+  const newHTML = doc.open("text/html");
+  newHTML.write(context);
+  newHTML.close();
+};
+
 const hideOutputContainer = () => {
-  //chartFLex, outputContainer, dataTableFrameContainerX
+  dataTableFrameX.contentWindow.dataTable?.destroy();
+  writeHTML(dataTableFrameX, "");
   chartFlex.classList.remove("flex");
   const entries = [
     { node: chartFlex, action: "remove", classList: "flex" },
@@ -259,7 +267,7 @@ const convertDataToCSV = async (url, body, method) => {
 
 // fills chart options(x and y axis based on the input and chart type based on the library)
 const fillChartOptions = async () => {
-  const url = "http://127.0.0.1:5000";
+  const url = "/";
   const method = "POST";
   const formData = new FormData();
   formData.append("file", file);
@@ -386,7 +394,6 @@ const handleSelectOutput = (e) => {
         classList: "hidden",
       },
     ];
-    dataTableFrameX.contentWindow.dataTable?.destroy();
     fillExportOptions();
   } else {
     entries = [
@@ -520,10 +527,7 @@ const resizeIframe = (event) => {
 // creates a new html and injects it to a frame
 const createHTML = async (frame, res) => {
   const htmlText = await res.text();
-  const doc = frame.contentWindow.document;
-  const newHTML = doc.open("text/html", "replace");
-  newHTML.write(htmlText);
-  newHTML.close();
+  writeHTML(frame, htmlText);
 };
 
 // renders a data table
@@ -622,7 +626,7 @@ const showEmptySelectError = (errorMessage) => {
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  const url = "http://127.0.0.1:5000";
+  const url = "/";
   const method = "POST";
   if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     const formData = new FormData();
