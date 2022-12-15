@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.8] 2022-12-15
+### Changes
+
+- Codebase cleanUP
+- PKL conversion stable
+- Remove file-based processing 
+
 ## [0.0.7] 2022-12-14
 ### Changes
 
