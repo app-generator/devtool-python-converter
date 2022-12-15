@@ -12,7 +12,7 @@ from flask import jsonify
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 # App modules
-from app import app, ALLOWED_EXTENSIONS
+from app import app
 
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models, parse_csv
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
@@ -23,7 +23,7 @@ from py_data_converter.converter_pandas import convert_pandas_to_csv
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 def jsonify_csv(df):
     values = [[val for val in record[1]] for record in df.iterrows()]
