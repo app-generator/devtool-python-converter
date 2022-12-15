@@ -582,6 +582,7 @@ const showChartData = async (chartType, x, y) => {
   scrollToOutPut(chartOutput);
 };
 
+
 const showEmptySelectError = (errorMessage) => {
   generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
   setTimeout(() => {
