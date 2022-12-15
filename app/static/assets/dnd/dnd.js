@@ -702,7 +702,7 @@ const handleOutputCopy = (event) => {
 //   const djangoUpdated = djangoOutput.textContent;
 //   const flaskUpdated = flaskOutput.textContent;
 //   const type = "update";
-//   const url = "http://127.0.0.1:5000/";
+//   const url = "/";
 //   const method = "POST";
 //   const formData = new FormData();
 //   const updatedValues = {
