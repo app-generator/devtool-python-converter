@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.9] 2022-12-15
+### Changes
+
+- Fixes: reset context at new drop
+
 ## [0.0.8] 2022-12-15
 ### Changes
 
