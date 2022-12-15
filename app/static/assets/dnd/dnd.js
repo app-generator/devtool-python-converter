@@ -216,12 +216,26 @@ const handleInvalidDrop = (fileExtension) => {
   generateContainer.classList.add("hidden");
 };
 
+const hideOutputContainer = () => {
+  //chartFLex, outputContainer, dataTableFrameContainerX
+  chartFlex.classList.remove("flex");
+  const entries = [
+    { node: chartFlex, action: "remove", classList: "flex" },
+    { node: outputContainer, action: "remove", classList: "flex" },
+    { node: chartFlex, action: "add", classList: "hidden" },
+    { node: outputContainer, action: "add", classList: "hidden" },
+    { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
+  ];
+  handleContainersVisibility(entries);
+};
+
 // listens to all drop events on the determined div tag
 const dropZoneDropHandler = (e) => {
   // console.log(e.dataTransfer.getData("URL"));
   chartOptionsContainer.classList.remove("flex");
   chartOptionsContainer.classList.add("hidden");
   selectTableOutputContainer.classList.add("hidden");
+  hideOutputContainer();
   file = e.dataTransfer.files[0];
   const fileName = file.name;
   const splittedFileName = fileName.split(".");
@@ -262,13 +276,13 @@ const fillChartOptions = async () => {
 };
 
 // using an entry object, handles className toggles
-const handleContainersVisibility = (entries) => {
+function handleContainersVisibility(entries) {
   entries.forEach((entry) =>
     entry.action === "add"
       ? entry.node.classList.add(entry.classList)
       : entry.node.classList.remove(entry.classList)
   );
-};
+}
 
 // fills export options
 const fillExportOptions = () => {
