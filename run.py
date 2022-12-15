@@ -10,7 +10,7 @@ from app import app
 DEBUG = app.config['DEBUG'] 
 
 if not DEBUG:
-    Minify(app=app, html=True, js=False, cssless=False)
+    Minify(app=app, html=True, js=True, cssless=True)
 
 app.logger.info('DEBUG            = ' + str( DEBUG )                 )
 app.logger.info('Page Compression = ' + 'FALSE' if DEBUG else 'TRUE' )
