@@ -3,7 +3,7 @@
 **Converter library** for `CSV`, `OpenAPI`, `Pandas DF`, `URLs` using a simple **Drag & Drop UI** - provided by [AppSeed](https://appseed.us/).
 
 - [Python Data Converter](https://app-generator.dev/) - `LIVE demo`
-- [Support](https://appseed.us/support/) via `Email` & `Discord`
+- Free [Support](https://appseed.us/support/) via `Email` & `Discord`
 
 <br />
 
