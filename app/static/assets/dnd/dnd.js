@@ -232,7 +232,6 @@ const dropZoneDropHandler = (e) => {
     handleInvalidDrop(fileExtension);
   else handleValidDrop(fileName, fileExtension);
 };
-
 // fills chart options(x and y axis based on the input and chart type based on the library)
 const fillChartOptions = async () => {
   [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
