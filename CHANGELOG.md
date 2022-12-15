@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.0] 2022-12-15
+### Changes
+
+- Flask STABLE_version
+  - `Drop1` is validated 
+- Minor codebase improvements
+
 ## [0.0.9] 2022-12-15
 ### Changes
 
