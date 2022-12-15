@@ -54,8 +54,8 @@ The license covers:
 
 - `Usage in commercial` projects
 - `Usage in eLearning` activities
-- `Unlimited copies`
-- `Premium Support` via Email / Discord 
+- `Unlimited projects`
+- `Premium` [Support](https://appseed.us/support/) via Email / Discord 
 
 > `IMPORTANT`: The **end-product that used the tool should NOT compete with AppSeed**.
 
