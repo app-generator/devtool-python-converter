@@ -3,7 +3,7 @@
 ## [1.0.2] 2022-12-15
 ### Changes
 
-- `Deploy LIVE`: [Generator & Converter Service](https://app-generator.dev/)
+- `Python` [Generator & Converter](https://app-generator.dev/) - `LIVE demo`
 - `DOCS` Update (minor)
 
 ## [1.0.1] 2022-12-15
