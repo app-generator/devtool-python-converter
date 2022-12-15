@@ -7,16 +7,22 @@ Copyright (c) 2019 - present AppSeed.us
 from flask import Flask
 from flask_cors import CORS
 
+from .config import Config
+
 # Inject Flask magic
 app = Flask(__name__)
 
 CORS(app)
 
+# load Configuration
+app.config.from_object( Config ) 
+
 # App Config - the minimal footprint
-app.config['TESTING'] = True
-app.config['SECRET_KEY'] = 'S#perS3crEt_JamesBond'
-app.config['UPLOAD_FOLDER'] = app.root_path
-ALLOWED_EXTENSIONS = {'json', 'yaml', 'csv', 'pkl'}
+#app.config['TESTING'] = True
+#app.config['SECRET_KEY'] = 'S#perS3crEt_JamesBond'
+#app.config['UPLOAD_FOLDER'] = app.root_path
+
+
 
 # Import routing to render the pages
 from app import views
