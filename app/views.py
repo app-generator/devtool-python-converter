@@ -128,7 +128,7 @@ def index():
 
     elif request.method == 'GET':
         # front
-        return render_template('converter/index.html')
+        return render_template('Converter/index.html')
 
 
 import pandas as pd
