@@ -5,10 +5,12 @@
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
 
-<link href="/static/assets/dnd/dnd.css" rel="stylesheet" />
 
+<!-- DataTables default styling -->
 <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
 
+<!-- UI Processor CSS -->
+<link href="/static/assets/converter/converter.css" rel="stylesheet" />
 
 {% endblock stylesheets %}
 
@@ -246,16 +248,18 @@
 <!-- Specific JS goes HERE -->
 {% block javascripts %}
 
+<!-- Soft Design -->
 <script src="/static/assets/js/soft-design-system.min.js?v=1.0.1" type="text/javascript"></script>
 
-<script defer type="text/javascript" src="/static/assets/dnd/dnd.js"></script>
-
+<!-- FA Fonts -->
 <script src="https://kit.fontawesome.com/9dfa2931b4.js" crossorigin="anonymous"></script>
 
+<!-- JS Plugins: Charts, Data tables -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
 
+<!-- UI Processor JS -->
+<script defer type="text/javascript" src="/static/assets/converter/converter.js"></script>
 
 <script>
   function something() {
