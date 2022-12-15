@@ -53,23 +53,40 @@ The `material explains how to use this conversion tool` written in **Python** to
 
 ## Build from sources
 
+> `Step 1` - Clone Sources 
+
 ```bash
 $ # Clone the sources
 $ git clone https://github.com/app-generator/devtool-python-converter.git
 $ cd devtool-python-converter
-$
+```
+
+<br />
+
+> `Step 2` - Install modules 
+
+```bash
 $ # Virtualenv modules installation (Unix based systems)
 $ virtualenv env
 $ source env/bin/activate
-$
-$ # Install requirements
-$ pip3 install -r requirements.txt
-$
-$ # Set the FLASK_APP environment variable
-$ (Unix/Mac) export FLASK_APP=run.py
-$ (Windows) set FLASK_APP=run.py
+$ pip install -r requirements.txt
+```
+
+<br />
+
+> `Step 3` - Set up environment (optional) 
+
+```bash
+$ (Unix/Mac)   export FLASK_APP=run.py
+$ (Windows)    set FLASK_APP=run.py
 $ (Powershell) $env:FLASK_APP = ".\run.py"
-$
+```
+
+<br />
+
+> `Step 4` - Run the `APP` 
+
+```bash
 $ flask run 
 ```
 
