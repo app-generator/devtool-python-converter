@@ -484,6 +484,7 @@ const showFlaskDjangoOutput = (output) => {
     elem.innerHTML = divivize(django["#codes$"], "django");
     handleTypeEventListeners("django");
   }
+  scrollToOutPut(outputContainer);
 };
 
 // sends an http request to the server containing uploaded file to be converted to flask or django output
@@ -564,6 +565,7 @@ const getOffset = (element) => {
   return { top: _y, left: _x };
 };
 
+// scrolls to output container
 const scrollToOutPut = (element) => {
   const { top, left } = getOffset(element);
   window.scrollTo({
@@ -596,6 +598,14 @@ const showChartData = async (chartType, x, y) => {
   });
   scrollToOutPut(chartOutput);
 };
+const showEmptySelectError = (errorMessage) => {
+  generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
+  setTimeout(() => {
+    generateButton.innerHTML = "Generate";
+  }, 2000);
+};
+
+// shows error in case of non-selected output options
 const showEmptySelectError = (errorMessage) => {
   generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
   setTimeout(() => {
