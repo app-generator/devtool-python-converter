@@ -605,14 +605,6 @@ const showEmptySelectError = (errorMessage) => {
   }, 2000);
 };
 
-// shows error in case of non-selected output options
-const showEmptySelectError = (errorMessage) => {
-  generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
-  setTimeout(() => {
-    generateButton.innerHTML = "Generate";
-  }, 2000);
-};
-
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
