@@ -245,7 +245,7 @@ const convertDataToCSV = async (url, body, method) => {
 
 // fills chart options(x and y axis based on the input and chart type based on the library)
 const fillChartOptions = async () => {
-  const url = "http://127.0.0.1:5000";
+  const url = "/";
   const method = "POST";
   const formData = new FormData();
   formData.append("file", file);
@@ -608,7 +608,7 @@ const showEmptySelectError = (errorMessage) => {
 // prepers the required data for post request using sendData function
 const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
-  const url = "http://127.0.0.1:5000";
+  const url = "/";
   const method = "POST";
   if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     const formData = new FormData();
@@ -684,7 +684,7 @@ const handleOutputCopy = (event) => {
 //   const djangoUpdated = djangoOutput.textContent;
 //   const flaskUpdated = flaskOutput.textContent;
 //   const type = "update";
-//   const url = "http://127.0.0.1:5000/";
+//   const url = "/";
 //   const method = "POST";
 //   const formData = new FormData();
 //   const updatedValues = {
