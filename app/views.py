@@ -6,6 +6,8 @@ import csv
 import io
 import json
 
+import pandas as pd
+
 # Flask modules
 from werkzeug.datastructures import FileStorage
 from flask import jsonify, send_from_directory

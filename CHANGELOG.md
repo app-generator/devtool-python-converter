@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.5] 2022-12-16
+### Changes
+
+- Fix: added missing dependency
+
 ## [1.0.4] 2022-12-15
 ### Changes
 
