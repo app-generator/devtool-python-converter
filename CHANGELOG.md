@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.6] 2022-12-16
+### Changes
+
+- `DOCS` Update:
+  - **Recommended Python Version**: `3.8+`
+
 ## [1.0.5] 2022-12-16
 ### Changes
 

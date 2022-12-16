@@ -1,6 +1,6 @@
 # `Python` [Generator & Converter](https://app-generator.dev/)
 
-**Converter library** for `CSV`, `OpenAPI`, `Pandas DF`, `URLs` using a simple **Drag & Drop UI** - provided by [AppSeed](https://appseed.us/).
+**Converter library** for `CSV`, `OpenAPI`, `Pandas DF`, `URLs` using a simple `Drag & Drop UI`. **Recommended Python Version**: `3.8+` and above.
 
 - `Python` [Generator & Converter](https://app-generator.dev/) - `LIVE demo`
 - `Python` [Generator & Converter](https://github.com/app-generator/devtool-python-converter) - `source code`
@@ -59,7 +59,9 @@ The `material explains how to use this conversion tool` written in **Python** to
 
 ## Build from sources
 
-> `Step 1` - Clone Sources 
+> Note: **Recommended Python Version**: `3.8+` and above. `PKL` (Pandas DF) processing will not work with a version below `3.8`. 
+
+**Clone Sources** from the putblic repository:  
 
 ```bash
 $ # Clone the sources
