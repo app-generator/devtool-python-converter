@@ -61,7 +61,9 @@ The `material explains how to use this conversion tool` written in **Python** to
 
 > Note: **Recommended Python Version**: `3.8+` and above. `PKL` (Pandas DF) processing will not work with a version below `3.8`. 
 
-**Clone Sources** from the putblic repository:  
+<br />
+
+> `Step 1` - **Clone Sources** from the putblic repository:  
 
 ```bash
 $ # Clone the sources
