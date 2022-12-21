@@ -35,6 +35,11 @@ const selectTableOutputContainer = document.querySelector(
 );
 const dataTableFrameX = document.querySelector("#data-table-frame-x");
 const dataTableFrameContainerX = document.querySelector("#iframe-container-x");
+const exportPreviewContainer = document.querySelector(
+  "#export-preview-container"
+);
+const downloadPreview = document.querySelector("#download-preview");
+const exportPreviewTitle = document.querySelector("#export-preview-title");
 
 // constants
 let file = null;
@@ -233,6 +238,16 @@ const hideOutputContainer = () => {
     { node: chartFlex, action: "add", classList: "hidden" },
     { node: outputContainer, action: "add", classList: "hidden" },
     { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
+    {
+      node: exportPreviewContainer,
+      action: "remove",
+      classList: "flex",
+    },
+    {
+      node: exportPreviewContainer,
+      action: "add",
+      classList: "hidden",
+    },
   ];
   handleContainersVisibility(entries);
 };
@@ -295,9 +310,7 @@ function handleContainersVisibility(entries) {
 // fills export options
 const fillExportOptions = () => {
   resetOptions(exportOutputSelect, "");
-  ["CSV", "JSON", "SQL", "PDF"].forEach((item) =>
-    addOption(exportOutputSelect, item)
-  );
+  ["CSV", "JSON", "SQL"].forEach((item) => addOption(exportOutputSelect, item));
 };
 
 // listens to change event on the output selection tag
@@ -327,6 +340,11 @@ const handleSelectOutput = (e) => {
         action: "add",
         classList: "hidden",
       },
+      {
+        node: exportPreviewContainer,
+        action: "add",
+        classList: "hidden",
+      },
     ];
   } else if (value === "Charts") {
     entries = [
@@ -340,6 +358,11 @@ const handleSelectOutput = (e) => {
       { node: dataTableFrameContainerX, action: "add", classList: "hidden" },
       {
         node: selectTableOutputContainer,
+        action: "add",
+        classList: "hidden",
+      },
+      {
+        node: exportPreviewContainer,
         action: "add",
         classList: "hidden",
       },
@@ -365,6 +388,11 @@ const handleSelectOutput = (e) => {
       },
       {
         node: chartOptionsContainer,
+        action: "add",
+        classList: "hidden",
+      },
+      {
+        node: exportPreviewContainer,
         action: "add",
         classList: "hidden",
       },
@@ -413,6 +441,11 @@ const handleSelectOutput = (e) => {
       },
       {
         node: chartOptionsContainer,
+        action: "add",
+        classList: "hidden",
+      },
+      {
+        node: exportPreviewContainer,
         action: "add",
         classList: "hidden",
       },
@@ -537,6 +570,40 @@ const showDataTableOutput = async (res) => {
   scrollToOutPut(dataTableFrameX);
 };
 
+// shows the output of export in the browser before downloading
+const handleExportPreview = (dataTable) => {
+  const type = exportOutputSelect.value.toLowerCase();
+  const download = false;
+  const outputShow = document.querySelector("#prettyprint");
+  let processedText = "";
+  const outputText = dataTable.export({
+    type,
+    download,
+  });
+  exportPreviewTitle.innerHTML = type;
+  // exportPreviewContainer.classList.add("flex");
+  exportPreviewContainer.classList.remove("hidden");
+  switch (type) {
+    case "json":
+      processedText = outputText;
+      break;
+    case "sql":
+      processedText = sqlFormatter.format(outputText, { language: "sql" });
+      break;
+    default:
+      break;
+  }
+  outputShow.innerHTML = processedText;
+  scrollToOutPut(exportPreviewContainer);
+  downloadPreview.addEventListener("click", () => {
+    dataTable.export({
+      type,
+      download: true,
+    });
+  });
+  dataTable.destroy();
+};
+
 // fetches data from a table and creates a data table object to use
 const fetchTable = (newDoc) => {
   const table = newDoc.querySelector(".table");
@@ -547,11 +614,7 @@ const fetchTable = (newDoc) => {
     .querySelector("#table-container > table")
     .setAttribute("id", "export-table");
   const dataTable = new simpleDatatables.DataTable("#export-table");
-  dataTable.export({
-    type: exportOutputSelect.value.toLowerCase(),
-    download: true,
-  });
-  dataTable.destroy();
+  handleExportPreview(dataTable);
 };
 
 // prepers the data required for exporting data
