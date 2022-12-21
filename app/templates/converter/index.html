@@ -28,28 +28,30 @@
       <div class="col-12">
         <div class="text-center">
           <p class="my-4 text-sm">
-            <h1 class="text-primary" style="font-size: 1.5rem" >
-              Free Python Converter Service 
-            </h1>  
-            <a target="_blank" class="text-decoration-underline" 
-               href="https://github.com/app-generator/devtool-python-converter" target="_blank">Sources</a>
-            <span class="mx-1">&bull;</span>
-            <a target="_blank" class="text-decoration-underline" 
-              href="https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md" target="_blank">EULA License</a>
+          <h1 class="text-primary" style="font-size: 1.5rem">
+            Free Python Converter Service
+          </h1>
+          <a target="_blank" class="text-decoration-underline"
+            href="https://github.com/app-generator/devtool-python-converter" target="_blank">Sources</a>
+          <span class="mx-1">&bull;</span>
+          <a target="_blank" class="text-decoration-underline"
+            href="https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md" target="_blank">EULA
+            License</a>
           </p>
           <p class="my-4 text-sm">
             <strong>Sources are Free</strong> for eLearning & Hobby Projects.
-            <br /> 
+            <br />
             <span class="text-primary">
-              Usage in commercial projects requires a 
-              <a class="fw-bold text-decoration-underline" 
-                 href="https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md" target="_blank">license</a>.
+              Usage in commercial projects requires a
+              <a class="fw-bold text-decoration-underline"
+                href="https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md"
+                target="_blank">license</a>.
             </span>
           </p>
         </div>
       </div>
-    </div>      
-    
+    </div>
+
     <div class="row ">
       <div class="col-md-6 mx-auto text-center">
 
@@ -67,7 +69,8 @@
           Simply drop your asset below.
           </h5>
           <p class="text-lead">
-            Supported Inputs: <strong>OpenAPI</strong> (JSON), <strong>Pandas DF</strong> (pkl), <strong>CSV</strong> files 
+            Supported Inputs: <strong>OpenAPI</strong> (JSON), <strong>Pandas DF</strong> (pkl), <strong>CSV</strong>
+            files
           </p>
 
           {% endif %}
@@ -137,7 +140,7 @@
             <button id="apply-change-1" class="button apply-button">Apply Change</button>
           </div>
         </div>
-        <pre class="output-1" id="output-1"></pre>
+        <pre class="output output-1" id="output-1"></pre>
         <div class="validation-container" id="validation-container-1">
           <div>
             <button class="validate button hidden" id="validate-1">validate data</button>
@@ -179,7 +182,7 @@
             <button id="apply-change-2" class="button apply-button">Apply Change</button>
           </div>
         </div>
-        <pre class="output-2" id="output-2"></pre>
+        <pre class="output output-2" id="output-2"></pre>
         <div class="validation-container" id="validation-container-2">
           <div>
             <button class="validate button hidden" id="validate-2">validate data</button>
@@ -250,6 +253,24 @@
 
     <!-- </div> -->
   </div>
+  <div id="export-preview-container" class="output-container hidden">
+    <div class="output-wrapper">
+      <div class="output-header">
+        <div class="output-title" id="export-preview-title">output</div>
+        <div id="download-preview" class="utill download-button">
+          <div>
+            download
+          </div>
+          <div>
+            <i class="fa fa-download" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+      <div>
+        <pre class="prettyprint output" id="prettyprint"></pre>
+      </div>
+    </div>
+  </div>
 </section>
 
 {% endblock content %}
@@ -270,7 +291,13 @@
 <!-- UI Processor JS -->
 <script defer type="text/javascript" src="/static/assets/converter/converter.js"></script>
 
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql-formatter/12.0.4/sql-formatter.min.js"
+  integrity="sha512-RQyV6UByz4KZZZtZLtQnxaqRLQ46x0sKtBcwz7svQeC2HdZavOVplrQzpes1lW5BYr1hz/PjW9dOOwOh97wlSw=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+
   function something() {
 
     console.log(' whatever');
