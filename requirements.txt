@@ -1,11 +1,11 @@
 flask==2.0.2
 jinja2==3.0.2
-gunicorn==20.1.0
-python-dotenv==0.19.2
+gunicorn
+python-dotenv
 Flask-Minify
 requests
-glom==22.1.0
-pyyaml==6.0
-pandas
+glom
+pyyaml
+pandas==1.1.5
 Werkzeug~=2.0.3
 flask-cors
