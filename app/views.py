@@ -7,6 +7,7 @@ import io
 import json
 
 import pandas as pd
+import requests
 
 # Flask modules
 from werkzeug.datastructures import FileStorage
@@ -27,6 +28,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+
 def jsonify_csv(df):
     values = [[val for val in record[1]] for record in df.iterrows()]
     headings = [row for row in df.head()]
@@ -34,11 +36,12 @@ def jsonify_csv(df):
     for i in range(len(values)):
         out.append({})
         for j in range(len(values[i])):
-            if(pd.isna(values[i][j])):
+            if (pd.isna(values[i][j])):
                 out[i][headings[j]] = 'null'
             else:
                 out[i][headings[j]] = values[i][j]
     return out
+
 
 def get_type(filename):
     return filename.rsplit('.', 1)[1].lower()
@@ -46,6 +49,11 @@ def get_type(filename):
 
 # App main route + generic
 # routing
+
+def extract_filename(url):
+    parts = url.split('/')
+    return parts[-1][:-4]
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -57,6 +65,11 @@ def index():
             file = request.files['file']
             # If the user does not select a file, the browser submits an
             # empty file without a filename.
+            file.stream.seek(0, 2)
+            size = file.stream.tell()
+            file.stream.seek(0)
+            if size >= 50000:
+                return 'Sorry your file is too big it must have less than 50000 char',400
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
@@ -144,22 +157,80 @@ def index():
                         django_response = convert_csv_to_django_models(model, file.filename[:-4])
                     data = {'django': django_response, 'flask': flask_response}
                     return data
+        elif post_type == 'url':
+            url = data['url']
+            if url[-3:] != 'csv':
+                return "your link is not a valid csv file", 400
+            r = requests.get(url)
+            file = r.content
+            if len(file) < 50000:
+                filename = extract_filename(url)
+                output_desired = data['output']
+                flask_response = ''
+                django_response = ''
+                input_type = get_type(filename)
+                if output_desired == 'Flask':
+                    if input_type == 'csv':
+                        model = parse_csv(file)
+                        flask_response = convert_csv_to_flask_models(model, filename)
+                    data = {'flask': flask_response}
+                    return data
+                elif output_desired == 'Django':
+                    if input_type == 'csv':
+                        model = parse_csv(file)
+                        django_response = convert_csv_to_django_models(model, filename)
+                    data = {'django': django_response}
+                    return data
+                elif output_desired == 'DataTable':
+                    if input_type == 'csv':
+                        csv_file = pd.read_csv(file)
+                    else:
+                        flash('input file is not supported!')
+                        return redirect(request.url)
+                    headings = [row for row in csv_file.head()]
+
+                    return render_template('datatb/datatb.html', **{
+                        'model_name': 'model_name',
+                        'headings': headings,
+                        'data': [[val for val in record[1]] for record in csv_file.iterrows()],
+                    })
+                elif output_desired == 'Charts':
+                    if input_type == 'csv':
+                        csv_file = pd.read_csv(file)
+                    else:
+                        flash('input file is not supported!')
+                        return redirect(request.url)
+                    response = jsonify(jsonify_csv(csv_file))
+                    return response
+                else:
+                    if input_type == 'csv':
+                        model = parse_csv(file)
+                        django_response = convert_csv_to_django_models(model, filename)
+                        flask_response = convert_csv_to_flask_models(model, filename)
+                    data = {'django': django_response, 'flask': flask_response}
+                    return data
+
+
 
     elif request.method == 'GET':
         return render_template('converter/index.html')
 
+
 @app.route('/sitemap.xml')
 def sitemap():
-    return send_from_directory( '.', 'sitemap.xml')
+    return send_from_directory('.', 'sitemap.xml')
+
 
 @app.route('/robots.txt')
 def robots():
-    return send_from_directory( '.', 'robots.txt')
+    return send_from_directory('.', 'robots.txt')
+
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory( './static/common', 'favicon.ico')
+    return send_from_directory('./static/common', 'favicon.ico')
+
 
 @app.route('/googlee35aa2f2fd7b0c5b.html')
 def google_hash():
-    return send_from_directory( '.', 'googlee35aa2f2fd7b0c5b.html')
+    return send_from_directory('.', 'googlee35aa2f2fd7b0c5b.html')
