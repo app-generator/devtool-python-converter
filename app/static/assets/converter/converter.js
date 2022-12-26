@@ -261,15 +261,19 @@ const dropZoneDropHandler = (e) => {
   selectTableOutputContainer.classList.add("hidden");
   hideOutputContainer();
   file = e.dataTransfer.files[0] ?? e.dataTransfer.getData("URL");
-  // console.log(file ?? e.dataTransfer.getData("URL"));
-  const fileName = file.name;
-  const splittedFileName = fileName.split(".");
-  const fileExtension =
-    splittedFileName[splittedFileName.length - 1].toLocaleLowerCase();
-  resetOptions(selectOutput, "select output");
-  if (!VALID_EXTENSIONS.includes(fileExtension))
-    handleInvalidDrop(fileExtension);
-  else handleValidDrop(fileName, fileExtension);
+  if (file instanceof File) {
+    const fileName = file.name;
+    const splittedFileName = fileName.split(".");
+    const fileExtension =
+      splittedFileName[splittedFileName.length - 1].toLocaleLowerCase();
+    resetOptions(selectOutput, "select output");
+    if (!VALID_EXTENSIONS.includes(fileExtension))
+      handleInvalidDrop(fileExtension);
+    else handleValidDrop(fileName, fileExtension);
+  } else {
+    resetOptions(selectOutput, "select output");
+    handleValidDrop(file, "csv");
+  }
 };
 
 // sends an http request to server and converts pkl,csv files to json
@@ -550,6 +554,7 @@ const sendFlaskDjangoData = async (body, url, method) => {
     body,
   });
   const result = await request.json().catch((error) => error);
+  console.log(result);
   showFlaskDjangoOutput(result);
 };
 
@@ -583,7 +588,6 @@ const handleExportPreview = (dataTable) => {
     download,
   });
   exportPreviewTitle.innerHTML = type;
-  // exportPreviewContainer.classList.add("flex");
   exportPreviewContainer.classList.remove("hidden");
   switch (type) {
     case "json":
@@ -600,7 +604,6 @@ const handleExportPreview = (dataTable) => {
 
       break;
     case "csv":
-      // document.querySelector("#table-container").classList.remove("hidden");
       document
         .querySelector("#prettprint-table-container")
         .classList.remove("hidden");
@@ -617,8 +620,6 @@ const handleExportPreview = (dataTable) => {
     });
   });
   dataTable.destroy();
-  // console.log(dataTable);
-  // console.log(document.querySelector("#prettyprint-container"));
 };
 
 // fetches data from a table and creates a data table object to use
@@ -709,17 +710,26 @@ const sendDataWrapper = () => {
   const output = document.querySelector("#select-output").value;
   const url = "/";
   const method = "POST";
-  if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
-    const formData = new FormData();
+  const formData = new FormData();
+  formData.append("output", output === "Export" ? "DataTable" : output);
+  if (file instanceof File) {
     formData.append("file", file);
     formData.append("type", "file");
-    formData.append("output", output);
+  } else {
+    formData.append("url", file);
+    formData.append("type", "url");
+  }
+  if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
+    // const formData = new FormData();
+    // formData.append("file", file);
+    // formData.append("type", "file");
+    // formData.append("output", output);
     sendFlaskDjangoData(formData, url, method);
   } else if (output === "DataTable") {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", "file");
-    formData.append("output", output);
+    // const formData = new FormData();
+    // formData.append("file", file);
+    // formData.append("type", "file");
+    // formData.append("output", output);
     sendDataTableData(formData, url, method, showDataTableOutput);
   } else if (output === "Charts") {
     const chartArr = [chartType.value, chartX.value, chartY.value];
@@ -732,10 +742,10 @@ const sendDataWrapper = () => {
     if (exportOutputSelect.value === "") {
       showEmptySelectError("select Export output");
     } else {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", "file");
-      formData.append("output", "DataTable");
+      // const formData = new FormData();
+      // formData.append("file", file);
+      // formData.append("type", "file");
+      // formData.append("output", "DataTable");
       sendDataTableData(formData, url, method, exportData);
     }
   }
