@@ -149,6 +149,7 @@ def index():
                     return data
                 elif output_desired == 'DataTable':
                     if input_type == 'csv':
+                        print(file)
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
@@ -167,7 +168,6 @@ def index():
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
-
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
@@ -196,8 +196,8 @@ def index():
         elif post_type == 'url':
             url = data['url']
             if url.count('github') > 0:
-                url = url + '?raw=true'
-                r = requests.get(url)
+                url1 = url + '?raw=true'
+                r = requests.get(url1)
                 file = r.content
                 file = file.decode('utf-8')
             else:
@@ -209,16 +209,14 @@ def index():
                 output_desired = data['output']
                 flask_response = ''
                 django_response = ''
-                input_type = get_type(filename)
-
+                input_type = get_type(url)
                 if output_desired == 'DataTable':
                     if input_type == 'csv':
-                        csv_file = pd.read_csv(file)
+                        csv_file = pd.read_csv(io.StringIO(file))
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
                     headings = [row for row in csv_file.head()]
-
                     return render_template('datatb/datatb.html', **{
                         'model_name': 'model_name',
                         'headings': headings,
@@ -226,9 +224,9 @@ def index():
                     })
                 elif output_desired == 'Charts':
                     if input_type == 'csv':
-                        csv_file = pd.read_csv(file)
+                        csv_file = pd.read_csv(io.StringIO(file))
                     else:
-                        flash('input file is not supported!')
+                        flash('input file is not supported!*6')
                         return redirect(request.url)
                     response = jsonify(jsonify_csv(csv_file))
                     return response
