@@ -230,6 +230,7 @@ const writeHTML = (frame, context) => {
 
 const hideOutputContainer = () => {
   dataTableFrameX.contentWindow.dataTable?.destroy();
+  // document.querySelector("#prettyprint-container").remove("#export-table");
   writeHTML(dataTableFrameX, "");
   chartFlex.classList.remove("flex");
   const entries = [
@@ -259,7 +260,8 @@ const dropZoneDropHandler = (e) => {
   chartOptionsContainer.classList.add("hidden");
   selectTableOutputContainer.classList.add("hidden");
   hideOutputContainer();
-  file = e.dataTransfer.files[0];
+  file = e.dataTransfer.files[0] ?? e.dataTransfer.getData("URL");
+  // console.log(file ?? e.dataTransfer.getData("URL"));
   const fileName = file.name;
   const splittedFileName = fileName.split(".");
   const fileExtension =
@@ -586,9 +588,22 @@ const handleExportPreview = (dataTable) => {
   switch (type) {
     case "json":
       processedText = outputText;
+      document
+        .querySelector("#prettprint-table-container")
+        .classList.add("hidden");
       break;
     case "sql":
       processedText = sqlFormatter.format(outputText, { language: "sql" });
+      document
+        .querySelector("#prettprint-table-container")
+        .classList.add("hidden");
+
+      break;
+    case "csv":
+      // document.querySelector("#table-container").classList.remove("hidden");
+      document
+        .querySelector("#prettprint-table-container")
+        .classList.remove("hidden");
       break;
     default:
       break;
@@ -602,6 +617,8 @@ const handleExportPreview = (dataTable) => {
     });
   });
   dataTable.destroy();
+  // console.log(dataTable);
+  // console.log(document.querySelector("#prettyprint-container"));
 };
 
 // fetches data from a table and creates a data table object to use
@@ -609,11 +626,12 @@ const fetchTable = (newDoc) => {
   const table = newDoc.querySelector(".table");
   table.classList.remove("table");
   table.classList.remove("dataTable-table");
-  document.querySelector("#table-container").appendChild(table);
+  document.querySelector("#prettprint-table-container").appendChild(table);
   document
-    .querySelector("#table-container > table")
+    .querySelector("#prettprint-table-container > table")
     .setAttribute("id", "export-table");
   const dataTable = new simpleDatatables.DataTable("#export-table");
+  // console.log(document.querySelector("#prettyprint"));
   handleExportPreview(dataTable);
 };
 
@@ -823,3 +841,69 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 // );
 
 dataTableFrameX.addEventListener("load", resizeIframe);
+// let r = "";
+// const x = async () => {
+//   fetch(
+//     "https://api.github.com/repos/app-generator/devtool-data-converter/contents/samples/data.csv"
+//   )
+//     .then(async (a) => {
+//       const x = await a.json();
+//       r = x.name;
+//       return x;
+//     })
+//     .then(
+//       (d) =>
+//         fetch(
+//           `https://api.github.com/repos/app-generator/devtool-data-converter/git/blobs/${d.sha}`
+//         )
+//           .then((b) => b.json())
+//           .then((d) => {
+//             console.log(atob(d.content));
+//             // const url = "/";
+//             // const method = "POST";
+//             // const formData = new FormData();
+//             // const blob = new Blob([d], {
+//             //   type: "application/octet-stream",
+//             // });
+//             // const f = new File([blob], r, {
+//             //   type: "application/octet-stream",
+//             // });
+//             // formData.append("file", f);
+//             // formData.append("type", "file");
+//             // formData.append("output", "Model");
+//             // fetch(url, { method, body: formData })
+//             //   .then((res) => res.json())
+//             //   .then((x) => console.log(x))
+//             //   .catch((e) => console.log(e));
+//           })
+//           // .then((a) => console.log(a))
+//           .catch((err) => console.log(err))
+//       // {
+//       //   const url = "/";
+//       //   const method = "POST";
+//       //   const formData = new FormData();
+//       //   formData.append("file", new File([x], "x.csv"));
+//       //   formData.append("type", "file");
+//       //   formData.append("output", "Model");
+//       //   fetch(url, { method, body: formData })
+//       //     .then((res) => res.json())
+//       //     .then((x) => console.log(x))
+//       //     .catch((e) => console.log(e));
+//       // }
+//     )
+//     .catch((err) => console.log(err.response));
+// };
+// x();
+
+// const myFunc = (a) => {
+//   console.log(a);
+// };
+// const c = async () => {
+//   fetch(
+//     "https://docs.google.com/spreadsheets/d/1_z9OGyFnVKKvD2OidFNKF8vEXMzoddnLgbBCERLPgG8/edit#gid=0"
+//   )
+//     .then((a) => a.text())
+//     .then((b) => console.log(b))
+//     .catch((err) => console.log(err));
+// };
+// c();
