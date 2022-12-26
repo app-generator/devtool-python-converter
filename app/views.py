@@ -104,11 +104,11 @@ def index():
                         django_response = convert_openapi_json_to_django_models(openAPI_schema)
                     elif input_type == 'yaml':
                         openAPI_schema = parse_yaml(file)
-                        django_response = convert_openapi_json_to_flask_models(openAPI_schema)
+                        django_response = convert_openapi_json_to_django_models(openAPI_schema)
                     elif input_type == 'pkl':
                         file = convert_pandas_to_csv(file)
                         model = parse_csv(file)
-                        django_response = convert_csv_to_flask_models(model, file.filename[:-4])
+                        django_response = convert_csv_to_django_models(model, file.filename[:-4])
                     data = {'django': django_response}
                     return data
                 elif output_desired == 'DataTable':
@@ -148,7 +148,7 @@ def index():
                         flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
                     elif input_type == 'yaml':
                         openAPI_schema = parse_yaml(file)
-                        django_response = convert_openapi_json_to_flask_models(openAPI_schema)
+                        django_response = convert_openapi_json_to_django_models(openAPI_schema)
                         flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
                     elif input_type == 'pkl':
                         file1 = convert_pandas_to_csv(file)

@@ -57,7 +57,7 @@ def convert_openapi_json_to_flask_models(openAPI_schema):
 
 def parse_yaml(file):
     configuration = yaml.safe_load(file)
-    file = json.dumps(configuration)
+    file = json.loads(json.dumps(configuration))
     return Parse_input(file)
 
 def parse_json(file):

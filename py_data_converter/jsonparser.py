@@ -35,15 +35,15 @@ def getKeysofanObj(object, prev_key=None, keys=[]):
 
 
 def get_keys(d, curr_key=[]):
-    for k, v in d.items():
 
+    for k, v in d.items():
         if isinstance(v, dict):
             yield from get_keys(v, curr_key + [k])
-        elif isinstance(v, list):
-            for i in v:
-                yield from get_keys(i, curr_key + [k])
-        else:
-            yield '.'.join(curr_key + [k])
+        # elif isinstance(v, list):
+        #     for i in v:
+        #         yield from get_keys(i, curr_key + [k])
+        # else:
+        #     yield '.'.join(curr_key + [k])
 
 
 def dict_replace_value(d, old, new):
@@ -62,10 +62,11 @@ def dict_replace_value(d, old, new):
 def replace_keys(data_dict, key_dict):
     new_dict = {}
     if isinstance(data_dict, list):
-        dict_value_list = list()
-        for inner_dict in data_dict:
-            dict_value_list.append(replace_keys(inner_dict, key_dict))
-        return dict_value_list
+        ...
+        # dict_value_list = list()
+        # for inner_dict in data_dict:
+        #     dict_value_list.append(replace_keys(inner_dict, key_dict))
+        # return dict_value_list
     else:
         for key in data_dict.keys():
             value = data_dict[key]
@@ -75,7 +76,7 @@ def replace_keys(data_dict, key_dict):
             else:
                 new_dict[new_key] = value
         return new_dict
-    return new_dict
+
 
 
 def walk_json(obj, key_transform):
