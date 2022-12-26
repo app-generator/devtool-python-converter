@@ -157,7 +157,9 @@ const getDropAreaLabelText = (state, ext, fileName) => {
     case UPLOAD_STATE.success:
       return `${fileName} uploaded successfully.`;
     case UPLOAD_STATE.error:
-      return `${ext} is not a valid file extension.`;
+      return ext
+        ? `${ext} is not a valid file extension.`
+        : "this url is not supported.";
     case UPLOAD_STATE.drag:
       return "drop it like it's hot.";
     case UPLOAD_STATE.dragLeave:
@@ -221,6 +223,7 @@ const handleInvalidDrop = (fileExtension) => {
   generateContainer.classList.add("hidden");
 };
 
+// writes the given context to the given frame
 const writeHTML = (frame, context) => {
   const doc = frame.contentWindow.document;
   const newHTML = doc.open("text/html");
@@ -228,9 +231,9 @@ const writeHTML = (frame, context) => {
   newHTML.close();
 };
 
+// hides the output containers when a new drop is fired
 const hideOutputContainer = () => {
   dataTableFrameX.contentWindow.dataTable?.destroy();
-  // document.querySelector("#prettyprint-container").remove("#export-table");
   writeHTML(dataTableFrameX, "");
   chartFlex.classList.remove("flex");
   const entries = [
@@ -253,9 +256,16 @@ const hideOutputContainer = () => {
   handleContainersVisibility(entries);
 };
 
+// makes sure dropped urls are supported
+const isValidURL = (url) => {
+  return (
+    url.startsWith("https://github.com/") ||
+    url.startsWith("https://docs.google.com/spreadsheets/d/")
+  );
+};
+
 // listens to all drop events on the determined div tag
 const dropZoneDropHandler = (e) => {
-  // console.log(e.dataTransfer.getData("URL"));
   chartOptionsContainer.classList.remove("flex");
   chartOptionsContainer.classList.add("hidden");
   selectTableOutputContainer.classList.add("hidden");
@@ -272,7 +282,11 @@ const dropZoneDropHandler = (e) => {
     else handleValidDrop(fileName, fileExtension);
   } else {
     resetOptions(selectOutput, "select output");
-    handleValidDrop(file, "csv");
+    if (isValidURL(file)) {
+      handleValidDrop(file, "csv");
+    } else {
+      handleInvalidDrop(undefined);
+    }
   }
 };
 
@@ -291,9 +305,14 @@ const fillChartOptions = async () => {
   const url = "/";
   const method = "POST";
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("type", "file");
   formData.append("output", "Charts");
+  if (file instanceof File) {
+    formData.append("file", file);
+    formData.append("type", "file");
+  } else {
+    formData.append("url", file);
+    formData.append("type", "url");
+  }
   [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
   chartInfo = await convertDataToCSV(url, formData, method);
   const columns = Object.keys(chartInfo[0]);
@@ -632,7 +651,6 @@ const fetchTable = (newDoc) => {
     .querySelector("#prettprint-table-container > table")
     .setAttribute("id", "export-table");
   const dataTable = new simpleDatatables.DataTable("#export-table");
-  // console.log(document.querySelector("#prettyprint"));
   handleExportPreview(dataTable);
 };
 
@@ -698,6 +716,8 @@ const showChartData = async (chartType, x, y) => {
   });
   scrollToOutPut(chartOutput);
 };
+
+// shows errors
 const showEmptySelectError = (errorMessage) => {
   generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
   setTimeout(() => {
@@ -720,16 +740,8 @@ const sendDataWrapper = () => {
     formData.append("type", "url");
   }
   if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
-    // const formData = new FormData();
-    // formData.append("file", file);
-    // formData.append("type", "file");
-    // formData.append("output", output);
     sendFlaskDjangoData(formData, url, method);
   } else if (output === "DataTable") {
-    // const formData = new FormData();
-    // formData.append("file", file);
-    // formData.append("type", "file");
-    // formData.append("output", output);
     sendDataTableData(formData, url, method, showDataTableOutput);
   } else if (output === "Charts") {
     const chartArr = [chartType.value, chartX.value, chartY.value];
@@ -742,10 +754,6 @@ const sendDataWrapper = () => {
     if (exportOutputSelect.value === "") {
       showEmptySelectError("select Export output");
     } else {
-      // const formData = new FormData();
-      // formData.append("file", file);
-      // formData.append("type", "file");
-      // formData.append("output", "DataTable");
       sendDataTableData(formData, url, method, exportData);
     }
   }
