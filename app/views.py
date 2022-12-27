@@ -228,7 +228,7 @@ def index():
                     return data
         elif post_type == 'url':
             url = data['url']
-            if url.count('github') > 0:
+            if url.count('github') > 0 and url.count('.csv') > 0:
                 url1 = url + '?raw=true'
                 r = requests.get(url1)
                 file = r.content
@@ -277,7 +277,7 @@ def index():
             driver = data['DB driver']
             user = data['user']
             password = data['pass']
-            db = connect_todb(driver, dbname, user, password, ip, port)
+            db = connect_todb(driver, dbname, user, password, ip, int(port))
             if db is None:
                 return 'bad request', 400
             tables = get_tables(db)
@@ -290,7 +290,7 @@ def index():
             user = data['user']
             password = data['pass']
             table_name = data['table_name']
-            db = connect_todb(driver, dbname, user, password, ip, port)
+            db = connect_todb(driver, dbname, user, password, ip, int(port))
             if db is None:
                 return 'bad request', 400
             csv_table = get_csv_table(db, table_name)
