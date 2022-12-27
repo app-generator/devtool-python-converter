@@ -43,6 +43,9 @@ const exportPreviewTitle = document.querySelector("#export-preview-title");
 const tab1 = document.querySelector("#tab-item-1");
 const tab2 = document.querySelector("#tab-item-2");
 const dbmsContainer = document.querySelector("#dbms-container");
+const dbmsSearch = document.querySelector("#dbms-search");
+const tableName = document.querySelector("#table-name");
+
 // constants
 let file = null;
 let myChart = null;
@@ -720,10 +723,10 @@ const showChartData = async (chartType, x, y) => {
 };
 
 // shows errors
-const showEmptySelectError = (errorMessage) => {
-  generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
+const showEmptySelectError = (button, errorMessage, defaultMessage) => {
+  button.innerHTML = `<div style="font-size:1rem;">${errorMessage}</div>`;
   setTimeout(() => {
-    generateButton.innerHTML = "Generate";
+    button.innerHTML = defaultMessage;
   }, 2000);
 };
 
@@ -750,11 +753,11 @@ const sendDataWrapper = () => {
     if (!chartArr.includes("")) {
       showChartData(...chartArr);
     } else {
-      showEmptySelectError("select chart options");
+      showEmptySelectError(generateButton, "select chart options", "Generate");
     }
   } else if (output === "Export") {
     if (exportOutputSelect.value === "") {
-      showEmptySelectError("select Export output");
+      showEmptySelectError(generateButton, "select Export output", "Generate");
     } else {
       sendDataTableData(formData, url, method, exportData);
     }
@@ -806,6 +809,23 @@ const handleTabChange = (e) => {
   }
 };
 
+const dbmsSearchForTable = async () => {
+  const form = document.forms[1];
+  const body = new FormData(form);
+  body.append("type", "dbms");
+  const url = "/";
+  const method = "POST";
+  const res = await fetch(url, { method, body });
+  if (res.ok) {
+    const options = await res.json();
+    tableName.removeAttribute("disabled");
+    // dbmsSearch.innerHTML = "";
+    options.forEach((option) => addOption(tableName, option));
+  } else {
+    showEmptySelectError(dbmsSearch, res.statusText, "search");
+  }
+};
+// console.log(document.forms);
 // sends an http request to the server containing updated django and flask models to be validated
 // const updateData = async (body, url, method) => {
 //   const result = await fetch(url, {
@@ -880,6 +900,7 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 
 dataTableFrameX.addEventListener("load", resizeIframe);
 [tab1, tab2].forEach((tab) => tab.addEventListener("click", handleTabChange));
+dbmsSearch.addEventListener("click", dbmsSearchForTable);
 // let r = "";
 // const x = async () => {
 //   fetch(

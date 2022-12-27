@@ -274,9 +274,9 @@ def index():
             dbname = data['dbname']
             ip = data['ip']
             port = data['port']
-            driver = data['DB driver']
+            driver = data['DB-driver']           
             user = data['user']
-            password = data['pass']
+            password = data['password']
             db = connect_todb(driver, dbname, user, password, ip, int(port))
             if db is None:
                 return 'bad request', 400
@@ -286,9 +286,9 @@ def index():
             dbname = data['dbname']
             ip = data['ip']
             port = data['port']
-            driver = data['DB driver']
+            driver = data['DB-driver']
             user = data['user']
-            password = data['pass']
+            password = data['password']
             table_name = data['table_name']
             db = connect_todb(driver, dbname, user, password, ip, int(port))
             if db is None:
