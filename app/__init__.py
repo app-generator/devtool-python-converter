@@ -21,7 +21,7 @@ app.config.from_object( Config )
 #app.config['TESTING'] = True
 #app.config['SECRET_KEY'] = 'S#perS3crEt_JamesBond'
 #app.config['UPLOAD_FOLDER'] = app.root_path
-
+app.config['INPUT_LIMIT'] = 50000
 
 
 # Import routing to render the pages
