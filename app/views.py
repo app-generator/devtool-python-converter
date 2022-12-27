@@ -6,7 +6,7 @@ import csv
 import io
 import json
 import os
-# from google import Create_Service
+# from Google import Create_Service
 import pandas as pd
 import requests
 
@@ -30,11 +30,11 @@ from py_data_converter.converter_pandas import convert_pandas_to_csv
 
 def get_tables(db):
     db.load_models()
-    tables = list(db._models.keys())
+    tables = db.get_tables_name()
     return tables
 
 
-def connect_todb(driver, db_name, user, password):
+def connect_todb(driver, db_name, user, password, host, port):
     db = DbWrapper()
     if driver == 'DB_SQLITE':
         db.driver = COMMON.DB_SQLITE
@@ -47,6 +47,8 @@ def connect_todb(driver, db_name, user, password):
     db.db_name = db_name
     db.db_user = user
     db.db_pass = password
+    db.db_host = host
+    db.db_port = port
     db.connect()
     return db
 
@@ -152,10 +154,8 @@ def index():
                         model = parse_csv(file)
                         flask_response = convert_csv_to_flask_models(model, file.filename[:-4])
                     elif input_type == 'json':
-                        # test_dbms()
-                        get_csv_table('api_user_user')
-                    #     openAPI_schema = parse_json(file)
-                    #     flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
+                        openAPI_schema = parse_json(file)
+                        flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
                     elif input_type == 'yaml':
                         openAPI_schema = parse_yaml(file)
                         flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
@@ -271,25 +271,29 @@ def index():
                     data = {'django': django_response, 'flask': flask_response}
                     return data
         elif post_type == 'dbms':
-            url = data['url']
-            driver = data['driver']
+            dbname = data['dbname']
+            ip = data['ip']
+            port = data['port']
+            driver = data['DB driver']
             user = data['user']
-            password = data['password']
-            db = connect_todb(driver, url, user, password)
+            password = data['pass']
+            db = connect_todb(driver, dbname, user, password, ip, port)
             if db is None:
                 return 'bad request', 400
             tables = get_tables(db)
             return jsonify(tables)
         elif post_type == 'dbms_table':
-            url = data['url']
-            driver = data['driver']
+            dbname = data['dbname']
+            ip = data['ip']
+            port = data['port']
+            driver = data['DB driver']
             user = data['user']
-            password = data['password']
+            password = data['pass']
             table_name = data['table_name']
-            db = connect_todb(driver, url, user, password)
+            db = connect_todb(driver, dbname, user, password, ip, port)
             if db is None:
                 return 'bad request', 400
-            csv_table = get_csv_table(db,table_name)
+            csv_table = get_csv_table(db, table_name)
             output_desired = data['output']
             csv_file = pd.read_csv(io.StringIO(csv_table))
             if output_desired == 'DataTable':

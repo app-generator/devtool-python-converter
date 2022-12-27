@@ -26,6 +26,8 @@ class DbWrapper:
     db_name = None
     db_user = None
     db_pass = None
+    db_host = None
+    db_port = None
 
     # reset
     def reset(self):
@@ -51,11 +53,13 @@ class DbWrapper:
             self._ds = DataSet(self._db)
             return True
         elif self.driver == COMMON.DB_MYSQL:
-            self._db = MySQLDatabase(self.db_name, user=self.db_user, password=self.db_pass)
+            self._db = MySQLDatabase(self.db_name, user=self.db_user, password=self.db_pass, host=self.db_host,
+                                     port=self.db_port)
             self._ds = DataSet(self._db)
             return True
         elif self.driver == COMMON.DB_PGSQL:
-            self._db = PostgresqlDatabase(self.db_name, user=self.db_user, password=self.db_pass)
+            self._db = PostgresqlDatabase(self.db_name, user=self.db_user, password=self.db_pass, host=self.db_host,
+                                          port=self.db_port)
             self._ds = DataSet(self._db)
             return True
         else:
@@ -71,6 +75,9 @@ class DbWrapper:
         if not self._models:
             self._models = generate_models(self._db)
             return True
+
+    def get_tables_name(self):
+        return list(self._models.keys())
 
     def get_model(self, aModelName):
 
