@@ -304,8 +304,8 @@ def index():
                 return response
             else:
                 model = parse_csv(csv_table)
-                django_response = convert_csv_to_django_models(model, name)
-                flask_response = convert_csv_to_flask_models(model, name)
+                django_response = convert_csv_to_django_models(model, table_name)
+                flask_response = convert_csv_to_flask_models(model, table_name)
                 data = {'django': django_response, 'flask': flask_response}
                 return data
 
