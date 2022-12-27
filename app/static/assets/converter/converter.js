@@ -40,7 +40,9 @@ const exportPreviewContainer = document.querySelector(
 );
 const downloadPreview = document.querySelector("#download-preview");
 const exportPreviewTitle = document.querySelector("#export-preview-title");
-
+const tab1 = document.querySelector("#tab-item-1");
+const tab2 = document.querySelector("#tab-item-2");
+const dbmsContainer = document.querySelector("#dbms-container");
 // constants
 let file = null;
 let myChart = null;
@@ -786,6 +788,24 @@ const handleOutputCopy = (event) => {
   alertCopy(event.currentTarget.querySelector("#copy-state"));
 };
 
+const handleTabChange = (e) => {
+  const elem = e.target;
+  const info = elem.dataset["info"];
+  const sibling =
+    e.target.nextElementSibling ?? e.target.previousElementSibling;
+  elem.classList.add("primary");
+  elem.classList.remove("secondary");
+  sibling.classList.add("secondary");
+  sibling.classList.remove("primary");
+  if (info === "drop") {
+    dropAreaBorder.classList.remove("hidden");
+    dbmsContainer.classList.add("hidden");
+  } else {
+    dropAreaBorder.classList.add("hidden");
+    dbmsContainer.classList.remove("hidden");
+  }
+};
+
 // sends an http request to the server containing updated django and flask models to be validated
 // const updateData = async (body, url, method) => {
 //   const result = await fetch(url, {
@@ -859,6 +879,7 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 // );
 
 dataTableFrameX.addEventListener("load", resizeIframe);
+[tab1, tab2].forEach((tab) => tab.addEventListener("click", handleTabChange));
 // let r = "";
 // const x = async () => {
 //   fetch(

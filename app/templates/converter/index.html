@@ -83,15 +83,20 @@
 <!-- END Blogs w/ 3 images & quote & text -->
 
 <section class="mt-3 pb-3">
-  <div class="container">
+  <div class="container main-container">
     <div class="row">
       <div class="col-lg-10 col-md-12 col-12 m-auto text-center">
-        <div class="custom-file-uploader" id="custom-file-uploader">
+        <div id="tab-select" class="tab-select">
+          <div class="tab-item tab-item-1 primary" id="tab-item-1" data-info="drop">drop a file or url</div>
+          <div class="tab-item tab-item-2 secondary" id="tab-item-2" data-info="dbms">enter DBMS remote url</div>
+        </div>
+        <div class="custom-file-uploader border-dashed" id="custom-file-uploader">
           <form name="form">
             <label for="file" id="file-upload-label" class="file-upload-label">drop your file or url here.</label>
             <input type="file" id="file_upload" class="file_upload" name="file" accept=".yaml, .json, .csv, .pkl" />
           </form>
         </div>
+        <div class="dbms-container hidden border-dashed" id="dbms-container">salam koskesh</div>
         <div class="output-utills">
           <div class="select-container hidden" id="select-container">
             <select id="select-output" class="form-select output-select" aria-label="Default select example">
@@ -269,7 +274,7 @@
       <div id="prettyprint-container">
         <div id="prettprint-table-container"></div>
         <pre class="prettyprint output" id="prettyprint"></pre>
-        </div>
+      </div>
     </div>
   </div>
 </section>
