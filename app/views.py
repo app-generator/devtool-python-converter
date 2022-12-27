@@ -10,6 +10,9 @@ import os
 import pandas as pd
 import requests
 
+from app.util.helpers import COMMON
+from app.util import *
+
 # Flask modules
 from werkzeug.datastructures import FileStorage
 from flask import jsonify, send_from_directory
@@ -21,8 +24,37 @@ from app import app
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models, parse_csv
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, \
-    Parse_input, parse_yaml, parse_json
+    parse_yaml, parse_json
 from py_data_converter.converter_pandas import convert_pandas_to_csv
+
+
+def get_tables(db):
+    db.load_models()
+    tables = list(db._models.keys())
+    return tables
+
+
+def connect_todb(driver, db_name, user, password):
+    db = DbWrapper()
+    if driver == 'DB_SQLITE':
+        db.driver = COMMON.DB_SQLITE
+    elif driver == 'DB_MYSQL':
+        db.driver = COMMON.DB_MYSQL
+    elif driver == 'DB_PGSQL':
+        db.driver = COMMON.DB_PGSQL
+    else:
+        return None
+    db.db_name = db_name
+    db.db_user = user
+    db.db_pass = password
+    db.connect()
+    return db
+
+
+def get_csv_table(db, name):
+    db.load_models()
+    model = db.dump_model_data(name)
+    return model
 
 
 def allowed_file(filename):
@@ -104,8 +136,8 @@ def index():
             file.stream.seek(0, 2)
             size = file.stream.tell()
             file.stream.seek(0)
-            if size >= 50000:
-                return 'Sorry your file is too big it must have less than 50000 char', 400
+            if size >= app.config['INPUT_LIMIT']:
+                return f"Sorry your file is too big it must have less than {app.config['INPUT_LIMIT']} char", 400
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
@@ -120,8 +152,10 @@ def index():
                         model = parse_csv(file)
                         flask_response = convert_csv_to_flask_models(model, file.filename[:-4])
                     elif input_type == 'json':
-                        openAPI_schema = parse_json(file)
-                        flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
+                        # test_dbms()
+                        get_csv_table('api_user_user')
+                    #     openAPI_schema = parse_json(file)
+                    #     flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
                     elif input_type == 'yaml':
                         openAPI_schema = parse_yaml(file)
                         flask_response = convert_openapi_json_to_flask_models(openAPI_schema)
@@ -149,7 +183,6 @@ def index():
                     return data
                 elif output_desired == 'DataTable':
                     if input_type == 'csv':
-                        print(file)
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
@@ -204,7 +237,7 @@ def index():
                 file = "Not implemented"
                 ...
 
-            if len(file) < 50000:
+            if len(file) < app.config['INPUT_LIMIT']:
                 filename = extract_filename(url)
                 output_desired = data['output']
                 flask_response = ''
@@ -237,6 +270,48 @@ def index():
                         flask_response = convert_csv_to_flask_models(model, filename)
                     data = {'django': django_response, 'flask': flask_response}
                     return data
+        elif post_type == 'dbms':
+            url = data['url']
+            driver = data['driver']
+            user = data['user']
+            password = data['password']
+            db = connect_todb(driver, url, user, password)
+            if db is None:
+                return 'bad request', 400
+            tables = get_tables(db)
+            return jsonify(tables)
+        elif post_type == 'dbms_table':
+            url = data['url']
+            driver = data['driver']
+            user = data['user']
+            password = data['password']
+            table_name = data['table_name']
+            db = connect_todb(driver, url, user, password)
+            if db is None:
+                return 'bad request', 400
+            csv_table = get_csv_table(db,table_name)
+            output_desired = data['output']
+            csv_file = pd.read_csv(io.StringIO(csv_table))
+            if output_desired == 'DataTable':
+                headings = [row for row in csv_file.head()]
+                return render_template('datatb/datatb.html', **{
+                    'model_name': 'model_name',
+                    'headings': headings,
+                    'data': [[val for val in record[1]] for record in csv_file.iterrows()],
+                })
+            elif output_desired == 'Charts':
+                response = jsonify(jsonify_csv(csv_file))
+                return response
+            else:
+                model = parse_csv(csv_table)
+                django_response = convert_csv_to_django_models(model, name)
+                flask_response = convert_csv_to_flask_models(model, name)
+                data = {'django': django_response, 'flask': flask_response}
+                return data
+
+
+
+
 
 
 
