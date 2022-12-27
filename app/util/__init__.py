@@ -40,6 +40,8 @@ class DbWrapper:
         self.db_name = None
         self.db_user = None
         self.db_pass = None
+        self.db_host = None
+        self.db_port = None
 
         # helpers
 
@@ -63,7 +65,7 @@ class DbWrapper:
             self._ds = DataSet(self._db)
             return True
         else:
-            print(' > Error unsupported driver [' + driver + ']')
+            print(' > Error unsupported driver [' + self.driver + ']')
             return False
 
     def load_models(self):

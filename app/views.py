@@ -33,7 +33,7 @@ def get_tables(db):
     tables = db.get_tables_name()
     return tables
 
-
+import time
 def connect_todb(driver, db_name, user, password, host, port):
     db = DbWrapper()
     if driver == 'DB_SQLITE':
