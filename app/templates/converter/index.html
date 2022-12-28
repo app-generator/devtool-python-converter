@@ -114,8 +114,7 @@
               </div>
               <div class="input-group input-group-sm">
                 <span id="inputGroup-sizing-sm" class="input-group-text">user : </span>
-                <input aria-describedby="inputGroup-sizing-sm" id="user" type="text" name="user"
-                  class="form-control" />
+                <input aria-describedby="inputGroup-sizing-sm" id="user" type="text" name="user" class="form-control" />
               </div>
               <div class="input-group input-group-sm">
                 <span id="inputGroup-sizing-sm" class="input-group-text">password : </span>
@@ -129,12 +128,16 @@
               </div>
               <div class="input-group input-group-sm">
                 <span id="inputGroup-sizing-sm" class="input-group-text">table name : </span>
-                <select disabled aria-describedby="inputGroup-sizing-sm" id="table-name" type="text" name="table-name"
+                <select aria-describedby="inputGroup-sizing-sm" id="table-name" type="text" name="table-name"
                   class="form-select">
+                  <option value="x">x</option>
+                  <option value="y">y</option>
                 </select>
               </div>
-              <div>
-                <div class="button search" id="dbms-search">search</div>
+              <div class="search-container">
+                <div class="button search" id="dbms-search">
+                  <div>search</div>
+                </div>
               </div>
             </div>
           </form>

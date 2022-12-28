@@ -189,6 +189,7 @@ const resetOptions = (node, defaultVal) => {
 
 // handles the case when the dropped file is valid
 const handleValidDrop = (fileName, fileExtension) => {
+  generateButton.dataset.target = "drop";
   dropAreaBorder.classList.remove("highlight-border", "error-border");
   dropAreaLabel.classList.remove("highlight-label", "error-label");
   dropAreaBorder.classList.add("success-border");
@@ -578,7 +579,6 @@ const sendFlaskDjangoData = async (body, url, method) => {
     body,
   });
   const result = await request.json().catch((error) => error);
-  console.log(result);
   showFlaskDjangoOutput(result);
 };
 
@@ -730,11 +730,13 @@ const showEmptySelectError = (button, errorMessage, defaultMessage) => {
   }, 2000);
 };
 
-// prepers the required data for post request using sendData function
-const sendDataWrapper = () => {
-  const output = document.querySelector("#select-output").value;
-  const url = "/";
-  const method = "POST";
+const sendDBMSDataWrapper = (url, method) => {
+  const formData = new FormData(document.forms[1]);
+  formData.append("type", "dbms-table");
+  formData.append("output", output === "Export" ? "DataTable" : output);
+};
+
+const sendDroppedDataWrapper = (url, method) => {
   const formData = new FormData();
   formData.append("output", output === "Export" ? "DataTable" : output);
   if (file instanceof File) {
@@ -761,6 +763,19 @@ const sendDataWrapper = () => {
     } else {
       sendDataTableData(formData, url, method, exportData);
     }
+  }
+};
+
+// prepers the required data for post request using sendData function
+const sendDataWrapper = () => {
+  const target = generateButton.dataset.target;
+  const output = document.querySelector("#select-output").value;
+  const url = "/";
+  const method = "POST";
+  if (target === "drop") {
+    sendDroppedDataWrapper(url, method);
+  } else {
+    sendDBMSDataWrapper(url, method);
   }
 };
 
@@ -791,7 +806,24 @@ const handleOutputCopy = (event) => {
   alertCopy(event.currentTarget.querySelector("#copy-state"));
 };
 
+const resetCommons = () => {
+  hideOutputContainer();
+  generateContainer.classList.add("hidden");
+  selectContainer.classList.add("hidden");
+};
+const resetDropArea = () => {
+  file = null;
+  dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.dragLeave);
+  dropAreaBorder.classList.remove("error-border", "success-border");
+  dropAreaLabel.classList.remove("error-label", "success-label");
+};
+const resetInputArea = () => {
+  resetOptions(selectOutput, "select output");
+};
 const handleTabChange = (e) => {
+  resetCommons();
+  resetDropArea();
+  resetInputArea();
   const elem = e.target;
   const info = elem.dataset["info"];
   const sibling =
@@ -824,6 +856,13 @@ const dbmsSearchForTable = async () => {
   } else {
     showEmptySelectError(dbmsSearch, res.statusText, "search");
   }
+};
+
+const handleTableSelection = (e) => {
+  // const selectedValue = e.target.value;
+  CSV_OUTPUT.forEach((output) => addOption(selectOutput, output));
+  selectContainer.classList.remove("hidden");
+  generateContainer.dataset.target = "dbms";
 };
 // console.log(document.forms);
 // sends an http request to the server containing updated django and flask models to be validated
@@ -901,6 +940,7 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 dataTableFrameX.addEventListener("load", resizeIframe);
 [tab1, tab2].forEach((tab) => tab.addEventListener("click", handleTabChange));
 dbmsSearch.addEventListener("click", dbmsSearchForTable);
+tableName.addEventListener("change", handleTableSelection);
 // let r = "";
 // const x = async () => {
 //   fetch(

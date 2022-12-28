@@ -282,14 +282,14 @@ def index():
                 return 'bad request', 400
             tables = get_tables(db)
             return jsonify(tables)
-        elif post_type == 'dbms_table':
+        elif post_type == 'dbms-table':
             dbname = data['dbname']
             ip = data['ip']
             port = data['port']
             driver = data['DB-driver']
             user = data['user']
             password = data['password']
-            table_name = data['table_name']
+            table_name = data['table-name']
             db = connect_todb(driver, dbname, user, password, ip, int(port))
             if db is None:
                 return 'bad request', 400
