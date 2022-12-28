@@ -9,5 +9,9 @@ pyyaml
 pandas
 Werkzeug~=2.0.3
 flask-cors
-pickle5
-# if python version is less than 3.8 install picke5
+Google
+PyMySQL==1.0.2
+peewee==3.14.8
+psycopg==3.0.8
+pickle5;python_version < '3.8' and python_version >= '3.5'
+# if python version is less than 3.8 install pickle5

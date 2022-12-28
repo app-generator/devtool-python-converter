@@ -5,9 +5,13 @@ Copyright (c) 2019 - present AppSeed.us
 import csv
 import io
 import json
-
+import os
+# from Google import Create_Service
 import pandas as pd
 import requests
+
+from app.util.helpers import COMMON
+from app.util import *
 
 # Flask modules
 from werkzeug.datastructures import FileStorage
@@ -20,8 +24,39 @@ from app import app
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models, parse_csv
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, \
-    Parse_input, parse_yaml, parse_json
+    parse_yaml, parse_json
 from py_data_converter.converter_pandas import convert_pandas_to_csv
+
+
+def get_tables(db):
+    db.load_models()
+    tables = db.get_tables_name()
+    return tables
+
+import time
+def connect_todb(driver, db_name, user, password, host, port):
+    db = DbWrapper()
+    if driver == 'DB_SQLITE':
+        db.driver = COMMON.DB_SQLITE
+    elif driver == 'DB_MYSQL':
+        db.driver = COMMON.DB_MYSQL
+    elif driver == 'DB_PGSQL':
+        db.driver = COMMON.DB_PGSQL
+    else:
+        return None
+    db.db_name = db_name
+    db.db_user = user
+    db.db_pass = password
+    db.db_host = host
+    db.db_port = port
+    db.connect()
+    return db
+
+
+def get_csv_table(db, name):
+    db.load_models()
+    model = db.dump_model_data(name)
+    return model
 
 
 def allowed_file(filename):
@@ -55,6 +90,41 @@ def extract_filename(url):
     return parts[-1][:-4]
 
 
+def run_batchUpdate_request(service, google_sheet_id, request_body_json):
+    try:
+        response = service.spreadsheets().batchUpdate(
+            spreadsheetId=google_sheet_id,
+            body=request_body_json
+        ).execute()
+        return response
+    except Exception as e:
+        print(e)
+        return None
+
+
+# def test_google_api():
+#     CLIENT_SECRET_FILE = '<Client Secret file path>'
+#     API_SERVICE_NAME = 'sheets'
+#     API_VERSION = 'v4'
+#     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+#     GOOGLE_SHEET_ID = '1_z9OGyFnVKKvD2OidFNKF8vEXMzoddnLgbBCERLPgG8'
+#
+#     service = Create_Service(CLIENT_SECRET_FILE, API_SERVICE_NAME, API_VERSION, SCOPES)
+#
+#     """
+#     Iterate Worksheets
+#     """
+#     gsheets = service.spreadsheets().get(spreadsheetId=GOOGLE_SHEET_ID).execute()
+#     sheets = gsheets['sheets']
+#     print(sheets)
+
+def test_github_api():
+    url = 'https://github.com/app-generator/devtool-data-converter/raw/main/samples/data.csv?raw=true?raw=true'
+    r = requests.get(url)
+    file = r.content
+    print(file.decode('utf-8'))
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -68,8 +138,8 @@ def index():
             file.stream.seek(0, 2)
             size = file.stream.tell()
             file.stream.seek(0)
-            if size >= 50000:
-                return 'Sorry your file is too big it must have less than 50000 char',400
+            if size >= app.config['INPUT_LIMIT']:
+                return f"Sorry your file is too big it must have less than {app.config['INPUT_LIMIT']} char", 400
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
@@ -131,7 +201,6 @@ def index():
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
                         csv_file = pd.read_pickle(file)
-
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
@@ -159,36 +228,28 @@ def index():
                     return data
         elif post_type == 'url':
             url = data['url']
-            if url[-3:] != 'csv':
-                return "your link is not a valid csv file", 400
-            r = requests.get(url)
-            file = r.content
-            if len(file) < 50000:
+            if url.count('github') > 0 and url.count('.csv') > 0:
+                url1 = url + '?raw=true'
+                r = requests.get(url1)
+                file = r.content
+                file = file.decode('utf-8')
+            else:
+                file = "Not implemented"
+                ...
+
+            if len(file) < app.config['INPUT_LIMIT']:
                 filename = extract_filename(url)
                 output_desired = data['output']
                 flask_response = ''
                 django_response = ''
-                input_type = get_type(filename)
-                if output_desired == 'Flask':
+                input_type = get_type(url)
+                if output_desired == 'DataTable':
                     if input_type == 'csv':
-                        model = parse_csv(file)
-                        flask_response = convert_csv_to_flask_models(model, filename)
-                    data = {'flask': flask_response}
-                    return data
-                elif output_desired == 'Django':
-                    if input_type == 'csv':
-                        model = parse_csv(file)
-                        django_response = convert_csv_to_django_models(model, filename)
-                    data = {'django': django_response}
-                    return data
-                elif output_desired == 'DataTable':
-                    if input_type == 'csv':
-                        csv_file = pd.read_csv(file)
+                        csv_file = pd.read_csv(io.StringIO(file))
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
                     headings = [row for row in csv_file.head()]
-
                     return render_template('datatb/datatb.html', **{
                         'model_name': 'model_name',
                         'headings': headings,
@@ -196,9 +257,9 @@ def index():
                     })
                 elif output_desired == 'Charts':
                     if input_type == 'csv':
-                        csv_file = pd.read_csv(file)
+                        csv_file = pd.read_csv(io.StringIO(file))
                     else:
-                        flash('input file is not supported!')
+                        flash('input file is not supported!*6')
                         return redirect(request.url)
                     response = jsonify(jsonify_csv(csv_file))
                     return response
@@ -209,6 +270,52 @@ def index():
                         flask_response = convert_csv_to_flask_models(model, filename)
                     data = {'django': django_response, 'flask': flask_response}
                     return data
+        elif post_type == 'dbms':
+            dbname = data['dbname']
+            ip = data['ip']
+            port = data['port']
+            driver = data['DB-driver']           
+            user = data['user']
+            password = data['password']
+            db = connect_todb(driver, dbname, user, password, ip, int(port))
+            if db is None:
+                return 'bad request', 400
+            tables = get_tables(db)
+            return jsonify(tables)
+        elif post_type == 'dbms-table':
+            dbname = data['dbname']
+            ip = data['ip']
+            port = data['port']
+            driver = data['DB-driver']
+            user = data['user']
+            password = data['password']
+            table_name = data['table-name']
+            db = connect_todb(driver, dbname, user, password, ip, int(port))
+            if db is None:
+                return 'bad request', 400
+            csv_table = get_csv_table(db, table_name)
+            output_desired = data['output']
+            csv_file = pd.read_csv(io.StringIO(csv_table))
+            if output_desired == 'DataTable':
+                headings = [row for row in csv_file.head()]
+                return render_template('datatb/datatb.html', **{
+                    'model_name': 'model_name',
+                    'headings': headings,
+                    'data': [[val for val in record[1]] for record in csv_file.iterrows()],
+                })
+            elif output_desired == 'Charts':
+                response = jsonify(jsonify_csv(csv_file))
+                return response
+            else:
+                model = parse_csv(csv_table)
+                django_response = convert_csv_to_django_models(model, table_name)
+                flask_response = convert_csv_to_flask_models(model, table_name)
+                data = {'django': django_response, 'flask': flask_response}
+                return data
+
+
+
+
 
 
 

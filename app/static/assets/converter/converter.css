@@ -1,3 +1,80 @@
+.tab-select{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.tab-item{
+  font-family: 'Open Sans';
+  height: 35px;
+  border-radius: 5px 5px 0 0;
+  font-size: 1rem;
+  padding: 5px; 
+  font-weight: 100;
+  border: 2px dashed #9c9c9c;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.primary{
+  opacity: 100%;
+}
+
+.secondary{
+  opacity: 30%;
+}
+
+.secondary:hover{
+  transition-duration: 0.5s;
+  opacity: 80%;
+}
+.secondary:not(:hover) {
+  transition-duration: 0.5s;
+  opacity: 30%;
+}
+
+.tab-item-2{
+  margin-left: 20px;
+}
+
+.border-dashed{
+  border: 2px dashed #9c9c9c;
+}
+
+/* .dbms-container{
+  padding: 40px 10px;
+} */
+
+
+.dbms-flex-container{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.dbms-flex-container > div{
+  padding: 10px;
+}
+
+.search-container{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.search{
+  border: none;
+  border-radius: 20px;
+  height: 40px;
+  cursor: pointer;
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .custom-file-uploader {
   position: relative;
   border: 2px dashed #9c9c9c;

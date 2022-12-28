@@ -40,6 +40,11 @@ const exportPreviewContainer = document.querySelector(
 );
 const downloadPreview = document.querySelector("#download-preview");
 const exportPreviewTitle = document.querySelector("#export-preview-title");
+const tab1 = document.querySelector("#tab-item-1");
+const tab2 = document.querySelector("#tab-item-2");
+const dbmsContainer = document.querySelector("#dbms-container");
+const dbmsSearch = document.querySelector("#dbms-search");
+const tableName = document.querySelector("#table-name");
 
 // constants
 let file = null;
@@ -157,7 +162,9 @@ const getDropAreaLabelText = (state, ext, fileName) => {
     case UPLOAD_STATE.success:
       return `${fileName} uploaded successfully.`;
     case UPLOAD_STATE.error:
-      return `${ext} is not a valid file extension.`;
+      return ext
+        ? `${ext} is not a valid file extension.`
+        : "this url is not supported.";
     case UPLOAD_STATE.drag:
       return "drop it like it's hot.";
     case UPLOAD_STATE.dragLeave:
@@ -182,6 +189,7 @@ const resetOptions = (node, defaultVal) => {
 
 // handles the case when the dropped file is valid
 const handleValidDrop = (fileName, fileExtension) => {
+  generateButton.dataset.target = "drop";
   dropAreaBorder.classList.remove("highlight-border", "error-border");
   dropAreaLabel.classList.remove("highlight-label", "error-label");
   dropAreaBorder.classList.add("success-border");
@@ -221,6 +229,7 @@ const handleInvalidDrop = (fileExtension) => {
   generateContainer.classList.add("hidden");
 };
 
+// writes the given context to the given frame
 const writeHTML = (frame, context) => {
   const doc = frame.contentWindow.document;
   const newHTML = doc.open("text/html");
@@ -228,9 +237,9 @@ const writeHTML = (frame, context) => {
   newHTML.close();
 };
 
+// hides the output containers when a new drop is fired
 const hideOutputContainer = () => {
   dataTableFrameX.contentWindow.dataTable?.destroy();
-  // document.querySelector("#prettyprint-container").remove("#export-table");
   writeHTML(dataTableFrameX, "");
   chartFlex.classList.remove("flex");
   const entries = [
@@ -253,23 +262,38 @@ const hideOutputContainer = () => {
   handleContainersVisibility(entries);
 };
 
+// makes sure dropped urls are supported
+const isValidURL = (url) => {
+  return (
+    url.startsWith("https://github.com/") ||
+    url.startsWith("https://docs.google.com/spreadsheets/d/")
+  );
+};
+
 // listens to all drop events on the determined div tag
 const dropZoneDropHandler = (e) => {
-  // console.log(e.dataTransfer.getData("URL"));
   chartOptionsContainer.classList.remove("flex");
   chartOptionsContainer.classList.add("hidden");
   selectTableOutputContainer.classList.add("hidden");
   hideOutputContainer();
   file = e.dataTransfer.files[0] ?? e.dataTransfer.getData("URL");
-  // console.log(file ?? e.dataTransfer.getData("URL"));
-  const fileName = file.name;
-  const splittedFileName = fileName.split(".");
-  const fileExtension =
-    splittedFileName[splittedFileName.length - 1].toLocaleLowerCase();
-  resetOptions(selectOutput, "select output");
-  if (!VALID_EXTENSIONS.includes(fileExtension))
-    handleInvalidDrop(fileExtension);
-  else handleValidDrop(fileName, fileExtension);
+  if (file instanceof File) {
+    const fileName = file.name;
+    const splittedFileName = fileName.split(".");
+    const fileExtension =
+      splittedFileName[splittedFileName.length - 1].toLocaleLowerCase();
+    resetOptions(selectOutput, "select output");
+    if (!VALID_EXTENSIONS.includes(fileExtension))
+      handleInvalidDrop(fileExtension);
+    else handleValidDrop(fileName, fileExtension);
+  } else {
+    resetOptions(selectOutput, "select output");
+    if (isValidURL(file)) {
+      handleValidDrop(file, "csv");
+    } else {
+      handleInvalidDrop(undefined);
+    }
+  }
 };
 
 // sends an http request to server and converts pkl,csv files to json
@@ -287,9 +311,14 @@ const fillChartOptions = async () => {
   const url = "/";
   const method = "POST";
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("type", "file");
   formData.append("output", "Charts");
+  if (file instanceof File) {
+    formData.append("file", file);
+    formData.append("type", "file");
+  } else {
+    formData.append("url", file);
+    formData.append("type", "url");
+  }
   [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
   chartInfo = await convertDataToCSV(url, formData, method);
   const columns = Object.keys(chartInfo[0]);
@@ -583,7 +612,6 @@ const handleExportPreview = (dataTable) => {
     download,
   });
   exportPreviewTitle.innerHTML = type;
-  // exportPreviewContainer.classList.add("flex");
   exportPreviewContainer.classList.remove("hidden");
   switch (type) {
     case "json":
@@ -600,7 +628,6 @@ const handleExportPreview = (dataTable) => {
 
       break;
     case "csv":
-      // document.querySelector("#table-container").classList.remove("hidden");
       document
         .querySelector("#prettprint-table-container")
         .classList.remove("hidden");
@@ -617,8 +644,6 @@ const handleExportPreview = (dataTable) => {
     });
   });
   dataTable.destroy();
-  // console.log(dataTable);
-  // console.log(document.querySelector("#prettyprint-container"));
 };
 
 // fetches data from a table and creates a data table object to use
@@ -631,7 +656,6 @@ const fetchTable = (newDoc) => {
     .querySelector("#prettprint-table-container > table")
     .setAttribute("id", "export-table");
   const dataTable = new simpleDatatables.DataTable("#export-table");
-  // console.log(document.querySelector("#prettyprint"));
   handleExportPreview(dataTable);
 };
 
@@ -697,47 +721,61 @@ const showChartData = async (chartType, x, y) => {
   });
   scrollToOutPut(chartOutput);
 };
-const showEmptySelectError = (errorMessage) => {
-  generateButton.innerHTML = `<div style="font-size:0.8rem;">${errorMessage}</div>`;
+
+// shows errors
+const showEmptySelectError = (button, errorMessage, defaultMessage) => {
+  button.innerHTML = `<div style="font-size:1rem;">${errorMessage}</div>`;
   setTimeout(() => {
-    generateButton.innerHTML = "Generate";
+    button.innerHTML = defaultMessage;
   }, 2000);
 };
 
-// prepers the required data for post request using sendData function
-const sendDataWrapper = () => {
-  const output = document.querySelector("#select-output").value;
-  const url = "/";
-  const method = "POST";
-  if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
-    const formData = new FormData();
+const sendDBMSDataWrapper = (url, method) => {
+  const formData = new FormData(document.forms[1]);
+  formData.append("type", "dbms-table");
+  formData.append("output", output === "Export" ? "DataTable" : output);
+};
+
+const sendDroppedDataWrapper = (url, method) => {
+  const formData = new FormData();
+  formData.append("output", output === "Export" ? "DataTable" : output);
+  if (file instanceof File) {
     formData.append("file", file);
     formData.append("type", "file");
-    formData.append("output", output);
+  } else {
+    formData.append("url", file);
+    formData.append("type", "url");
+  }
+  if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     sendFlaskDjangoData(formData, url, method);
   } else if (output === "DataTable") {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", "file");
-    formData.append("output", output);
     sendDataTableData(formData, url, method, showDataTableOutput);
   } else if (output === "Charts") {
     const chartArr = [chartType.value, chartX.value, chartY.value];
     if (!chartArr.includes("")) {
       showChartData(...chartArr);
     } else {
-      showEmptySelectError("select chart options");
+      showEmptySelectError(generateButton, "select chart options", "Generate");
     }
   } else if (output === "Export") {
     if (exportOutputSelect.value === "") {
-      showEmptySelectError("select Export output");
+      showEmptySelectError(generateButton, "select Export output", "Generate");
     } else {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", "file");
-      formData.append("output", "DataTable");
       sendDataTableData(formData, url, method, exportData);
     }
+  }
+};
+
+// prepers the required data for post request using sendData function
+const sendDataWrapper = () => {
+  const target = generateButton.dataset.target;
+  const output = document.querySelector("#select-output").value;
+  const url = "/";
+  const method = "POST";
+  if (target === "drop") {
+    sendDroppedDataWrapper(url, method);
+  } else {
+    sendDBMSDataWrapper(url, method);
   }
 };
 
@@ -768,6 +806,65 @@ const handleOutputCopy = (event) => {
   alertCopy(event.currentTarget.querySelector("#copy-state"));
 };
 
+const resetCommons = () => {
+  hideOutputContainer();
+  generateContainer.classList.add("hidden");
+  selectContainer.classList.add("hidden");
+};
+const resetDropArea = () => {
+  file = null;
+  dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.dragLeave);
+  dropAreaBorder.classList.remove("error-border", "success-border");
+  dropAreaLabel.classList.remove("error-label", "success-label");
+};
+const resetInputArea = () => {
+  resetOptions(selectOutput, "select output");
+};
+const handleTabChange = (e) => {
+  resetCommons();
+  resetDropArea();
+  resetInputArea();
+  const elem = e.target;
+  const info = elem.dataset["info"];
+  const sibling =
+    e.target.nextElementSibling ?? e.target.previousElementSibling;
+  elem.classList.add("primary");
+  elem.classList.remove("secondary");
+  sibling.classList.add("secondary");
+  sibling.classList.remove("primary");
+  if (info === "drop") {
+    dropAreaBorder.classList.remove("hidden");
+    dbmsContainer.classList.add("hidden");
+  } else {
+    dropAreaBorder.classList.add("hidden");
+    dbmsContainer.classList.remove("hidden");
+  }
+};
+
+const dbmsSearchForTable = async () => {
+  const form = document.forms[1];
+  const body = new FormData(form);
+  body.append("type", "dbms");
+  const url = "/";
+  const method = "POST";
+  const res = await fetch(url, { method, body });
+  if (res.ok) {
+    const options = await res.json();
+    tableName.removeAttribute("disabled");
+    // dbmsSearch.innerHTML = "";
+    options.forEach((option) => addOption(tableName, option));
+  } else {
+    showEmptySelectError(dbmsSearch, res.statusText, "search");
+  }
+};
+
+const handleTableSelection = (e) => {
+  // const selectedValue = e.target.value;
+  CSV_OUTPUT.forEach((output) => addOption(selectOutput, output));
+  selectContainer.classList.remove("hidden");
+  generateContainer.dataset.target = "dbms";
+};
+// console.log(document.forms);
 // sends an http request to the server containing updated django and flask models to be validated
 // const updateData = async (body, url, method) => {
 //   const result = await fetch(url, {
@@ -841,6 +938,9 @@ Object.values(DJANGO_FIELDS).forEach((value) => {
 // );
 
 dataTableFrameX.addEventListener("load", resizeIframe);
+[tab1, tab2].forEach((tab) => tab.addEventListener("click", handleTabChange));
+dbmsSearch.addEventListener("click", dbmsSearchForTable);
+tableName.addEventListener("change", handleTableSelection);
 // let r = "";
 // const x = async () => {
 //   fetch(
