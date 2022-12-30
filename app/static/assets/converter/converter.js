@@ -736,7 +736,7 @@ const sendDBMSDataWrapper = (url, method) => {
   formData.append("output", output === "Export" ? "DataTable" : output);
 };
 
-const sendDroppedDataWrapper = (url, method) => {
+const sendDroppedDataWrapper = (url, method, output) => {
   const formData = new FormData();
   formData.append("output", output === "Export" ? "DataTable" : output);
   if (file instanceof File) {
@@ -773,7 +773,7 @@ const sendDataWrapper = () => {
   const url = "/";
   const method = "POST";
   if (target === "drop") {
-    sendDroppedDataWrapper(url, method);
+    sendDroppedDataWrapper(url, method, output);
   } else {
     sendDBMSDataWrapper(url, method);
   }
