@@ -6,7 +6,7 @@ Flask-Minify
 requests
 glom
 pyyaml
-pandas==1.5.2
+pandas
 Werkzeug~=2.0.3
 flask-cors
 Google
