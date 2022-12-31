@@ -189,7 +189,7 @@ const resetOptions = (node, defaultVal) => {
 
 // handles the case when the dropped file is valid
 const handleValidDrop = (fileName, fileExtension) => {
-  generateButton.dataset.target = "drop";
+  generateContainer.dataset.target = "drop";
   dropAreaBorder.classList.remove("highlight-border", "error-border");
   dropAreaLabel.classList.remove("highlight-label", "error-label");
   dropAreaBorder.classList.add("success-border");
@@ -310,14 +310,22 @@ const convertDataToCSV = async (url, body, method) => {
 const fillChartOptions = async () => {
   const url = "/";
   const method = "POST";
-  const formData = new FormData();
-  formData.append("output", "Charts");
-  if (file instanceof File) {
-    formData.append("file", file);
-    formData.append("type", "file");
+  const target = generateContainer.dataset.target;
+  let formData;
+  if (target === "drop") {
+    formData = new FormData();
+    formData.append("output", "Charts");
+    if (file instanceof File) {
+      formData.append("file", file);
+      formData.append("type", "file");
+    } else {
+      formData.append("url", file);
+      formData.append("type", "url");
+    }
   } else {
-    formData.append("url", file);
-    formData.append("type", "url");
+    formData = new FormData(document.forms[1]);
+    formData.append("output", "Charts");
+    formData.append("type", "dbms-table");
   }
   [chartType, chartX, chartY].forEach((node) => resetOptions(node, ""));
   chartInfo = await convertDataToCSV(url, formData, method);
@@ -600,10 +608,11 @@ const showDataTableOutput = async (res) => {
   dataTableFrameContainerX.classList.remove("hidden");
   scrollToOutPut(dataTableFrameX);
 };
-
+let [dt, t] = [null, null];
 // shows the output of export in the browser before downloading
 const handleExportPreview = (dataTable) => {
   const type = exportOutputSelect.value.toLowerCase();
+  [dt, t] = [dataTable, type];
   const download = false;
   const outputShow = document.querySelector("#prettyprint");
   let processedText = "";
@@ -625,7 +634,6 @@ const handleExportPreview = (dataTable) => {
       document
         .querySelector("#prettprint-table-container")
         .classList.add("hidden");
-
       break;
     case "csv":
       document
@@ -637,14 +645,15 @@ const handleExportPreview = (dataTable) => {
   }
   outputShow.innerHTML = processedText;
   scrollToOutPut(exportPreviewContainer);
-  downloadPreview.addEventListener("click", () => {
-    dataTable.export({
-      type,
-      download: true,
-    });
-  });
   dataTable.destroy();
 };
+const downloadFile = () => {
+  dt.export({
+    type: t,
+    download: true,
+  });
+};
+downloadPreview.addEventListener("click", downloadFile);
 
 // fetches data from a table and creates a data table object to use
 const fetchTable = (newDoc) => {
@@ -730,13 +739,16 @@ const showEmptySelectError = (button, errorMessage, defaultMessage) => {
   }, 2000);
 };
 
-const sendDBMSDataWrapper = (url, method) => {
+// creates FormData object when DBMS url is provided
+const createDBMSFormData = (output) => {
   const formData = new FormData(document.forms[1]);
   formData.append("type", "dbms-table");
   formData.append("output", output === "Export" ? "DataTable" : output);
+  return formData;
 };
 
-const sendDroppedDataWrapper = (url, method, output) => {
+// creates a FormData object when data is dropped
+const createDroppedFormData = (output) => {
   const formData = new FormData();
   formData.append("output", output === "Export" ? "DataTable" : output);
   if (file instanceof File) {
@@ -746,6 +758,19 @@ const sendDroppedDataWrapper = (url, method, output) => {
     formData.append("url", file);
     formData.append("type", "url");
   }
+  return formData;
+};
+
+// prepers the required data for post request using sendData function
+const sendDataWrapper = () => {
+  const target = generateContainer.dataset.target;
+  const output = document.querySelector("#select-output").value;
+  const url = "/";
+  const method = "POST";
+  let formData =
+    target === "drop"
+      ? createDroppedFormData(output)
+      : createDBMSFormData(output);
   if (OPENAPI_OUTPUT.includes(output) || output === "Model") {
     sendFlaskDjangoData(formData, url, method);
   } else if (output === "DataTable") {
@@ -763,19 +788,6 @@ const sendDroppedDataWrapper = (url, method, output) => {
     } else {
       sendDataTableData(formData, url, method, exportData);
     }
-  }
-};
-
-// prepers the required data for post request using sendData function
-const sendDataWrapper = () => {
-  const target = generateButton.dataset.target;
-  const output = document.querySelector("#select-output").value;
-  const url = "/";
-  const method = "POST";
-  if (target === "drop") {
-    sendDroppedDataWrapper(url, method, output);
-  } else {
-    sendDBMSDataWrapper(url, method);
   }
 };
 
@@ -806,20 +818,28 @@ const handleOutputCopy = (event) => {
   alertCopy(event.currentTarget.querySelector("#copy-state"));
 };
 
+// resets common UI states between tabs
 const resetCommons = () => {
   hideOutputContainer();
   generateContainer.classList.add("hidden");
   selectContainer.classList.add("hidden");
 };
+
+// resets drop area UI
 const resetDropArea = () => {
   file = null;
   dropAreaLabel.innerHTML = getDropAreaLabelText(UPLOAD_STATE.dragLeave);
   dropAreaBorder.classList.remove("error-border", "success-border");
   dropAreaLabel.classList.remove("error-label", "success-label");
 };
+
+// resets input area UI
 const resetInputArea = () => {
   resetOptions(selectOutput, "select output");
+  tableName.setAttribute("disabled", true);
 };
+
+// handles UI change when switching tabs
 const handleTabChange = (e) => {
   resetCommons();
   resetDropArea();
@@ -841,6 +861,7 @@ const handleTabChange = (e) => {
   }
 };
 
+//
 const dbmsSearchForTable = async () => {
   const form = document.forms[1];
   const body = new FormData(form);
