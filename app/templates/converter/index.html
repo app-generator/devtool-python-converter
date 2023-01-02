@@ -100,7 +100,7 @@
           <form name="dbms-form">
             <div id="dbms-flex-container" class="dbms-flex-container">
               <div class="input-group input-group-sm">
-                <span id="inputGroup-sizing-sm" class="input-group-text">ip : </span>
+                <span id="inputGroup-sizing-sm" class="input-group-text">ip ( domain / subdomain ) : </span>
                 <input aria-describedby="inputGroup-sizing-sm" id="ip" type="text" name="ip" class="form-control" />
               </div>
               <div class="input-group input-group-sm">
@@ -123,15 +123,17 @@
               </div>
               <div class="input-group input-group-sm">
                 <span id="inputGroup-sizing-sm" class="input-group-text">DB Driver : </span>
-                <input aria-describedby="inputGroup-sizing-sm" id="db-driver" type="text" name="DB-driver"
-                  class="form-control" />
+                <select aria-describedby="inputGroup-sizing-sm" id="db-driver" type="text" name="db-driver"
+                  class="form-select">
+                  <option selected value="DB_SQLITE">SQLITE</option>
+                  <option value="DB_MYSQL">MYSQL</option>
+                  <option value="DB_PGSQL">POSTGRESQL</option>
+                </select>
               </div>
               <div class="input-group input-group-sm">
                 <span id="inputGroup-sizing-sm" class="input-group-text">table name : </span>
-                <select aria-describedby="inputGroup-sizing-sm" id="table-name" type="text" name="table-name"
+                <select disabled aria-describedby="inputGroup-sizing-sm" id="table-name" type="text" name="table-name"
                   class="form-select">
-                  <option value="x">x</option>
-                  <option value="y">y</option>
                 </select>
               </div>
               <div class="search-container">
