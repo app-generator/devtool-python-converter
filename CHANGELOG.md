@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.7] 2023-01-02
+### Changes
+
+- Validation TAG (used for fixes)
+
 ## [1.0.6] 2022-12-16
 ### Changes
 
