@@ -274,7 +274,7 @@ def index():
             dbname = data['dbname']
             ip = data['ip']
             port = data['port']
-            driver = data['DB-driver']           
+            driver = data['db-driver']           
             user = data['user']
             password = data['password']
             db = connect_todb(driver, dbname, user, password, ip, int(port))
