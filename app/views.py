@@ -2,19 +2,13 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
-import csv
 import io
-import json
-import os
 # from Google import Create_Service
 import pandas as pd
 import requests
-
-from app.util.helpers import COMMON
 from app.util import *
 
 # Flask modules
-from werkzeug.datastructures import FileStorage
 from flask import jsonify, send_from_directory
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
@@ -25,7 +19,7 @@ from py_data_converter.converter_csv import convert_csv_to_django_models, conver
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, \
     parse_yaml, parse_json
-from py_data_converter.converter_pandas import convert_pandas_to_csv
+from py_data_converter.converter_pandas import convert_pandas_to_csv, pkl_to_pandas
 
 
 def get_tables(db):
@@ -33,7 +27,7 @@ def get_tables(db):
     tables = db.get_tables_name()
     return tables
 
-import time
+
 def connect_todb(driver, db_name, user, password, host, port):
     db = DbWrapper()
     if driver == 'DB_SQLITE':
@@ -185,7 +179,7 @@ def index():
                     if input_type == 'csv':
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
-                        csv_file = pd.read_pickle(file)
+                        csv_file = pkl_to_pandas(file)
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
@@ -200,7 +194,7 @@ def index():
                     if input_type == 'csv':
                         csv_file = pd.read_csv(file)
                     elif input_type == 'pkl':
-                        csv_file = pd.read_pickle(file)
+                        csv_file = pkl_to_pandas(file)
                     else:
                         flash('input file is not supported!')
                         return redirect(request.url)
@@ -234,8 +228,7 @@ def index():
                 file = r.content
                 file = file.decode('utf-8')
             else:
-                file = "Not implemented"
-                ...
+                return 'your link should be a csv file from github!', 400
 
             if len(file) < app.config['INPUT_LIMIT']:
                 filename = extract_filename(url)
@@ -274,12 +267,13 @@ def index():
             dbname = data['dbname']
             ip = data['ip']
             port = data['port']
-            driver = data['db-driver']           
+            driver = data['DB-driver']
             user = data['user']
             password = data['password']
-            db = connect_todb(driver, dbname, user, password, ip, int(port))
-            if db is None:
-                return 'bad request', 400
+            try:
+                db = connect_todb(driver, dbname, user, password, ip, int(port))
+            except:
+                return 'could not connect to the DBMS', 500
             tables = get_tables(db)
             return jsonify(tables)
         elif post_type == 'dbms-table':
@@ -290,9 +284,10 @@ def index():
             user = data['user']
             password = data['password']
             table_name = data['table-name']
-            db = connect_todb(driver, dbname, user, password, ip, int(port))
-            if db is None:
-                return 'bad request', 400
+            try:
+                db = connect_todb(driver, dbname, user, password, ip, int(port))
+            except:
+                return 'could not connect to the DBMS', 500
             csv_table = get_csv_table(db, table_name)
             output_desired = data['output']
             csv_file = pd.read_csv(io.StringIO(csv_table))
@@ -312,13 +307,6 @@ def index():
                 flask_response = convert_csv_to_flask_models(model, table_name)
                 data = {'django': django_response, 'flask': flask_response}
                 return data
-
-
-
-
-
-
-
     elif request.method == 'GET':
         return render_template('converter/index.html')
 
