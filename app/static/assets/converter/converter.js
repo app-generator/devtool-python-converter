@@ -616,6 +616,7 @@ const handleExportPreview = (dataTable) => {
   const download = false;
   const outputShow = document.querySelector("#prettyprint");
   let processedText = "";
+  console.log(dataTable)
   const outputText = dataTable.export({
     type,
     download,

@@ -28,21 +28,21 @@ def get_tables(db):
     return tables
 
 
-def connect_todb(driver, db_name, user, password, host, port):
+def connect_todb(db_driver, db_name, user, password, host, port):
     db = DbWrapper()
-    if driver == 'DB_SQLITE':
+    if db_driver == 'DB_SQLITE':
         db.driver = COMMON.DB_SQLITE
-    elif driver == 'DB_MYSQL':
+    elif db_driver == 'DB_MYSQL':
         db.driver = COMMON.DB_MYSQL
-    elif driver == 'DB_PGSQL':
+    elif db_driver == 'DB_PGSQL':
         db.driver = COMMON.DB_PGSQL
     else:
         return None
     db.db_name = db_name
-    db.db_user = user
-    db.db_pass = password
-    db.db_host = host
-    db.db_port = port
+    # db.db_user = user
+    # db.db_pass = password
+    # db.db_host = host
+    # db.db_port = port
     db.connect()
     return db
 
@@ -265,32 +265,46 @@ def index():
                     return data
         elif post_type == 'dbms':
             dbname = data['dbname']
-            ip = data['ip']
-            port = data['port']
-            driver = data['DB-driver']
-            user = data['user']
-            password = data['password']
-            try:
-                db = connect_todb(driver, dbname, user, password, ip, int(port))
-            except:
-                return 'could not connect to the DBMS', 500
+
+            # ip = data['ip']
+
+            # port = data['port']
+            db_driver = data['db-driver']
+
+            # user = data['user']
+            # password = data['password']
+            ip = 0
+            port = 0
+            user = 0
+            password = 0
+            # try:
+            db = connect_todb(db_driver, dbname, user, password, ip, int(port))
+            # except Exception:
+            #     return 'could not connect to the DBMS', 500
             tables = get_tables(db)
             return jsonify(tables)
         elif post_type == 'dbms-table':
             dbname = data['dbname']
-            ip = data['ip']
-            port = data['port']
-            driver = data['DB-driver']
-            user = data['user']
-            password = data['password']
+            # ip = data['ip']
+            # port = data['port']
+            db_driver = data['db-driver']
+            # user = data['user']
+            # password = data['password']
             table_name = data['table-name']
+            ip = 0
+            port = 0
+            user = 0
+            password = 0
             try:
-                db = connect_todb(driver, dbname, user, password, ip, int(port))
+                db = connect_todb(db_driver, dbname, user, password, ip, int(port))
             except:
-                return 'could not connect to the DBMS', 500
+                return 'Could not connect to the DBMS!', 500
             csv_table = get_csv_table(db, table_name)
             output_desired = data['output']
+            if csv_table is None:
+                return 'The table is empty.', 500
             csv_file = pd.read_csv(io.StringIO(csv_table))
+
             if output_desired == 'DataTable':
                 headings = [row for row in csv_file.head()]
                 return render_template('datatb/datatb.html', **{
@@ -302,6 +316,7 @@ def index():
                 response = jsonify(jsonify_csv(csv_file))
                 return response
             else:
+
                 model = parse_csv(csv_table)
                 django_response = convert_csv_to_django_models(model, table_name)
                 flask_response = convert_csv_to_flask_models(model, table_name)
