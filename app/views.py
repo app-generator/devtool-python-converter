@@ -277,10 +277,11 @@ def index():
             port = 0
             user = 0
             password = 0
-            # try:
-            db = connect_todb(db_driver, dbname, user, password, ip, int(port))
-            # except Exception:
-            #     return 'could not connect to the DBMS', 500
+            try:
+                db = connect_todb(db_driver, dbname, user, password, ip, int(port))
+            except Exception:
+                error = {'message': 'Could not connect to the DBMS!'}
+                return error, 400
             tables = get_tables(db)
             return jsonify(tables)
         elif post_type == 'dbms-table':
@@ -298,11 +299,13 @@ def index():
             try:
                 db = connect_todb(db_driver, dbname, user, password, ip, int(port))
             except:
-                return 'Could not connect to the DBMS!', 500
+                error = {'message': 'Could not connect to the DBMS!'}
+                return error, 400
             csv_table = get_csv_table(db, table_name)
             output_desired = data['output']
             if csv_table is None:
-                return 'The table is empty.', 500
+                error = {'message': 'The table is empty.'}
+                return error, 400
             csv_file = pd.read_csv(io.StringIO(csv_table))
 
             if output_desired == 'DataTable':
