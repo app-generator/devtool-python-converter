@@ -10,7 +10,7 @@ from app.util import *
 
 # Flask modules
 from flask import jsonify, send_from_directory
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, Response
 from werkzeug.utils import secure_filename
 # App modules
 from app import app
@@ -20,7 +20,7 @@ from py_data_converter.converter_openapi import convert_openapi_json_to_django_m
     convert_openapi_json_to_flask_models, \
     parse_yaml, parse_json
 from py_data_converter.converter_pandas import convert_pandas_to_csv, pkl_to_pandas
-
+import json
 
 def get_tables(db):
     db.load_models()
@@ -281,7 +281,7 @@ def index():
                 db = connect_todb(db_driver, dbname, user, password, ip, int(port))
             except Exception:
                 error = {'message': 'Could not connect to the DBMS!'}
-                return error, 400
+                return Response(response=json.dumps(error), status=400, mimetype='application/json')
             tables = get_tables(db)
             return jsonify(tables)
         elif post_type == 'dbms-table':
@@ -300,12 +300,12 @@ def index():
                 db = connect_todb(db_driver, dbname, user, password, ip, int(port))
             except:
                 error = {'message': 'Could not connect to the DBMS!'}
-                return error, 400
+                return Response(response=json.dumps(error), status=400, mimetype='application/json')
             csv_table = get_csv_table(db, table_name)
             output_desired = data['output']
             if csv_table is None:
                 error = {'message': 'The table is empty.'}
-                return error, 400
+                return Response(response=json.dumps(error), status=400, mimetype='application/json')
             csv_file = pd.read_csv(io.StringIO(csv_table))
 
             if output_desired == 'DataTable':

@@ -840,6 +840,8 @@ const resetDropArea = () => {
 const resetInputArea = () => {
   resetOptions(selectOutput, "select output");
   tableName.setAttribute("disabled", true);
+  resetOptions(tableName, "");
+  hideInputs(false);
 };
 
 // handles UI change when switching tabs
@@ -867,17 +869,43 @@ const handleTabChange = (e) => {
 const showConnectionDetails = () => {
   connectionContainer.classList.remove("hidden");
   const form = document.forms[1];
-  console.log(form["db-driver"].value);
-  connection.value = `${
-    (form["db-driver"].value ?? undefined) +
-    " / " +
-    (form["dbname"].value ?? undefined) +
-    " / " +
-    (form["user"].value ?? undefined)
-  }`;
+  const driver = form["db-driver"].value ? form["db-driver"].value : undefined;
+  const name = form["dbname"].value ? form["dbname"].value : undefined;
+  const user = form["user"].value ? form["user"].value : undefined;
+  connection.value = `${driver + " / " + name + " / " + user}`;
 };
 
-//
+const hideConnectionDetails = () => {
+  connectionContainer.classList.add("hidden");
+  connection.value = "";
+};
+
+// handles show or hiding 
+function hideInputs(flag) {
+  const form = document.forms[1];
+  for (const item of form) {
+    const inputName = item.name;
+    if (flag) {
+      // show connection, hide others
+      if (inputName === "connection") {
+        showConnectionDetails();
+      } else if (inputName === "table-name") {
+      } else {
+        item.closest("div").classList.add("hidden");
+      }
+    } else {
+      // show others, hide connection
+      if (inputName === "connection") {
+        hideConnectionDetails();
+      } else if (inputName === "table-name") {
+      } else {
+        item.closest("div").classList.remove("hidden");
+      }
+    }
+  }
+}
+
+// searches for table names in dbms
 const dbmsSearchForTable = async () => {
   resetOptions(tableName, "");
   tableName.setAttribute("disabled", true);
@@ -886,22 +914,26 @@ const dbmsSearchForTable = async () => {
   body.append("type", "dbms");
   const url = "/";
   const method = "POST";
-  const res = await fetch(url, { method, body });
-  if (res.ok) {
-    const options = await res.json();
-    if (options.length !== 0) {
-      tableName.removeAttribute("disabled");
-      options.forEach((option) => addOption(tableName, option));
-      showConnectionDetails();
-    }
-  } else {
-    showEmptySelectError(dbmsSearch, res.message, "search");
-  }
+  await fetch(url, { method, body })
+    .then((a) => a.json())
+    .then((b) => {
+      if (b.message) throw Error(b.message);
+      if (b.length !== 0) {
+        tableName.removeAttribute("disabled");
+        b.forEach((option) => addOption(tableName, option));
+        hideInputs(true);
+      }
+    })
+    .catch((e) => {
+      showEmptySelectError(dbmsSearch, e.message, "search");
+    });
 };
 
+// handles selection of table name
 const handleTableSelection = (e) => {
-  // const selectedValue = e.target.value;
-  CSV_OUTPUT.forEach((output) => addOption(selectOutput, output));
+  if (selectOutput.childElementCount === 1) {
+    CSV_OUTPUT.forEach((output) => addOption(selectOutput, output));
+  }
   selectContainer.classList.remove("hidden");
   generateContainer.dataset.target = "dbms";
 };

@@ -130,17 +130,18 @@
                   <option value="DB_PGSQL">POSTGRESQL</option>
                 </select>
               </div>
+              <div class="hidden input-group input-group-sm" id="connection-container">
+                <span id="inputGroup-sizing-sm" class="input-group-text">connection : </span>
+                <input readonly aria-describedby="inputGroup-sizing-sm" id="connection" type="text" name="connection"
+                  class="form-control" />
+              </div>
               <div class="input-group input-group-sm">
                 <span id="inputGroup-sizing-sm" class="input-group-text">table name : </span>
                 <select disabled aria-describedby="inputGroup-sizing-sm" id="table-name" type="text" name="table-name"
                   class="form-select">
                 </select>
               </div>
-              <div class="input-group input-group-sm" id="connection-container">
-                <span id="inputGroup-sizing-sm" class="input-group-text">connection : </span>
-                <input readonly aria-describedby="inputGroup-sizing-sm" id="connection" type="text" name="connection"
-                  class="form-control" />
-              </div>
+
               <div class="search-container">
                 <div class="button search" id="dbms-search">
                   <div>CONNECT</div>
