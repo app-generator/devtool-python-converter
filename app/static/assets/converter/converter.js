@@ -45,6 +45,8 @@ const tab2 = document.querySelector("#tab-item-2");
 const dbmsContainer = document.querySelector("#dbms-container");
 const dbmsSearch = document.querySelector("#dbms-search");
 const tableName = document.querySelector("#table-name");
+const connectionContainer = document.querySelector("#connection-container");
+const connection = document.querySelector("#connection");
 
 // constants
 let file = null;
@@ -616,7 +618,7 @@ const handleExportPreview = (dataTable) => {
   const download = false;
   const outputShow = document.querySelector("#prettyprint");
   let processedText = "";
-  console.log(dataTable)
+  console.log(dataTable);
   const outputText = dataTable.export({
     type,
     download,
@@ -862,8 +864,23 @@ const handleTabChange = (e) => {
   }
 };
 
+const showConnectionDetails = () => {
+  connectionContainer.classList.remove("hidden");
+  const form = document.forms[1];
+  console.log(form["db-driver"].value);
+  connection.value = `${
+    (form["db-driver"].value ?? undefined) +
+    " / " +
+    (form["dbname"].value ?? undefined) +
+    " / " +
+    (form["user"].value ?? undefined)
+  }`;
+};
+
 //
 const dbmsSearchForTable = async () => {
+  resetOptions(tableName, "");
+  tableName.setAttribute("disabled", true);
   const form = document.forms[1];
   const body = new FormData(form);
   body.append("type", "dbms");
@@ -872,11 +889,13 @@ const dbmsSearchForTable = async () => {
   const res = await fetch(url, { method, body });
   if (res.ok) {
     const options = await res.json();
-    tableName.removeAttribute("disabled");
-    // dbmsSearch.innerHTML = "";
-    options.forEach((option) => addOption(tableName, option));
+    if (options.length !== 0) {
+      tableName.removeAttribute("disabled");
+      options.forEach((option) => addOption(tableName, option));
+      showConnectionDetails();
+    }
   } else {
-    showEmptySelectError(dbmsSearch, res.statusText, "search");
+    showEmptySelectError(dbmsSearch, res.message, "search");
   }
 };
 

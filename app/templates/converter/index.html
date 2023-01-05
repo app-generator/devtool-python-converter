@@ -136,9 +136,14 @@
                   class="form-select">
                 </select>
               </div>
+              <div class="input-group input-group-sm" id="connection-container">
+                <span id="inputGroup-sizing-sm" class="input-group-text">connection : </span>
+                <input readonly aria-describedby="inputGroup-sizing-sm" id="connection" type="text" name="connection"
+                  class="form-control" />
+              </div>
               <div class="search-container">
                 <div class="button search" id="dbms-search">
-                  <div>search</div>
+                  <div>CONNECT</div>
                 </div>
               </div>
             </div>
@@ -338,7 +343,7 @@
 
 <!-- JS Plugins: Charts, Data tables -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@4.0.8" type="text/javascript"></script>
 
 <!-- UI Processor JS -->
 <script defer type="text/javascript" src="/static/assets/converter/converter.js"></script>
