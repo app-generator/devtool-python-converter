@@ -1,12 +1,11 @@
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-import requests
+
 import json
 import operator
-import re
+
 import sys
 from glom import glom
-from collections import OrderedDict
-from pprint import pprint
+
 
 iteritems = operator.methodcaller("items")
 unicode = str

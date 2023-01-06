@@ -156,12 +156,13 @@ class DbWrapper:
 
         items = self.get_model_data(aModelName)
 
-        if not items:
-            return None
+        # if not items:
+        #     return None
 
         if len(items) == 0:
             print(' > Model [' + aModelName + '] is empty ')
             return None
+
 
         header = items[0].keys()
 
@@ -171,6 +172,7 @@ class DbWrapper:
             sqlContent += col + ','
 
         sqlContent += '\n'
+        print(3)
 
         for row in items:
 
