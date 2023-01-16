@@ -39,10 +39,10 @@ def connect_todb(db_driver, db_name, user, password, host, port):
     else:
         return None
     db.db_name = db_name
-    # db.db_user = user
-    # db.db_pass = password
-    # db.db_host = host
-    # db.db_port = port
+    db.db_user = user
+    db.db_pass = password
+    db.db_host = host
+    db.db_port = port
     db.connect()
     return db
 
@@ -266,17 +266,14 @@ def index():
         elif post_type == 'dbms':
             dbname = data['dbname']
 
-            # ip = data['ip']
+            ip = data['ip']
 
-            # port = data['port']
+            port = data['port']
             db_driver = data['db-driver']
 
-            # user = data['user']
-            # password = data['password']
-            ip = 0
-            port = 0
-            user = 0
-            password = 0
+            user = data['user']
+            password = data['password']
+
             try:
                 db = connect_todb(db_driver, dbname, user, password, ip, int(port))
             except Exception:
@@ -286,16 +283,12 @@ def index():
             return jsonify(tables)
         elif post_type == 'dbms-table':
             dbname = data['dbname']
-            # ip = data['ip']
-            # port = data['port']
+            ip = data['ip']
+            port = data['port']
             db_driver = data['db-driver']
-            # user = data['user']
-            # password = data['password']
+            user = data['user']
+            password = data['password']
             table_name = data['table-name']
-            ip = 0
-            port = 0
-            user = 0
-            password = 0
             try:
                 db = connect_todb(db_driver, dbname, user, password, ip, int(port))
             except:
