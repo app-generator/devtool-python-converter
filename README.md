@@ -34,7 +34,7 @@ The `material explains how to use this conversion tool` written in **Python** to
 | --- | --- | --- | --- | --- |
 | ✅ | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
 | ✅ | `Drop 2` | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
-| ❌ | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
+| ✅ | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- | --- |
 | ✅ | **Drop 1** | **CSV** | `DB Model` | DB Model |
 | ✅ | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
