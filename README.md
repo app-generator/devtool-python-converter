@@ -66,7 +66,6 @@ The `material explains how to use this conversion tool` written in **Python** to
 > `Step 1` - **Clone Sources** from the putblic repository:  
 
 ```bash
-$ # Clone the sources
 $ git clone https://github.com/app-generator/devtool-python-converter.git
 $ cd devtool-python-converter
 ```
