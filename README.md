@@ -33,7 +33,7 @@ The `material explains how to use this conversion tool` written in **Python** to
 | Status | Delivery | Input | Output | Info | 
 | --- | --- | --- | --- | --- |
 | ✅ | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
-| ❌ | `Drop 2` | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
+| ✅ | `Drop 2` | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
 | ❌ | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- | --- |
 | ✅ | **Drop 1** | **CSV** | `DB Model` | DB Model |
@@ -50,10 +50,10 @@ The `material explains how to use this conversion tool` written in **Python** to
 | ✅ | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
 | ❌ | `Drop 2` | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
-| ❌ | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
-| ❌ | `Drop 2` | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |
-| ❌ | `Drop 2` | **DBMS** `Remote URL` | `Charts` | Data to visualisation  |
-| ❌ | `Drop 2` | **DBMS** `Remote URL` | `Export` (with filters) | CSV, PDF  |
+| ✅ | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
+| ✅ | `Drop 2` | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |
+| ✅ | `Drop 2` | **DBMS** `Remote URL` | `Charts` | Data to visualisation  |
+| ✅ | `Drop 2` | **DBMS** `Remote URL` | `Export` (with filters) | CSV, PDF  |
 
 <br />
 
