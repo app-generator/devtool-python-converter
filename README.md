@@ -40,10 +40,10 @@ The `material explains how to use this conversion tool` written in **Python** to
 | ✅ | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
 | ✅ | **Drop 1** | **CSV** | `Charts` | Data to visualisation  |
 | ❌ | `Drop 2` | **CSV** | `Export` (with filters) | CSV, PDF  |
-| ❌ | `Drop 2` | **CSV** URL | `DB Model` | DB Model |
-| ❌ | `Drop 2` | **CSV** URL | `DataTables` | Paginated Data View (vanilla JS) |
-| ❌ | `Drop 2` | **CSV** URL | `Charts` | Data to visualisation  |
-| ❌ | `Drop 2` | **CSV** URL | `Export` (with filters) | CSV, PDF  |
+| ❌ | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `DB Model` | DB Model |
+| ❌ | `Drop 2` | **CSV** Remote URL (Gdrive)` | `DataTables` | Paginated Data View (vanilla JS) |
+| ❌ | `Drop 2` | **CSV** Remote URL (Gdrive)` | `Charts` | Data to visualisation  |
+| ❌ | `Drop 2` | **CSV** Remote URL (Gdrive)` | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
 | ✅ | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
 | ✅ | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
