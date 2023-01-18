@@ -618,7 +618,6 @@ const handleExportPreview = (dataTable) => {
   const download = false;
   const outputShow = document.querySelector("#prettyprint");
   let processedText = "";
-  console.log(dataTable);
   const outputText = dataTable.export({
     type,
     download,
@@ -660,7 +659,7 @@ downloadPreview.addEventListener("click", downloadFile);
 
 // fetches data from a table and creates a data table object to use
 const fetchTable = (newDoc) => {
-  const table = newDoc.querySelector(".table");
+  const table = newDoc.querySelector("table");
   table.classList.remove("table");
   table.classList.remove("dataTable-table");
   document.querySelector("#prettprint-table-container").appendChild(table);
@@ -868,6 +867,7 @@ const handleTabChange = (e) => {
 
 const showConnectionDetails = () => {
   connectionContainer.classList.remove("hidden");
+  dbmsSearch.classList.remove(hidden);
   const form = document.forms[1];
   const driver = form["db-driver"].value ? form["db-driver"].value : undefined;
   const name = form["dbname"].value ? form["dbname"].value : undefined;
@@ -877,10 +877,11 @@ const showConnectionDetails = () => {
 
 const hideConnectionDetails = () => {
   connectionContainer.classList.add("hidden");
+  dbmsSearch.classList.add(hidden);
   connection.value = "";
 };
 
-// handles show or hiding 
+// handles show or hiding
 function hideInputs(flag) {
   const form = document.forms[1];
   for (const item of form) {
