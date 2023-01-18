@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.8] 2023-01-06
+### Changes
+
+- Validation TAG (used for fixes)
+- Merge Pull #37
+  - https://github.com/app-generator/devtool-python-converter/pull/37
+
 ## [1.0.7] 2023-01-02
 ### Changes
 
