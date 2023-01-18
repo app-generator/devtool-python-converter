@@ -47,7 +47,7 @@ This document explains the usage of this **open-source** product developed by **
 
 ### Lifetime License
 
-> `One-time Payment` via GUMROAD - [$299](https://appseed.gumroad.com/l/devtool-python-converter) (payment link)
+> `One-time Payment` via GUMROAD - [$499](https://appseed.gumroad.com/l/devtool-python-converter) (payment link)
 
 The license covers: 
 

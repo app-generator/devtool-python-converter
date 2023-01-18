@@ -12,7 +12,7 @@
 
 - **Free** for `students`, `solo-developers` (hobby projects), `NGOs`, and `eLearning` activities
 - **[Unrestricted usage](https://github.com/app-generator/devtool-python-converter/blob/master/LICENSE.md#lifetime-license)** requires a license (one-time payment) 
-  - `Payment Link`: **[$299](https://appseed.gumroad.com/l/devtool-python-converter)** (managed by `GUMROAD`) 
+  - `Payment Link`: **[$499](https://appseed.gumroad.com/l/devtool-python-converter)** (managed by `GUMROAD`) 
 
 <br />
 
@@ -48,7 +48,7 @@ The `material explains how to use this conversion tool` written in **Python** to
 | ✅ | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
 | ✅ | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
 | ✅ | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
-| ❌ | `Drop 2` | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
+| ✅ | `Drop 2` | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
 | ✅ | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
 | ✅ | `Drop 2` | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |

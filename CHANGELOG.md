@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.0.9] 2023-01-18
+### Changes
+
+- `Update Pricing`: **$499** (one-time payment)
+- Shipped Items:
+  - `Drop 2`: CSV Export
+  - `Drop 2`: OpenAPI YAML processing
+  - `Drop 2`: DBMS `Remote URL` (all actions)
+    - Models Introspection, DataTables, Charts, Export
+
 ## [1.0.8] 2023-01-06
 ### Changes
 
