@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.10] 2023-01-19
+### Changes
+
+- DOCS Update
+- Update LIVE Version
+
 ## [1.0.9] 2023-01-18
 ### Changes
 

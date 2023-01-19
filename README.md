@@ -32,28 +32,28 @@ The `material explains how to use this conversion tool` written in **Python** to
 
 | Status | Delivery | Input | Output | Info | 
 | --- | --- | --- | --- | --- |
-| ✅ | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
-| ✅ | `Drop 2` | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
-| ❌ | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
+| **DONE** | **Drop 1** | **OpenAPI** `JSON` | `DB Model` | DB Model(s) extraction |
+| **DONE** | `Drop 2` | **OpenAPI** `Yaml` | `DB Model` | DB Model(s) extraction |
+| `NA` | `Drop 2` | `Swagger UI` URL | `DB Model` | DB Model(s) extraction |
 | --- | --- | --- | --- | --- |
-| ✅ | **Drop 1** | **CSV** | `DB Model` | DB Model |
-| ✅ | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
-| ✅ | **Drop 1** | **CSV** | `Charts` | Data to visualisation  |
-| ✅ | `Drop 2` | **CSV** | `Export` (with filters) | CSV, PDF  |
-| ❌ | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `DB Model` | DB Model |
-| ❌ | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `DataTables` | Paginated Data View (vanilla JS) |
-| ❌ | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `Charts` | Data to visualisation  |
-| ❌ | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `Export` (with filters) | CSV, PDF  |
+| **DONE** | **Drop 1** | **CSV** | `DB Model` | DB Model |
+| **DONE** | **Drop 1** | **CSV** | `DataTables` | Paginated Data View (vanilla JS) |
+| **DONE** | **Drop 1** | **CSV** | `Charts` | Data to visualisation  |
+| **DONE** | `Drop 2` | **CSV** | `Export` (with filters) | CSV, PDF  |
+| `NA` | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `DB Model` | DB Model |
+| `NA` | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `DataTables` | Paginated Data View (vanilla JS) |
+| `NA` | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `Charts` | Data to visualisation  |
+| `NA` | `Drop 2` | **CSV** `Remote URL (Gdrive)` | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
-| ✅ | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
-| ✅ | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
-| ✅ | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
-| ✅ | `Drop 2` | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
+| **DONE** | **Drop 1** | **Pandas DF** | `DB Model` | DB Model |
+| **DONE** | **Drop 1** | **Pandas DF** | `DataTables` | Paginated Data View (vanilla JS) |
+| **DONE** | **Drop 1** | **Pandas DF** | `Charts` | Data to visualisation  |
+| **DONE** | `Drop 2` | **Pandas DF** | `Export` (with filters) | CSV, PDF  |
 | --- | --- | --- | --- | --- |
-| ✅ | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
-| ✅ | `Drop 2` | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |
-| ✅ | `Drop 2` | **DBMS** `Remote URL` | `Charts` | Data to visualisation  |
-| ✅ | `Drop 2` | **DBMS** `Remote URL` | `Export` (with filters) | CSV, PDF  |
+| **DONE** | `Drop 2` | **DBMS** `Remote URL` | `DB Model` | Models Introspection |
+| **DONE** | `Drop 2` | **DBMS** `Remote URL` | `DataTables` | Paginated Data View (vanilla JS) |
+| **DONE** | `Drop 2` | **DBMS** `Remote URL` | `Charts` | Data to visualisation  |
+| **DONE** | `Drop 2` | **DBMS** `Remote URL` | `Export` (with filters) | CSV, PDF  |
 
 <br />
 
