@@ -1,10 +1,10 @@
-Flask==2.0.2
+Flask
 Flask_Cors
 Flask_Minify
 glom
 pandas
 peewee
-pickle5==0.0.11; python_version < '3.8' and python_version >= '3.5'
 PyYAML
 requests
 Werkzeug
+google-api-python-client

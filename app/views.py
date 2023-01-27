@@ -6,21 +6,24 @@ import io
 # from Google import Create_Service
 import pandas as pd
 import requests
+
 from app.util import *
 
 # Flask modules
 from flask import jsonify, send_from_directory
-from flask import render_template, request, redirect, flash, Response
+from flask import render_template, request, Response
 from werkzeug.utils import secure_filename
 # App modules
 from app import app
-
 from py_data_converter.converter_csv import convert_csv_to_django_models, convert_csv_to_flask_models, parse_csv
 from py_data_converter.converter_openapi import convert_openapi_json_to_django_models, \
     convert_openapi_json_to_flask_models, \
     parse_yaml, parse_json
 from py_data_converter.converter_pandas import convert_pandas_to_csv, pkl_to_pandas
 import json
+
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 
 def get_tables(db):
@@ -155,9 +158,9 @@ def handle_output(input_file, input_type, output_type, filename):
     else:
         if input_type == 'pandas':
             file = input_file.to_csv()
-            flask_response = handle_output(file, 'csv', 'Flask', filename)
-            django_response = handle_output(file, 'csv', 'Django', filename)
-            return {'django': django_response, 'flask': flask_response}
+            response = handle_output(file, 'csv', 'Flask', filename)
+            response.update(handle_output(file, 'csv', 'Django', filename))
+            return response
         else:
             if input_type == 'csv':
                 model = parse_csv(input_file)
@@ -210,12 +213,23 @@ def index():
 
         elif post_type == 'url':
             url = data['url']
+            df = pd.DataFrame()
             if url.count('google') > 0:
-                url1 = 'https://drive.google.com/uc?id=' + url.split('/')[-2]
-                print(url1)
-                df = pd.read_csv(url1)
+                service = build('sheets', 'v4', developerKey=app.config['GOOGLE_API_KEY'])
+                try:
+                    sheet = service.spreadsheets()
+                    spreadsheet_id = url.split('/')[-2]
+                    sheet_metadata = sheet.get(spreadsheetId=spreadsheet_id).execute()
+                    sheet_name = sheet_metadata['properties']['title']
+                    result = sheet.values().get(spreadsheetId=spreadsheet_id, range=sheet_name).execute()
+                    sheet_data = result['values'][1:]
+                    columns_names = result['values'][0]
+                    df = pd.DataFrame(sheet_data, columns=columns_names)
+                except HttpError as e:
+                    return error_message('Could not get the csv file from google api.'.format( e.error_details))
+
                 if df.shape[0] * df.shape[1] < app.config['INPUT_LIMIT']:
-                    return handle_output(df, 'pandas', data['output'], extract_filename(url))
+                    return handle_output(df, 'pandas', data['output'], sheet_name)
                 else:
                     return error_message(
                         f"the input file exceeds memory policy:the input file's size must be less than {app.config['INPUT_LIMIT']}")
