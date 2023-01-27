@@ -866,8 +866,9 @@ const handleTabChange = (e) => {
 };
 
 const showConnectionDetails = () => {
+  console.log("here");
   connectionContainer.classList.remove("hidden");
-  dbmsSearch.classList.remove(hidden);
+  dbmsSearch.classList.remove("hidden");
   const form = document.forms[1];
   const driver = form["db-driver"].value ? form["db-driver"].value : undefined;
   const name = form["dbname"].value ? form["dbname"].value : undefined;
@@ -876,8 +877,9 @@ const showConnectionDetails = () => {
 };
 
 const hideConnectionDetails = () => {
+  console.log("here1");
   connectionContainer.classList.add("hidden");
-  dbmsSearch.classList.add(hidden);
+  // dbmsSearch.classList.add("hidden");
   connection.value = "";
 };
 
@@ -886,6 +888,7 @@ function hideInputs(flag) {
   const form = document.forms[1];
   for (const item of form) {
     const inputName = item.name;
+    console.log(inputName, flag);
     if (flag) {
       // show connection, hide others
       if (inputName === "connection") {
