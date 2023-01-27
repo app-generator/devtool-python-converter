@@ -17,6 +17,12 @@ class Config(object):
     # App Config - the minimal footprint
     SECRET_KEY = os.getenv('SECRET_KEY', 'S#perS3crEt_9999')
 
+    # Google Apikey
+    GOOGLE_API_KEY = 'AIzaSyDcuiOnTnCjwuDS4WhCYDTbs8iDrYhRqbs'
+
+    # Input file limit
+    INPUT_LIMIT = 50000
+
     # App Valid INPUTs
     ALLOWED_EXTENSIONS = {'json', 'yaml', 'csv', 'pkl'}
     
