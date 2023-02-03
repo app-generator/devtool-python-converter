@@ -20,6 +20,7 @@ class Config(object):
     # Google Apikey
     GOOGLE_API_KEY = 'AIzaSyDcuiOnTnCjwuDS4WhCYDTbs8iDrYhRqbs'
 
+    # temp directory for sqlite_dbms
     TEMP_FILE_DIRECTORY = 'app\\temp\\'
 
     # Input file limit
