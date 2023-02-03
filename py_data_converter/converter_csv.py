@@ -17,9 +17,19 @@ def parse_csv(file):
     fields = fields_string.split(',')
     values = values_string.split(',')
     types = find_type(values)
+    fields_new = []
+    i = 0
+    for field in fields:
+        if field == '':
+            fields_new.append('un_named$'+str(i))
+            i = i+1
+        else:
+            fields_new.append(field)
+
     model = {}
-    for i in range(len(fields)):
-        model[fields[i]] = {'type': types[i]}
+    for i in range(len(fields_new)):
+        model[fields_new[i]] = {'type': types[i]}
+
     return model
 
 
@@ -50,22 +60,28 @@ def find_type(values):
     alphabets = "[a-zA-Z]"
     not_number_alphabet = "[^a-zA-Z0-9.]"
     types = []
+
     for value in values:
+
         has_number = re.search(numbers, value)
         has_alphabet = re.search(alphabets, value)
         has_extra = re.search(not_number_alphabet, value)
-        if ' ' not in value:
-            if has_number and not has_alphabet:
-                if has_extra:
-                    types.append('string')
-                elif '.' in value:
-                    types.append('number')
+        if value:
+            if ' ' not in value:
+                if has_number and not has_alphabet:
+                    if has_extra:
+                        types.append('string')
+                    elif '.' in value:
+                        types.append('number')
+                    else:
+                        types.append('integer')
                 else:
-                    types.append('integer')
+                    types.append('string')
             else:
                 types.append('string')
         else:
             types.append('string')
+
     return types
 
 
