@@ -3,6 +3,8 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import io
+import os
+
 # from Google import Create_Service
 import pandas as pd
 import requests
@@ -24,6 +26,16 @@ import json
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+import random
+import string
+
+
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
+
 
 def get_tables(db):
     db.load_models()
@@ -35,14 +47,16 @@ def connect_to_sqlite(url):
     url = url + '?raw=true'
     r = requests.get(url)
     file = r.content
-    file = file.decode('utf-8',errors='ignore')
-    print(file)
     if len(file) < app.config['INPUT_LIMIT']:
+        name = app.config['TEMP_FILE_DIRECTORY'] + f'{get_random_string(10)}.sqlite3'
+        temp = open(name, 'wb')
+        temp.write(file)
+        temp.close()
         db = DbWrapper()
         db.driver = COMMON.DB_SQLITE
-        db.file = file
+        db.db_name = name
         db.connect()
-        return db
+        return db, name
 
 
 def connect_to_db(db_driver, db_name, user, password, host, port):
@@ -217,7 +231,6 @@ def index():
                 return error_message(
                     f"Sorry your file is too big it must have less than {app.config['INPUT_LIMIT']} char", 400)
             if file and allowed_file(file.filename):
-
                 filename = secure_filename(file.filename)
                 output_desired = data['output']
                 input_type = get_type(filename)
@@ -262,7 +275,11 @@ def index():
             db_driver = data['db-driver']
             if db_driver == 'DB_SQLITE':
                 # try:
-                db = connect_to_sqlite(ip)
+                db, file_name = connect_to_sqlite(ip)
+                tables = get_tables(db)
+                db.close()
+                os.remove(file_name)
+                return jsonify(tables)
                 # except Exception:
                 #     return error_message('Could not connect to the DBMS!')
             else:
@@ -272,19 +289,28 @@ def index():
                 password = data['password']
                 try:
                     db = connect_to_db(db_driver, dbname, user, password, ip, int(port))
+                    tables = get_tables(db)
+                    return jsonify(tables)
                 except Exception:
                     return error_message('Could not connect to the DBMS!')
-            tables = get_tables(db)
-            return jsonify(tables)
+
         elif post_type == 'dbms-table':
             ip = data['ip']
             db_driver = data['db-driver']
             table_name = data['table-name']
             if db_driver == 'DB_SQLITE':
-                # try:
-                db = connect_to_sqlite(ip)
-                # except Exception:
-                #     return error_message('Could not connect to the DBMS!')
+                try:
+                    db, file_name = connect_to_sqlite(ip)
+                    csv_table = get_csv_table(db, table_name)
+                    output_desired = data['output']
+                    if csv_table is None:
+                        return error_message('The table is empty.')
+                    csv_file = pd.read_csv(io.StringIO(csv_table))
+                    db.close()
+                    os.remove(file_name)
+                    return handle_output(csv_file, 'pandas', output_desired, table_name)
+                except Exception:
+                    return error_message('Could not connect to the DBMS!')
             else:
                 dbname = data['dbname']
                 port = data['port']
@@ -292,14 +318,15 @@ def index():
                 password = data['password']
                 try:
                     db = connect_to_db(db_driver, dbname, user, password, ip, int(port))
+                    csv_table = get_csv_table(db, table_name)
+                    output_desired = data['output']
+                    if csv_table is None:
+                        return error_message('The table is empty.')
+                    csv_file = pd.read_csv(io.StringIO(csv_table))
+                    return handle_output(csv_file, 'pandas', output_desired, table_name)
                 except Exception:
                     return error_message('Could not connect to the DBMS!')
-            csv_table = get_csv_table(db, table_name)
-            output_desired = data['output']
-            if csv_table is None:
-                return error_message('The table is empty.')
-            csv_file = pd.read_csv(io.StringIO(csv_table))
-            return handle_output(csv_file, 'pandas', output_desired, table_name)
+
 
     elif request.method == 'GET':
         return render_template('converter/index.html')

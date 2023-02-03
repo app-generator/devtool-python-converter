@@ -47,6 +47,8 @@ class DbWrapper:
         self.file = None
 
         # helpers
+    def close(self):
+        self._db.close()
 
     def connect(self):
 
@@ -54,7 +56,7 @@ class DbWrapper:
             print(' > Error DB driver not set')
 
         if self.driver == COMMON.DB_SQLITE:
-            self._db = SqliteDatabase(self.file)
+            self._db = SqliteDatabase(self.db_name)
             self._ds = DataSet(self._db)
             return True
         elif self.driver == COMMON.DB_MYSQL:

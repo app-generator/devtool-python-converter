@@ -20,6 +20,8 @@ class Config(object):
     # Google Apikey
     GOOGLE_API_KEY = 'AIzaSyDcuiOnTnCjwuDS4WhCYDTbs8iDrYhRqbs'
 
+    TEMP_FILE_DIRECTORY = 'app\\temp\\'
+
     # Input file limit
     INPUT_LIMIT = 500000
 
