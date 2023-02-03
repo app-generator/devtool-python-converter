@@ -9,6 +9,7 @@ from app.util.helpers import *
 from peewee import SqliteDatabase, MySQLDatabase, PostgresqlDatabase
 from playhouse.reflection import generate_models, print_model, print_table_sql
 from playhouse.dataset import DataSet
+from playhouse.db_url import connect
 
 
 def test():
@@ -28,6 +29,7 @@ class DbWrapper:
     db_pass = None
     db_host = None
     db_port = None
+    file = None
 
     # reset
     def reset(self):
@@ -42,6 +44,7 @@ class DbWrapper:
         self.db_pass = None
         self.db_host = None
         self.db_port = None
+        self.file = None
 
         # helpers
 
@@ -51,7 +54,7 @@ class DbWrapper:
             print(' > Error DB driver not set')
 
         if self.driver == COMMON.DB_SQLITE:
-            self._db = SqliteDatabase(self.db_name)
+            self._db = SqliteDatabase(self.file)
             self._ds = DataSet(self._db)
             return True
         elif self.driver == COMMON.DB_MYSQL:
@@ -162,7 +165,6 @@ class DbWrapper:
         if len(items) == 0:
             print(' > Model [' + aModelName + '] is empty ')
             return None
-
 
         header = items[0].keys()
 

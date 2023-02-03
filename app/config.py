@@ -21,7 +21,7 @@ class Config(object):
     GOOGLE_API_KEY = 'AIzaSyDcuiOnTnCjwuDS4WhCYDTbs8iDrYhRqbs'
 
     # Input file limit
-    INPUT_LIMIT = 50000
+    INPUT_LIMIT = 500000
 
     # App Valid INPUTs
     ALLOWED_EXTENSIONS = {'json', 'yaml', 'csv', 'pkl'}

@@ -6,7 +6,6 @@ import io
 # from Google import Create_Service
 import pandas as pd
 import requests
-
 from app.util import *
 
 # Flask modules
@@ -32,7 +31,21 @@ def get_tables(db):
     return tables
 
 
-def connect_todb(db_driver, db_name, user, password, host, port):
+def connect_to_sqlite(url):
+    url = url + '?raw=true'
+    r = requests.get(url)
+    file = r.content
+    file = file.decode('utf-8',errors='ignore')
+    print(file)
+    if len(file) < app.config['INPUT_LIMIT']:
+        db = DbWrapper()
+        db.driver = COMMON.DB_SQLITE
+        db.file = file
+        db.connect()
+        return db
+
+
+def connect_to_db(db_driver, db_name, user, password, host, port):
     db = DbWrapper()
     if db_driver == 'DB_SQLITE':
         db.driver = COMMON.DB_SQLITE
@@ -203,9 +216,8 @@ def index():
             if size >= app.config['INPUT_LIMIT']:
                 return error_message(
                     f"Sorry your file is too big it must have less than {app.config['INPUT_LIMIT']} char", 400)
-            if file.filename == '':
-                return error_message('No selected file', 400)
             if file and allowed_file(file.filename):
+
                 filename = secure_filename(file.filename)
                 output_desired = data['output']
                 input_type = get_type(filename)
@@ -213,7 +225,6 @@ def index():
 
         elif post_type == 'url':
             url = data['url']
-            df = pd.DataFrame()
             if url.count('google') > 0:
                 service = build('sheets', 'v4', developerKey=app.config['GOOGLE_API_KEY'])
                 try:
@@ -226,7 +237,7 @@ def index():
                     columns_names = result['values'][0]
                     df = pd.DataFrame(sheet_data, columns=columns_names)
                 except HttpError as e:
-                    return error_message('Could not get the csv file from google api.'.format( e.error_details))
+                    return error_message('Could not get the csv file from google api.'.format(e.error_details))
 
                 if df.shape[0] * df.shape[1] < app.config['INPUT_LIMIT']:
                     return handle_output(df, 'pandas', data['output'], sheet_name)
@@ -247,34 +258,42 @@ def index():
                 return error_message('the url is not supported!')
 
         elif post_type == 'dbms':
-            dbname = data['dbname']
-
             ip = data['ip']
-
-            port = data['port']
             db_driver = data['db-driver']
-
-            user = data['user']
-            password = data['password']
-
-            try:
-                db = connect_todb(db_driver, dbname, user, password, ip, int(port))
-            except Exception:
-                return error_message('Could not connect to the DBMS!')
+            if db_driver == 'DB_SQLITE':
+                # try:
+                db = connect_to_sqlite(ip)
+                # except Exception:
+                #     return error_message('Could not connect to the DBMS!')
+            else:
+                dbname = data['dbname']
+                port = data['port']
+                user = data['user']
+                password = data['password']
+                try:
+                    db = connect_to_db(db_driver, dbname, user, password, ip, int(port))
+                except Exception:
+                    return error_message('Could not connect to the DBMS!')
             tables = get_tables(db)
             return jsonify(tables)
         elif post_type == 'dbms-table':
-            dbname = data['dbname']
             ip = data['ip']
-            port = data['port']
             db_driver = data['db-driver']
-            user = data['user']
-            password = data['password']
             table_name = data['table-name']
-            try:
-                db = connect_todb(db_driver, dbname, user, password, ip, int(port))
-            except Exception:
-                return error_message('Could not connect to the DBMS!')
+            if db_driver == 'DB_SQLITE':
+                # try:
+                db = connect_to_sqlite(ip)
+                # except Exception:
+                #     return error_message('Could not connect to the DBMS!')
+            else:
+                dbname = data['dbname']
+                port = data['port']
+                user = data['user']
+                password = data['password']
+                try:
+                    db = connect_to_db(db_driver, dbname, user, password, ip, int(port))
+                except Exception:
+                    return error_message('Could not connect to the DBMS!')
             csv_table = get_csv_table(db, table_name)
             output_desired = data['output']
             if csv_table is None:
