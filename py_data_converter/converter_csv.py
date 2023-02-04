@@ -17,18 +17,11 @@ def parse_csv(file):
     fields = fields_string.split(',')
     values = values_string.split(',')
     types = find_type(values)
-    fields_new = []
-    i = 0
-    for field in fields:
-        if field == '':
-            fields_new.append('un_named$'+str(i))
-            i = i+1
-        else:
-            fields_new.append(field)
+
 
     model = {}
-    for i in range(len(fields_new)):
-        model[fields_new[i]] = {'type': types[i]}
+    for i in range(len(fields)):
+        model[fields[i]] = {'type': types[i]}
 
     return model
 

@@ -4,6 +4,7 @@ Flask_Minify
 glom
 pandas
 peewee
+pymysql
 PyYAML
 requests
 Werkzeug
