@@ -10,6 +10,7 @@ from peewee import SqliteDatabase, MySQLDatabase, PostgresqlDatabase
 from playhouse.reflection import generate_models, print_model, print_table_sql
 from playhouse.dataset import DataSet
 from playhouse.db_url import connect
+import pymysql
 
 
 def test():
@@ -47,6 +48,7 @@ class DbWrapper:
         self.file = None
 
         # helpers
+
     def close(self):
         self._db.close()
 
@@ -174,15 +176,14 @@ class DbWrapper:
 
         for col in header:
             sqlContent += col + ','
-
+        sqlContent = sqlContent[:-1]  # delete the last comma
         sqlContent += '\n'
-        print(3)
 
         for row in items:
 
             for i in row.values():
                 sqlContent += str(i) + ','
-
+            sqlContent = sqlContent[:-1]  # delete the last comma
             sqlContent += '\n'
 
         if not aFileName:

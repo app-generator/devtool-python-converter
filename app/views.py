@@ -158,7 +158,7 @@ def handle_output(input_file, input_type, output_type, filename):
         return {'django': django_response}
     elif output_type == 'DataTable':
         if input_type == 'csv':
-            csv_file = pd.read_csv(input_file)
+            csv_file = pd.read_csv(input_file, index_col=0)
         elif input_type == 'pkl':
             csv_file = pkl_to_pandas(input_file)
         elif input_type == 'pandas':
@@ -173,7 +173,7 @@ def handle_output(input_file, input_type, output_type, filename):
         })
     elif output_type == 'Charts':
         if input_type == 'csv':
-            csv_file = pd.read_csv(input_file)
+            csv_file = pd.read_csv(input_file, index_col=0)
         elif input_type == 'pkl':
             csv_file = pkl_to_pandas(input_file)
         elif input_type == 'pandas':
@@ -238,6 +238,7 @@ def index():
 
         elif post_type == 'url':
             url = data['url']
+
             if url.count('google') > 0:
                 service = build('sheets', 'v4', developerKey=app.config['GOOGLE_API_KEY'])
                 try:
@@ -265,7 +266,7 @@ def index():
                 if len(file) < app.config['INPUT_LIMIT']:
                     filename = extract_filename(url)
                     output_desired = data['output']
-                    csv_file = pd.read_csv(io.StringIO(file))
+                    csv_file = pd.read_csv(io.StringIO(file), index_col=0)
                     return handle_output(csv_file, 'pandas', output_desired, filename)
             else:
                 return error_message('the url is not supported!')
@@ -287,12 +288,12 @@ def index():
                 port = data['port']
                 user = data['user']
                 password = data['password']
-                try:
-                    db = connect_to_db(db_driver, dbname, user, password, ip, int(port))
-                    tables = get_tables(db)
-                    return jsonify(tables)
-                except Exception:
-                    return error_message('Could not connect to the DBMS!')
+                # try:
+                db = connect_to_db(db_driver, dbname, user, password, ip, int(port))
+                tables = get_tables(db)
+                return jsonify(tables)
+                # except Exception:
+                #     return error_message('Could not connect to the DBMS!')
 
         elif post_type == 'dbms-table':
             ip = data['ip']
@@ -305,7 +306,7 @@ def index():
                     output_desired = data['output']
                     if csv_table is None:
                         return error_message('The table is empty.')
-                    csv_file = pd.read_csv(io.StringIO(csv_table))
+                    csv_file = pd.read_csv(io.StringIO(csv_table), index_col=0)
                     db.close()
                     os.remove(file_name)
                     return handle_output(csv_file, 'pandas', output_desired, table_name)
@@ -322,7 +323,7 @@ def index():
                     output_desired = data['output']
                     if csv_table is None:
                         return error_message('The table is empty.')
-                    csv_file = pd.read_csv(io.StringIO(csv_table))
+                    csv_file = pd.read_csv(io.StringIO(csv_table), index_col=0)
                     return handle_output(csv_file, 'pandas', output_desired, table_name)
                 except Exception:
                     return error_message('Could not connect to the DBMS!')
