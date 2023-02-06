@@ -47,6 +47,7 @@ const dbmsSearch = document.querySelector("#dbms-search");
 const tableName = document.querySelector("#table-name");
 const connectionContainer = document.querySelector("#connection-container");
 const connection = document.querySelector("#connection");
+const exportContainer = document.querySelector("#export-container");
 
 // constants
 let file = null;
@@ -242,6 +243,7 @@ const writeHTML = (frame, context) => {
 // hides the output containers when a new drop is fired
 const hideOutputContainer = () => {
   dataTableFrameX.contentWindow.dataTable?.destroy();
+  myChart?.destroy();
   writeHTML(dataTableFrameX, "");
   chartFlex.classList.remove("flex");
   const entries = [
@@ -356,6 +358,7 @@ const fillExportOptions = () => {
 
 // listens to change event on the output selection tag
 const handleSelectOutput = (e) => {
+  hideOutputContainer();
   const value = e.target.value;
   let entries = [];
   if (value === "select output") {
@@ -820,11 +823,12 @@ const handleOutputCopy = (event) => {
   alertCopy(event.currentTarget.querySelector("#copy-state"));
 };
 
-// resets common UI states between tabs
+// resets common UI states between tabsclassList
 const resetCommons = () => {
   hideOutputContainer();
   generateContainer.classList.add("hidden");
   selectContainer.classList.add("hidden");
+  selectTableOutputContainer.classList.add("hidden");
 };
 
 // resets drop area UI
@@ -841,6 +845,7 @@ const resetInputArea = () => {
   tableName.setAttribute("disabled", true);
   resetOptions(tableName, "");
   hideInputs(false);
+  dbmsSearch.classList.remove("hidden");
 };
 
 // handles UI change when switching tabs
@@ -866,9 +871,8 @@ const handleTabChange = (e) => {
 };
 
 const showConnectionDetails = () => {
-  console.log("here");
   connectionContainer.classList.remove("hidden");
-  dbmsSearch.classList.remove("hidden");
+  dbmsSearch.classList.add("hidden");
   const form = document.forms[1];
   const driver = form["db-driver"].value ? form["db-driver"].value : undefined;
   const name = form["dbname"].value ? form["dbname"].value : undefined;
@@ -877,7 +881,6 @@ const showConnectionDetails = () => {
 };
 
 const hideConnectionDetails = () => {
-  console.log("here1");
   connectionContainer.classList.add("hidden");
   // dbmsSearch.classList.add("hidden");
   connection.value = "";
@@ -888,7 +891,6 @@ function hideInputs(flag) {
   const form = document.forms[1];
   for (const item of form) {
     const inputName = item.name;
-    console.log(inputName, flag);
     if (flag) {
       // show connection, hide others
       if (inputName === "connection") {
