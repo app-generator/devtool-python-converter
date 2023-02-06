@@ -18,7 +18,7 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'S#perS3crEt_9999')
 
     # Google Apikey
-    GOOGLE_API_KEY = ''
+    GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', None)
 
     # temp directory for sqlite_dbms
     TEMP_FILE_DIRECTORY = 'app\\temp\\'
